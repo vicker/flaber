@@ -10,7 +10,7 @@ class as.shape.RectangleMC extends MovieClip
 	private var rect_width:Number;
 	private var rect_height:Number;
 	private var rect_corner:Number;
-	private var line_style:String;
+	private var line_style:Array;
 	private var fill_color:Number;
 
 	private var edit_mode:Boolean;			// edit mode flag
@@ -21,7 +21,12 @@ class as.shape.RectangleMC extends MovieClip
 	public function RectangleMC ()
 	{
 		mc_ref = this;
-		fill_color = null;
+		
+		rect_width = 10;
+		rect_height = 10;
+		rect_corner = 0;
+		line_style = new Array (1, 0x000000, 100);
+		fill_color = 0x000000;
 		
 		edit_mode = false;
 	}
@@ -39,11 +44,7 @@ class as.shape.RectangleMC extends MovieClip
 			mc_ref.beginFill (fill_color);
 		}
 		
-		var temp_style:Array;
-		temp_style = new Array ();
-		temp_style = line_style.split ("|");
-		
-		mc_ref.lineStyle (parseInt (temp_style [0]), parseInt (temp_style [1]), parseInt (temp_style [2]));
+		mc_ref.lineStyle (parseInt (line_style [0]), parseInt (line_style [1]), parseInt (line_style [2]));
 		
 		mc_ref.lineTo (rect_width, 0);
 		mc_ref.lineTo (rect_width, rect_height);
@@ -111,7 +112,7 @@ class as.shape.RectangleMC extends MovieClip
 				// line style of the line of rectangle
 				case "line_style":
 				{
-					line_style = temp_value;
+					line_style = temp_value.split ("|");
 					break;
 				}
 				// fill color of the rectangle mc
@@ -279,6 +280,27 @@ class as.shape.RectangleMC extends MovieClip
 		mc_ref._rotation = r + target_degree;
 	}
 
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_rectangle";
+		temp_name = "Rectangle Properties Window";
+		temp_width = 580;
+		temp_height = 260;
+		
+		_root.sys_func.remove_window_mc ();
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
@@ -342,7 +364,7 @@ class as.shape.RectangleMC extends MovieClip
 		
 		// linestyle of rectangle
 		temp_node = out_xml.createElement ("line_style");
-		temp_node_2 = out_xml.createTextNode (line_style);
+		temp_node_2 = out_xml.createTextNode (line_style [0] + "|" + line_style [1] + "|" + line_style [2]);
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
@@ -363,5 +385,37 @@ class as.shape.RectangleMC extends MovieClip
 		
 		// export the xml node to whatever place need this
 		return (root_node);
+	}
+
+	// **************
+	// get rect width
+	// **************
+	public function get_rect_width ():Number
+	{
+		return (rect_width);
+	}
+
+	// ***************
+	// get rect height
+	// ***************
+	public function get_rect_height ():Number
+	{
+		return (rect_height);
+	}
+	
+	// **************
+	// get line style
+	// **************
+	public function get_line_style ():Array
+	{
+		return (line_style);
+	}
+	
+	// **************
+	// get fill color
+	// **************
+	public function get_fill_color ():Number
+	{
+		return (fill_color);
 	}
 }

@@ -44,6 +44,9 @@ class as.properties.TextFieldMC extends MovieClip
 		
 		// content
 		mc_ref.content_textarea.text = target_ref.content_field.htmlText;
+		
+		// scroll bar
+		mc_ref.scroll_button.selected = target_ref.get_scroll_flag ();
 	}
 		
 	// **********************
@@ -66,13 +69,14 @@ class as.properties.TextFieldMC extends MovieClip
 		mc_ref.createClassObject (mx.controls.Button, "center_button", 10, {_x:180, _y:100, _width:20, _height:20});
 		mc_ref.createClassObject (mx.controls.Button, "right_button", 11, {_x:210, _y:100, _width:20, _height:20});
 		
-		mc_ref.createClassObject (mx.controls.Button, "scroll_button", 12, {_x:260, _y:100, _width:20, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "scroll_button", 12, {_x:280, _y:100, _width:20, _height:20});
 		
 		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 13, {_x:40, _y:130, _width:120, _height:20});
 		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 14, {_x:180, _y:130, _width:50, _height:20});
 		
-		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 15, {_x:310, _y:100});
-		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 16, {_x:340, _y:100});
+		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 15, {_x:250, _y:130});
+		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 16, {_x:250, _y:100});
+		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 17, {_x:180, _y:370});
 		
 		setup_content_textarea ();
 		
@@ -95,6 +99,7 @@ class as.properties.TextFieldMC extends MovieClip
 		
 		mc_ref.font_color_palette.set_panel_ref (mc_ref, 1);
 		mc_ref.font_link_panel.set_panel_ref (mc_ref);
+		mc_ref.bg_color_palette.set_panel_ref (mc_ref, 2);
 	}
 	
 	// *********************
@@ -109,6 +114,7 @@ class as.properties.TextFieldMC extends MovieClip
 		mc_ref.width_label.setStyle ("styleName", "label_style");
 		mc_ref.height_label.setStyle ("styleName", "label_style");
 		mc_ref.content_label.setStyle ("styleName", "label_style");
+		mc_ref.textarea_bg_label.setStyle ("styleName", "label_style");
 		
 		mc_ref.x_textinput.setStyle ("styleName", "textinput_style");
 		mc_ref.y_textinput.setStyle ("styleName", "textinput_style");
@@ -423,7 +429,6 @@ class as.properties.TextFieldMC extends MovieClip
 	{
 		mc_ref.content_textarea.html = true;
 		mc_ref.content_textarea.wordWrap = true;
-		mc_ref.content_textarea.setStyle ("backgroundColor", 0xFF0000);		
 	}
 	
 	// ************
@@ -447,6 +452,7 @@ class as.properties.TextFieldMC extends MovieClip
 			// hook with the textarea background
 			case 2:
 			{
+				mc_ref.content_textarea.setStyle ("backgroundColor", mc_ref.bg_color_palette.get_color_string ());
 				break;
 			}
 		}
@@ -479,6 +485,16 @@ class as.properties.TextFieldMC extends MovieClip
 			mc_ref.y_textinput.text = "0";
 		}
 		
+		if (mc_ref.width_textinput.text == "")
+		{
+			mc_ref.width_textinput.text = "0";
+		}
+		
+		if (mc_ref.height_textinput.text == "")
+		{
+			mc_ref.height_textinput.text = "0";
+		}
+		
 		if (mc_ref.font_size_combobox.text == "")
 		{
 			mc_ref.font_size_combobox.text = "8";
@@ -505,6 +521,8 @@ class as.properties.TextFieldMC extends MovieClip
 				item_xml = new XML ();
 				
 				item_node = item_xml.createElement ("TextFieldMC");
+				
+				item_node.attributes.scroll_bar = this.class_ref.scroll_button.selected.toString ();
 				
 				temp_node = item_xml.createElement ("x");
 				temp_node_2 = item_xml.createTextNode (this.class_ref.x_textinput.text);

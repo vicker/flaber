@@ -14,6 +14,7 @@ class as.page_content.PageContentMC extends MovieClip
 	private var file_name:String;					// for tracer
 	private var loaded_file:String;				// loaded file name
 
+	private var max_depth:Number;					// the maximum depth of the page content items
 
 	// ***********
 	// constructor
@@ -25,6 +26,8 @@ class as.page_content.PageContentMC extends MovieClip
 		content_mc_array = new Array ();
 		
 		file_name = "(PageContentMC.as)";
+		
+		max_depth = 0;
 	}
 	
 	// **********
@@ -44,7 +47,7 @@ class as.page_content.PageContentMC extends MovieClip
 	// *************
 	public function load_root_xml (s:String):Void
 	{
-		loaded_file = s;
+		loaded_file = "page/" + s;
 		
 		// destroying old contents
 		destroy ();
@@ -54,8 +57,7 @@ class as.page_content.PageContentMC extends MovieClip
 		root_xml = new XML ();
 		root_xml ["class_ref"] = this;
 		root_xml.ignoreWhite = true;
-		root_xml ["break_cache"] = new Date ().getTime ();
-		root_xml.sendAndLoad ("page/" + s, root_xml, "POST");
+		root_xml.sendAndLoad ("page/" + s + _root.sys_func.get_break_cache (), root_xml, "POST");
 		
 		root_xml.onLoad = function (b:Boolean)
 		{
@@ -223,6 +225,80 @@ class as.page_content.PageContentMC extends MovieClip
 	}
 	
 	// ************
+	// add new item
+	// ************
+	public function add_new_item (s:String, x:XMLNode):Void
+	{
+		var lib_name:String;
+		var temp_name:String;
+		
+		switch (s)
+		{
+			// TextField
+			case "TextFieldMC":
+			{
+				lib_name = "lib_page_content_textfield";
+				temp_name = "text_field_";
+				break;
+			}
+			// Image
+			case "ImageMC":
+			{
+				lib_name = "lib_page_content_image";
+				temp_name = "image_";
+				break;
+			}
+			// Link
+			case "LinkMC":
+			{
+				lib_name = "lib_page_content_link";
+				temp_name = "link_";
+				break;
+			}
+			// Rectangle Shape
+			case "RectangleMC":
+			{
+				lib_name = "lib_shape_rectangle";
+				temp_name = "rectangle_";
+				break;
+			}
+			// exception
+			default:
+			{
+				_root.status_mc.add_message (file_name + " item skipped with item name '" + s + "'", "critical");
+			}
+		}
+		
+		var temp_id:Number;
+		
+		// if it is added by loading data, then must have depth data
+		if (x != null)
+		{
+			temp_id = parseInt (x.attributes.depth);
+			max_depth = Math.max (max_depth, temp_id);
+		}
+		// else it means this is brand new item
+		else	
+		{
+			temp_id = max_depth + 1;
+			max_depth = max_depth + 1;
+		}
+		
+		content_mc_array [temp_id] = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id, {_x: 50, _y:50});
+		
+		// if it is added by loading data, then set the xml data
+		if (x)	{	content_mc_array [temp_id].set_data_xml (x);	}
+		// else try to open the properties window, because this is brand new item
+		else
+		{
+			content_mc_array [temp_id].broadcaster_event (_root.sys_func.get_edit_mode ());
+			content_mc_array [temp_id].properties_function ();
+		}
+		
+		_root.mode_broadcaster.add_observer (content_mc_array [temp_id]);
+	}
+	
+	// ************
 	// set data_xml
 	// ************
 	public function set_data_xml (x:XMLNode):Void
@@ -237,59 +313,16 @@ class as.page_content.PageContentMC extends MovieClip
 			var lib_name:String;
 			var temp_name:String;
 			
-			switch (temp_node.nodeName)
-			{
-				// TextField
-				case "TextFieldMC":
-				{
-					lib_name = "lib_page_content_textfield";
-					temp_name = "text_field_";
-					break;
-				}
-				// Image
-				case "ImageMC":
-				{
-					lib_name = "lib_page_content_image";
-					temp_name = "image_";
-					break;
-				}
-				// Link
-				case "LinkMC":
-				{
-					lib_name = "lib_page_content_link";
-					temp_name = "link_";
-					break;
-				}
-				// Rectangle Shape
-				case "RectangleMC":
-				{
-					lib_name = "lib_shape_rectangle";
-					temp_name = "rectangle_";
-					break;
-				}
-				// exception
-				default:
-				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
-				}
-			}
-			
-			var temp_id:Number;
-			temp_id = parseInt (temp_node.attributes.depth);
-			
-			content_mc_array [temp_id] = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id);
-			content_mc_array [temp_id].set_data_xml (temp_node);
-			
-			_root.mode_broadcaster.add_observer (content_mc_array [temp_id]);
+			add_new_item (temp_node.nodeName, temp_node);
 		}
 	}
 
-	// **********
-	// export_xml
-	// **********
-	public function export_xml ():Void
+	// ********
+	// save_xml
+	// ********
+	public function save_xml ():Void
 	{
-		_root.status_mc.add_message ("Exporting page content...", "normal");
+		_root.status_mc.add_message ("Saving page content...", "normal");
 		
 		var out_xml:XML;
 		var out_string:String;
@@ -390,7 +423,7 @@ class as.page_content.PageContentMC extends MovieClip
 		out_string = out_string + out_xml.toString ();
 		out_xml = new XML (out_string);
 		out_xml.contentType = "text/xml";
-		trace (out_xml);
-		// out_xml.sendAndLoad ("update_xml.php?target_file=" + loaded_file, return_xml);
+		
+		out_xml.sendAndLoad ("function/update_xml.php?target_file=" + loaded_file, return_xml);
 	}
 }

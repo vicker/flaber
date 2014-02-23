@@ -74,8 +74,8 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:80, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:160, _y:40, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:40, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:40, _width:40, _height:20});
 		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 3, {_x:20, _y:100, _width:110, _height:20});
 		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 4, {_x:150, _y:100, _width:50, _height:20});
 		mc_ref.createClassObject (mx.controls.Button, "bold_button", 5, {_x:20, _y:130, _width:20, _height:20});

@@ -77,21 +77,7 @@ class as.global.SystemFunction
 		temp_script = "javascript:popup ('" + u + "','" + n + "','" + temp_properties + "')";
 		getURL (temp_script);
 	}
-	
-	// **************
-	// get movie size
-	// **************
-	public function get_movie_size ():Object
-	{
-		var temp_obj:Object;
-		
-		temp_obj = new Object ();
-		temp_obj ["width"] = 800;
-		temp_obj ["height"] = 600;
-		
-		return temp_obj;
-	}
-	
+
 	// ****************
 	// get mouse degree
 	// ****************
@@ -244,5 +230,35 @@ class as.global.SystemFunction
 		}
 		
 		return null;
+	}
+
+	// ****************
+	// remove window mc
+	// ****************
+	public function remove_window_mc ():Void
+	{
+		if (_root.window_mc)
+		{
+			_root.window_mc.removeMovieClip ();
+		}
+	}
+	
+	// ***************
+	// get break cache
+	// ***************
+	public function get_break_cache ():String
+	{
+		// because break cache method will prevent local testing
+		// so using this approach
+		// reference http://www.shockwave-india.com/blog/actionscript/?asfile=skipCache.as
+		
+		if (_url.indexOf ("file") == 0)
+		{
+			return ("");
+		}
+		else
+		{
+			return ("?break_cache=" + new Date ().getTime ().toString ());
+		}
 	}
 }

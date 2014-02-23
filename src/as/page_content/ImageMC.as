@@ -244,6 +244,27 @@ class as.page_content.ImageMC extends MovieClip
 		mc_ref.clip_mc._rotation = r + target_degree;
 	}
 
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_image";
+		temp_name = "Image Properties Window";
+		temp_width = 620;
+		temp_height = 510;
+		
+		_root.sys_func.remove_window_mc ();
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
@@ -307,5 +328,13 @@ class as.page_content.ImageMC extends MovieClip
 		
 		// export the xml node to whatever place need this
 		return (root_node);
+	}
+
+	// **********
+	// get mc url
+	// **********
+	public function get_mc_url ():String
+	{
+		return (mc_url);
 	}
 }

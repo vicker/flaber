@@ -10,6 +10,7 @@
 		// if the target is well defined, update now...
 		if ($target_file != "")
 		{
+			$target_file = "../" . $target_file;
 			if (is_file ($target_file))
 			{
 				if (is_writable ($target_file))
