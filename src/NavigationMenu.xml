@@ -15,20 +15,19 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		</text_format>
   </config>
 	<data>
-		<NavigationItemMC>
+		<NavigationItemMC style="global">
 		  <x>20</x>
 		  <y>20</y>
 	    <text>Home</text>
+		 <type>0</type>
+		 <url>index.xml</url>
 	  </NavigationItemMC>
-		<NavigationItemMC>
+		<NavigationItemMC style="global">
 		  <x>130</x>
 		  <y>20</y>
-	    <text>About Me</text>
-	  </NavigationItemMC>
-		<NavigationItemMC>
-		  <x>240</x>
-		  <y>20</y>
-	    <text>Testing Item</text>
+	    <text>Technologies</text>
+		 <type>0</type>
+		 <url>page2.xml</url>
 	  </NavigationItemMC>
   </data>
 </NavigationMenu>

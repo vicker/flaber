@@ -2,24 +2,9 @@
 
 	$file_name = "(update_xml.php)";
 
-	// check if the target object is specified
-	if (isset ($_GET ["target_object"]))
+	// check if the target file is specified
+	if (isset ($_GET ["target_file"]))
 	{
-		// for different target, update different xml file
-		switch ($_GET ["target_object"])
-		{
-			case "navigation_menu":
-			{
-				$target_file = "NavigationMenu.xml";
-				break;
-			}
-			default:
-			{
-				$target_file = "";
-				break;
-			}
-		}
-		
 		// if the target is well defined, update now...
 		if ($target_file != "")
 		{

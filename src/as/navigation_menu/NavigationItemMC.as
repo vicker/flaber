@@ -1,125 +1,237 @@
-﻿// NavigationItemMC class
+﻿// **********************
+// NavigationItemMC class
+// **********************
 class as.navigation_menu.NavigationItemMC extends MovieClip
 {
 	// MC variables
 	// Dynamic Text Field			content_field
 	
 	// private variables
-	private var text_format:TextFormat;				// text format of the text content
+	private var link_url:String;						// url of the link content
+	private var link_type:Number;						// internal link or external
 	
 	private var mc_ref:MovieClip;						// interface for the navigation item mc
-	private var menu_ref:MovieClip;					// reference back to the navigation menu
-	private var page_ref:MovieClip;					// reference back to the page content mc
 	
-	private var global_flag:Boolean;					// state that this item is using global style or not
+	private var style_global:Boolean;				// state that if this item is using global style
+	private var format_global:Boolean;				// state that if this item is using global textformat
+	private var file_name:String;						// for tracer
 	
+	private var edit_mode:Boolean;					// edit mode flag
+	
+	// ***********
 	// constructor
+	// ***********
 	public function NavigationItemMC ()
 	{
 		mc_ref = this;
-		text_format = new TextFormat ();
+		
+		file_name = "(NavigationItemMC.as)";
+		
+		edit_mode = false;
 	}
 	
-	// onpress override
-	public function onPress ()
-	{
-		// react only in edit mode
-		if (_root.config ["edit_mode"])
-		{
-			this.startDrag ();
-		}
-	}
-	
+	// ******************
 	// onrelease override
+	// ******************
 	public function onRelease ()
 	{
-		// react as drag in edit mode
-		if (_root.config ["edit_mode"])
+		// work as simple button in non edit mode
+		if (edit_mode == false)
 		{
-			this.stopDrag ();
-		}
-		// otherwise work as simple button
-		else
-		{
-			// somthing
+			mc_ref.gotoAndStop ("normal");
+			
+			switch (link_type)
+			{
+				case 0:
+				{
+					// loading internal content
+					_root.page_mc.load_root_xml (link_url);
+					break;
+				}
+				case 1:
+				{
+					// loading external content
+					_root.sys_func.build_popup (800, 600, "", link_url, 1);
+					break;
+				}
+			}
 		}
 	}
 	
+	// *************************
 	// onreleaseoutside override
+	// *************************
 	public function onReleaseOutside ()
 	{
-		onRollOut ();
-	}
-	
-	// onrollover override
-	public function onRollOver ()
-	{
-		// react only in non editing mode
-		if (!_root.config ["edit_mode"])
-		{
-			mc_ref.gotoAndStop ("over");
-			_root.status_mc.add_message ("Navigation Item", "tooltip");
-		}
-	}
-	
-	// onrollout override
-	public function onRollOut ()
-	{
-		// react only in non editing mode
-		if (!_root.config ["edit_mode"])
+		// work as simple button in non edit mode
+		if (edit_mode = false)
 		{
 			mc_ref.gotoAndStop ("normal");
 		}
 	}
 	
-	// content_field setter and getter
-	public function set_content_field (s:String):Void { mc_ref.content_field.text = s; }
-	public function get_content_field ():String	      { return mc_ref.content_field.text; }
-	
-	// text_format setter and getter
-	public function set_text_format (a:Array, f:TextFormat):Void
+	// *******************
+	// onrollover override
+	// *******************
+	public function onRollOver ()
 	{
-		if (a)
+		// react normally in action mode
+		if (edit_mode == false)
 		{
-			for (var i in a)
+			mc_ref.gotoAndStop ("over");
+			
+			var temp_string:String;
+			
+			temp_string = mc_ref.content_field.text + " - " + link_url;
+			_root.status_mc.add_message (temp_string , "tooltip");
+		}
+		// react as movable in edit mode
+		else
+		{
+			_root.mc_filters.set_brightness_filter (mc_ref);
+			
+			pull_edit_panel ();
+		}
+	}
+	
+	// ******************
+	// onrollout override
+	// ******************
+	public function onRollOut ()
+	{
+		// react normally in action mode
+		if (edit_mode == false)
+		{
+			mc_ref.gotoAndStop ("normal");
+		}
+		// react as movable in edit mode
+		else
+		{
+			_root.mc_filters.remove_filter (mc_ref);
+		}
+	}
+
+	// ***************
+	// pull edit panel
+	// ***************
+	public function pull_edit_panel ():Void
+	{
+		var temp_x:Number;
+		var temp_y:Number;
+		
+		temp_x = mc_ref._parent._x + mc_ref._x;
+		temp_y = mc_ref._parent._y + mc_ref._y + mc_ref._height;
+		
+		_root.edit_panel_mc.set_target_ref (mc_ref);
+		_root.edit_panel_mc.set_position (temp_x, temp_y);
+	}
+
+	// *****************
+	// broadcaster event
+	// *****************
+	public function broadcaster_event (o:Object):Void
+	{
+		edit_mode = new Boolean (o);
+	}
+
+	// ***************
+	// data_xml setter
+	// ***************
+	public function set_data_xml (x:XMLNode, t:TextFormat):Void
+	{
+		for (var i in x.childNodes)
+		{
+			var temp_node:XMLNode;
+			var temp_name:String;
+			var temp_value:String;
+			
+			temp_node = x.childNodes [i];
+			temp_name = temp_node.nodeName;
+			
+			// since text_format will have further nodes
+			if (temp_name != "text_format")
 			{
-				var temp_position = a [i].indexOf ("|");
-				var temp_property = a [i].substr (0, temp_position);
-				var temp_value = a [i].substr (temp_position + 1);
-				text_format [temp_property] = temp_value;
+				temp_value = temp_node.firstChild.nodeValue;
+			}
+			
+			switch (temp_name)
+			{
+				// x position of the navigation item respect to the menu
+				case "x":
+				{
+					mc_ref._x = parseInt (temp_value);
+					break;
+				}
+				// y position of the navigation item respect to the menu
+				case "y":
+				{
+					mc_ref._y = parseInt (temp_value);
+					break;
+				}
+				// text content of the navigation item
+				case "text":
+				{
+					mc_ref.content_field.text = temp_value;
+					break;
+				}
+				// text format of the navigation item
+				case "text_format":
+				{
+					var temp_format:TextFormat;
+					temp_format = new TextFormat ();
+					
+					for (var j in x.childNodes)
+					{
+						temp_format [x.childNodes [j].nodeName] = x.childNodes [j].nodeValue;
+					}
+					
+					mc_ref.content_field.setTextFormat (temp_format);
+					break;
+				}
+				// link type of the navigation item
+				case "type":
+				{
+					link_type = parseInt (temp_value);
+					break;
+				}
+				// link url of the navigation item
+				case "url":
+				{
+					link_url = temp_value;
+					break;
+				}
+				// exception
+				default:
+				{
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+				}
 			}
 		}
-		else if (f)
+		
+		// style of the navigation item
+		if (x.attributes ["style"] != "global")
 		{
-			text_format = f;
+			style_global = false;
 		}
 		else
 		{
-			trace ("NavigationItemMC.as -> set_text_format fail.");
+			style_global = true;
 		}
 		
-		mc_ref.content_field.setTextFormat (text_format);
-	}
-	
-	public function copy_text_format (f:TextFormat):Void
-	{
-		text_format = f;
-		mc_ref.content_field.setTextFormat (text_format);
-	}
-	
-	public function get_text_format ():Array	   
-	{
-		var temp_array = new Array ();
-		
-		for (var i in text_format)
+		// textformat of the navigation item
+		if (x.attributes ["textformat"] != "global")
 		{
-			temp_array.push (i + "|" + text_format [i]); 
+			format_global = false;
 		}
-		
-		trace (temp_array);
-		return temp_array;
+		else
+		{
+			format_global = true;
+		}
 	}
 	
+	// **********
+	// export xml
+	// **********
 	public function export_xml ():XMLNode
 	{
 		var out_xml:XML;
@@ -152,16 +264,18 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		root_node.appendChild (temp_node);
 		
 		// overriding styles, if any
-		if (global_flag)
+		if (!style_global)
 		{
 			//TODO if doing override style, then many things have to be added here
+		}
+		
+		// overriding textformats, if any
+		if (!format_global)
+		{
+			//TODO if doing override textformat, then many things have to be added here
 		}
 		
 		// export the xml node to whatever place need this
 		return (root_node);
 	}
-	
-	// global_flag setter and getter
-	public function set_global_flag (b:Boolean):Void	{ global_flag = b; }
-	public function get_global_flag ():Boolean			{ return global_flag; }
 }

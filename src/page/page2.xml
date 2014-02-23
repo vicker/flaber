@@ -1,0 +1,55 @@
+﻿<?xml version="1.0"?>
+
+<PageContent
+xmlns="http://www.w3schools.com"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <config>
+		<x>0</x>
+		<y>0</y>
+		<bg_color>0x99CCFF</bg_color>
+		<bg_image>
+			<x>0</x>
+			<y>0</y>
+			<url>img/flyswsv3.jpg</url>
+			<alpha>50</alpha>
+		</bg_image>
+	</config>
+	<data>
+		<TextFieldMC depth="1">
+			<x>50</x>
+			<y>100</y>
+			<width>200</width>
+			<height>100</height>
+			<text>
+				<TEXTFORMAT LEADING="2">
+					<P ALIGN="LEFT">
+						<FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0">
+							<B>TECHNOLOGIES BEHIND</B>
+						</FONT>
+					</P>
+				</TEXTFORMAT>
+			</text>
+		</TextFieldMC>
+		<TextFieldMC depth="2">
+			<x>50</x>
+			<y>130</y>
+			<width>200</width>
+			<height>350</height>
+			<text>
+				<TEXTFORMAT LEADING="2">
+					<P ALIGN="LEFT">
+						<FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0">FLABER basically works with the principle illustrated in the diagram besides. It involves a Flash administrative backend system to build some data in XML format or database format through the PHP Server. And then the Flash frontend will pull the data out to generate a Flash format website. Or a PHP frontend will pull the data out to generate a HTML format website.<br /></FONT>
+					</P>
+					<P ALIGN="LEFT">
+						<FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0">The advantage of this mechanism is that, there is only one unique source while the user can enjoy the convenience having both HTML and FLASH version. And of course the user can have fun designing his / her own Flash website without knowing any Flash and ActionScript knowledge.</FONT>
+					</P>
+				</TEXTFORMAT>
+			</text>
+		</TextFieldMC>
+		<ImageMC depth="6">
+			<x>300</x>
+			<y>130</y>
+			<url>img/methodology.png</url>
+		</ImageMC>
+	</data>
+</PageContent>
