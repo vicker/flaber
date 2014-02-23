@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+
+<NavigationMenu
+xmlns="http://www.w3schools.com"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <config>
+    <x>20</x>
+    <y>20</y>
+    <menu_style>
+		  <name>lib_navigation_item_1</name>
+		</menu_style>
+    <text_format>
+	    <font>Arial</font>
+	    <size>18</size>
+		</text_format>
+  </config>
+	<data>
+		<NavigationItemMC>
+		  <x>20</x>
+		  <y>20</y>
+	    <text>Home</text>
+	  </NavigationItemMC>
+		<NavigationItemMC>
+		  <x>130</x>
+		  <y>20</y>
+	    <text>About Me</text>
+	  </NavigationItemMC>
+		<NavigationItemMC>
+		  <x>240</x>
+		  <y>20</y>
+	    <text>Testing Item</text>
+	  </NavigationItemMC>
+  </data>
+</NavigationMenu>

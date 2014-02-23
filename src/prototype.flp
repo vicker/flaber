@@ -1,0 +1,19 @@
+
+<flash_project version='1' name='prototype'>
+  <project_folder expanded='true' name='prototype'>
+    <project_folder expanded='true' name='as'>
+      <project_folder expanded='true' name='global'>
+        <project_file path='as\global\ScrollBarMC.as' filetype='as'/>
+        <project_file path='as\global\StatusMessageMC.as' filetype='as'/>
+      </project_folder>
+      <project_folder expanded='true' name='navigation_menu'>
+        <project_file path='as\navigation_menu\NavigationItemMC.as' filetype='as'/>
+        <project_file path='as\navigation_menu\NavigationMenuMC.as' filetype='as'/>
+      </project_folder>
+    </project_folder>
+    <project_file path='prototype.fla' filetype='fla'/>
+    <project_file path='xml_editor.fla' filetype='fla'/>
+    <project_file path='update_xml.php' filetype='php'/>
+    <project_file path='NavigationMenu.xml' filetype='xml'/>
+  </project_folder>
+</flash_project>
