@@ -57,7 +57,8 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		// react only in non editing mode
 		if (!_root.config ["edit_mode"])
 		{
-			mc_ref.gotoAndStop ("over");      
+			mc_ref.gotoAndStop ("over");
+			_root.status_mc.add_message ("Navigation Item", "tooltip");
 		}
 	}
 	

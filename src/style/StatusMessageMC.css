@@ -1,0 +1,67 @@
+﻿critical
+{
+	color: #FF0000;
+	font-size: 10px;
+	font-weight: bold;
+	display: block;
+}
+
+flaber
+{
+	color: #3399FF;
+	font-size: 10px;
+	font-weight: bold;
+	display: block;
+}
+
+flaber_f
+{
+	color: #FF0000;
+	display: inline;
+}
+
+flaber_l
+{
+	color: #FF9900;
+	display: inline;
+}
+
+flaber_a
+{
+	color: #009900;
+	display: inline;
+}
+
+flaber_b
+{
+	color: #0000FF;
+	display: inline;
+}
+
+flaber_e
+{
+	color: #9900FF;
+	display: inline;
+}
+
+flaber_r
+{
+	color: #FF66FF;
+	display: inline;
+}
+
+normal
+{
+	color: #000066;
+	font-size: 10px;
+	font-weight: normal;
+	display: block;
+}
+
+tooltip
+{
+	color: #000066;
+	font-size: 10px;
+	font-weight: normal;
+	display: block;
+}
