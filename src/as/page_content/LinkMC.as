@@ -179,6 +179,7 @@ class as.page_content.LinkMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
+		_root.edit_panel_mc.set_function (true, false, false, true);
 	}
 
 	// *****************
@@ -187,5 +188,57 @@ class as.page_content.LinkMC extends MovieClip
 	public function broadcaster_event (o:Object):Void
 	{
 		edit_mode = new Boolean (o);
+	}
+
+	// **********
+	// export xml
+	// **********
+	public function export_xml ():XMLNode
+	{
+		var out_xml:XML;
+		
+		var root_node:XMLNode;
+		var temp_node:XMLNode;
+		var temp_node_2:XMLNode;
+		
+		out_xml = new XML ();
+		
+		// building root node
+		root_node = out_xml.createElement ("LinkMC");
+		root_node.attributes.depth = mc_ref.getDepth ();
+		
+		// x of link
+		temp_node = out_xml.createElement ("x");
+		temp_node_2 = out_xml.createTextNode (mc_ref._x.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// y of link
+		temp_node = out_xml.createElement ("y");
+		temp_node_2 = out_xml.createTextNode (mc_ref._y.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// type of link
+		temp_node = out_xml.createElement ("type");
+		temp_node_2 = out_xml.createTextNode (link_type.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// url of link
+		temp_node = out_xml.createElement ("url");
+		temp_node_2 = out_xml.createTextNode (link_url);
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// all the contents inside the link
+		for (var i in content_mc_array)
+		{
+			temp_node = content_mc_array [i].export_xml ();
+			root_node.appendChild (temp_node);
+		}
+		
+		// export the xml node to whatever place need this
+		return (root_node);
 	}
 }

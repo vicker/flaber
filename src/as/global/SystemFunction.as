@@ -1,4 +1,6 @@
-﻿// SystemFunction class
+﻿// ********************
+// SystemFunction class
+// ********************
 class as.global.SystemFunction
 {
 	// private variables
@@ -88,5 +90,78 @@ class as.global.SystemFunction
 		temp_obj ["height"] = 600;
 		
 		return temp_obj;
+	}
+	
+	// ****************
+	// get mouse degree
+	// ****************
+	public function get_mouse_degree (x:Number, y:Number):Number
+	{
+		var atan2_value:Number;
+				atan2_value = Math.atan2 (_root._ymouse - y, _root._xmouse - x);
+		
+		return (atan2_value / (Math.PI / 180) + 90);
+	}
+	
+	// *****************
+	// color code to num
+	// *****************
+	public function color_code_to_num (s:String):Number
+	{
+		if (s.charAt (0) == "#")
+		{
+			s = s.substr (1, 6);
+		}
+		
+		s = "0x" + s;
+		
+		if (isNaN (parseInt (s)))
+		{
+			return 0;
+		}
+		else
+		{
+			return parseInt (s);
+		}
+	}
+	
+	// ********************
+	// color code to string
+	// ********************
+	public function color_code_to_string (s:String):String
+	{
+		if (s.charAt (0) == "#")
+		{
+			s = s.substr (1, 6);
+		}
+		
+		s = "0x" + s;
+		
+		if (s.length == 8)
+		{
+			return (s);
+		}
+		else
+		{
+			return (null);
+		}
+	}
+	
+	// *****************
+	// color num to code
+	// *****************
+	public function color_num_to_code (n:Number):String
+	{
+		var temp_string:String;
+		
+		temp_string = n.toString (16).toUpperCase ();
+		
+		while (temp_string.length != 6)
+		{
+			temp_string = "0" + temp_string;
+		}
+		temp_string = "#" + temp_string;
+		
+		return temp_string; 
 	}
 }

@@ -12,6 +12,8 @@ class as.page_content.ImageMC extends MovieClip
 
 	private var mc_url:String;
 
+	private var interval_id:Number;					// temp store for interval id
+
 	private var edit_mode:Boolean;					// edit mode flag
 	
 	// constructor
@@ -28,6 +30,10 @@ class as.page_content.ImageMC extends MovieClip
 	// ***************
 	public function set_data_xml (x:XMLNode):Void
 	{
+		var temp_width:Number;
+		var temp_height:Number;
+		var temp_rotation:Number;
+		
 		for (var i in x.childNodes)
 		{
 			var temp_node:XMLNode;
@@ -52,6 +58,24 @@ class as.page_content.ImageMC extends MovieClip
 					mc_ref._y = parseInt (temp_value);
 					break;
 				}
+				// width of the image
+				case "width":
+				{
+					temp_width = parseInt (temp_value);
+					break;
+				}
+				// height of the image
+				case "height":
+				{
+					temp_height = parseInt (temp_value);
+					break;
+				}
+				// rotation of the image
+				case "rotation":
+				{
+					temp_rotation = parseInt (temp_value);
+					break;
+				}
 				// path of the image
 				case "url":
 				{
@@ -61,6 +85,18 @@ class as.page_content.ImageMC extends MovieClip
 			}			
 		}
 		
+		var load_listener:Object;
+		
+		load_listener = new Object ();
+		load_listener ["class_ref"] = mc_ref;
+		load_listener.onLoadInit = function ()
+		{
+			this.class_ref.clip_mc._width = temp_width;
+			this.class_ref.clip_mc._height = temp_height;
+			this.class_ref.clip_mc._rotation = temp_rotation;
+		}
+		
+		mc_loader.addListener (load_listener);
 		mc_loader.loadClip (mc_url, mc_ref.clip_mc);
 	}
 
@@ -98,11 +134,113 @@ class as.page_content.ImageMC extends MovieClip
 		var temp_x:Number;
 		var temp_y:Number;
 		
+		var adjust_x:Number;
+		var adjust_y:Number;
+		
 		temp_x = mc_ref._x;
 		temp_y = mc_ref._y + mc_ref._height;
 		
+		adjust_x = 0;
+		adjust_y = 0;
+		
+		// rotation adjuster
+		if (mc_ref.clip_mc._rotation < 0 && mc_ref.clip_mc._rotation >= - 90)
+		{
+			adjust_y = mc_ref._height * (mc_ref.clip_mc._rotation / 90);
+		}
+		else if (mc_ref.clip_mc._rotation < -90 && mc_ref.clip_mc._rotation >= - 180)
+		{
+			adjust_y = 0 - mc_ref._height;
+			adjust_x = mc_ref._width * ((mc_ref.clip_mc._rotation + 90) / 90);
+		}
+		else if (mc_ref.clip_mc._rotation > 90 && mc_ref.clip_mc._rotation <= 180)
+		{
+			adjust_y = 0 - (mc_ref._width * ((mc_ref.clip_mc._rotation - 90) / 90));
+			adjust_x = 0 - mc_ref._width;
+		}
+		else if (mc_ref.clip_mc._rotation > 0 && mc_ref.clip_mc._rotation <= 90)
+		{
+			adjust_x = 0 - mc_ref._width * (mc_ref.clip_mc._rotation / 90);
+		}
+		
+		temp_x = temp_x + adjust_x;
+		temp_y = temp_y + adjust_y;
+		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
+		_root.edit_panel_mc.set_function (true, true, true, true);
+	}
+
+	// ***************
+	// resize function
+	// ***************
+	public function resize_function (n:Number):Void
+	{
+		// calling to go
+		if (n == 1)
+		{
+			clearInterval (interval_id);
+			interval_id = setInterval (mc_ref, "resize_interval_function", 75);
+		}
+		// calling to stop
+		else
+		{
+			clearInterval (interval_id);
+		}
+	}
+	
+	// ************************
+	// resize interval function
+	// ************************
+	public function resize_interval_function ():Void
+	{
+		var target_width:Number;
+		var target_height:Number;
+		
+		target_height = Math.max (mc_ref._ymouse, 10);
+		target_width = mc_ref.clip_mc._width * (target_height / mc_ref.clip_mc._height);
+		
+		mc_ref.clip_mc._width = target_width;
+		mc_ref.clip_mc._height = target_height;
+	}
+
+	// ***************
+	// rotate function
+	// ***************
+	public function rotate_function (n:Number):Void
+	{
+		// calling to go
+		if (n == 1)
+		{
+			clearInterval (interval_id);
+			
+			var initial_rotation:Number;
+			var initial_degree:Number;
+			
+			initial_rotation = mc_ref.clip_mc._rotation;
+			initial_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
+			
+			interval_id = setInterval (mc_ref, "rotate_interval_function", 75, initial_rotation, initial_degree);
+		}
+		// calling to stop
+		else
+		{
+			clearInterval (interval_id);
+		}
+	}
+	
+	// ************************
+	// rotate interval function
+	// ************************
+	public function rotate_interval_function (r:Number, d:Number):Void
+	{
+		var target_degree:Number;
+		var current_degree:Number;
+		
+		current_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
+		target_degree = current_degree - d;
+		
+		mc_ref.clip_mc._rotation = r + target_degree;
 	}
 
 	// *****************
@@ -111,5 +249,62 @@ class as.page_content.ImageMC extends MovieClip
 	public function broadcaster_event (o:Object):Void
 	{
 		edit_mode = new Boolean (o);
+	}
+
+	// **********
+	// export xml
+	// **********
+	public function export_xml ():XMLNode
+	{
+		var out_xml:XML;
+		
+		var root_node:XMLNode;
+		var temp_node:XMLNode;
+		var temp_node_2:XMLNode;
+		
+		out_xml = new XML ();
+		
+		// building root node
+		root_node = out_xml.createElement ("ImageMC");
+		root_node.attributes.depth = mc_ref.getDepth ();
+		
+		// x of image
+		temp_node = out_xml.createElement ("x");
+		temp_node_2 = out_xml.createTextNode (mc_ref._x.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// y of image
+		temp_node = out_xml.createElement ("y");
+		temp_node_2 = out_xml.createTextNode (mc_ref._y.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+
+		// width of image
+		temp_node = out_xml.createElement ("width");
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._width.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// height of image
+		temp_node = out_xml.createElement ("height");
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._height.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// rotation of image
+		temp_node = out_xml.createElement ("rotation");
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._rotation.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// url of image
+		temp_node = out_xml.createElement ("url");
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._url);
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// export the xml node to whatever place need this
+		return (root_node);
 	}
 }

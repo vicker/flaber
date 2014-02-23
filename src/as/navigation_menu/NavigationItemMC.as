@@ -124,6 +124,27 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
+		_root.edit_panel_mc.set_function (true, false, false, true);
+	}
+
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_navigation_item";
+		temp_name = "Navigation Item Properties Window";
+		temp_width = 290;
+		temp_height = 290;
+		
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
 	// *****************
@@ -185,7 +206,7 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 						temp_format [x.childNodes [j].nodeName] = x.childNodes [j].nodeValue;
 					}
 					
-					mc_ref.content_field.setTextFormat (temp_format);
+					t = temp_format;
 					break;
 				}
 				// link type of the navigation item
@@ -207,6 +228,8 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 				}
 			}
 		}
+		
+		mc_ref.content_field.setTextFormat (t);
 		
 		// style of the navigation item
 		if (x.attributes ["style"] != "global")
@@ -245,6 +268,11 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		// building root node
 		root_node = out_xml.createElement ("NavigationItemMC");
 		
+		if (style_global == true)
+		{
+			root_node.attributes.style = "global";
+		}
+		
 		// x of navigation item
 		temp_node = out_xml.createElement ("x");
 		temp_node_2 = out_xml.createTextNode (mc_ref._x.toString ());
@@ -263,6 +291,18 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
+		// type of navigation item
+		temp_node = out_xml.createElement ("type");
+		temp_node_2 = out_xml.createTextNode (link_type.toString ());
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
+		// url of navigation item
+		temp_node = out_xml.createElement ("url");
+		temp_node_2 = out_xml.createTextNode (link_url);
+		temp_node.appendChild (temp_node_2);
+		root_node.appendChild (temp_node);
+		
 		// overriding styles, if any
 		if (!style_global)
 		{
@@ -277,5 +317,13 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		
 		// export the xml node to whatever place need this
 		return (root_node);
+	}
+
+	// *****************
+	// get content field
+	// *****************
+	public function get_content_field ():String
+	{
+		return (mc_ref.content_field.text);
 	}
 }

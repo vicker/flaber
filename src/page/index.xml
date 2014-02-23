@@ -77,6 +77,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 			<y>245</y>
 			<width>250</width>
 			<height>240</height>
+			<rotation>-45</rotation>
 			<corner>0</corner>
 			<line_style>2|0x666666|100</line_style>
 			<fill_color>0xFFFFFF</fill_color>
