@@ -1,6 +1,6 @@
 ﻿<?php
 
-	$file_name = "update_xml.php";
+	$file_name = "(update_xml.php)";
 
 	// check if the target object is specified
 	if (isset ($_GET ["target_object"]))
@@ -25,20 +25,36 @@
 		{
 			$raw_xml = file_get_contents("php://input");
 			
-			$fp = fopen($target_file, "w");
-			fwrite($fp, $raw_xml);
-			fclose($fp);
-			
-			print ($file_name . ": Update finished. " . $target_file . " updated.");
+			if (is_file ($target_file))
+			{
+				if (is_writable ($target_file))
+				{
+					$fp = fopen($target_file, "w");
+					fclose ($fp);
+					print ("<normal>" . $file_name . " " . $target_file . " updated successfully.</critical>");
+				}
+				else
+				{
+					print ("<critical>" . $file_name . " " . $target_file . " is not writable.</critical>");
+					exit;				
+				}
+			}
+			else
+			{
+				print ("<critical>" . $file_name . " " . $target_file . " does not exists.</critical>");
+				exit;				
+			}
 		}
 		else
 		{
-			print ($file_name . ": Update failed. Target not inside scope.");
+			print ("<critical>" . $file_name . " Incorrect parameter target_file.</critical>");
+			exit;
 		}
 	}
 	else
 	{
-		print ($file_name . ": Update failed. Target not specified.");
+		print ("<critical>" . $file_name . " Incorrect parameter target_object.</critical>");
+		exit;
 	}
 	
 ?>

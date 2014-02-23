@@ -30,7 +30,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 		menu_style = new Object ();
 		item_mc_array = new Array ();
 		
-		file_name = "NavigationMenuMC.as";
+		file_name = "(NavigationMenuMC.as)";
 		export_flag = true;
 		
 		// xml data loading
@@ -74,14 +74,14 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 						// exception
 						default:
 						{
-							trace (this.class_ref.file_name + " -> node skipped with node name - " + temp_node.nodeName);
+							_root.status_mc.add_message (this.class_ref.file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 						}
 					}
 				}
 			}
 			else
 			{
-				trace (this.class_ref.file_name + " -> Constructor load xml fail.");
+				_root.status_mc.add_message (this.class_ref.file_name + " constructor load xml fail.", "critical");
 			}
 		}
 	}
@@ -144,7 +144,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 				}
 				default:
 				{
-					trace (file_name + " -> node skipped with node name - " + temp_node.nodeName);
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 				}
 			}
 		}
@@ -223,7 +223,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 							// exception
 							default:
 							{
-								trace (file_name + " -> node skipped with node name - " + temp_node.nodeName);
+								_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 							}
 						}
 					}
@@ -261,13 +261,13 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 				}
 				else
 				{
-					trace (file_name + " -> node skipped with node name - " + temp_node.nodeName);
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 				}
 			}
 		}
 		else
 		{
-			trace (file_name + " -> config_xml not built before parsing data_xml.");
+			_root.status_mc.add_message (file_name + " config_xml not built before parsing data_xml.", "critical");
 		}
 	}
 
@@ -276,6 +276,8 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 	// **********
 	public function export_xml ():Void
 	{
+		_root.status_mc.add_message ("Exporting navigation menu...", "normal");
+		
 		var out_xml:XML;
 		var out_string:String;
 		var return_xml:XML;
@@ -357,8 +359,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 		{
 			if (b)
 			{
-				_root.status_message.text = return_xml.toString ();
-				//TODO start to write the system message class
+				_root.status_mc.add_message (return_xml.toString (), "");
 			}
 		}
 		

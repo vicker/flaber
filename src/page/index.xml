@@ -1,0 +1,47 @@
+﻿<?xml version="1.0"?>
+
+<PageContent
+xmlns="http://www.w3schools.com"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <config>
+		<x>0</x>
+		<y>0</y>
+		<bg_color>0x99CCFF</bg_color>
+		<bg_image>
+			<x>0</x>
+			<y>0</y>
+			<url>img/flyswsv3.jpg</url>
+			<alpha>50</alpha>
+		</bg_image>
+	</config>
+	<data>
+		<TextFieldMC depth="1">
+			<x>50</x>
+			<y>100</y>
+			<width>200</width>
+			<height>100</height>
+			<text><TEXTFORMAT LEADING="2"><P ALIGN="LEFT"><FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0"><B>WELCOME TO FLABER</B></FONT></P></TEXTFORMAT></text>
+		</TextFieldMC>
+		<TextFieldMC depth="2">
+			<x>50</x>
+			<y>120</y>
+			<width>200</width>
+			<height>100</height>
+			<text><TEXTFORMAT LEADING="2"><P ALIGN="LEFT"><FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0">FLABER (FLAsh web BuildER) - As it's name, it is a pure Flash-based application which allows any people making their web pages in Flash format.</FONT></P></TEXTFORMAT></text>
+		</TextFieldMC>
+		<TextFieldMC depth="3">
+			<x>50</x>
+			<y>250</y>
+			<width>200</width>
+			<height>100</height>
+			<text><TEXTFORMAT LEADING="2"><P ALIGN="LEFT"><FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0"><B>UPDATE HISTORY</B></FONT></P></TEXTFORMAT></text>
+		</TextFieldMC>
+		<TextFieldMC depth="4" scroll_bar="true">
+			<x>50</x>
+			<y>270</y>
+			<width>300</width>
+			<height>100</height>
+			<text><TEXTFORMAT LEADING="2"><P ALIGN="LEFT"><FONT FACE="Verdana" SIZE="10" COLOR="#FFFFFF" LETTERSPACING="0" KERNING="0">Prototype version 0.4 (Jan 22)<br />- Supporting text fields with text formats</FONT></P></TEXTFORMAT></text>
+		</TextFieldMC>
+	</data>
+</PageContent>

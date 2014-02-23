@@ -5,11 +5,25 @@
       <project_folder expanded='true' name='global'>
         <project_file path='as\global\ScrollBarMC.as' filetype='as'/>
         <project_file path='as\global\StatusMessageMC.as' filetype='as'/>
+        <project_file path='as\global\SystemFunction.as' filetype='as'/>
       </project_folder>
       <project_folder expanded='true' name='navigation_menu'>
         <project_file path='as\navigation_menu\NavigationItemMC.as' filetype='as'/>
         <project_file path='as\navigation_menu\NavigationMenuMC.as' filetype='as'/>
       </project_folder>
+      <project_folder expanded='true' name='page_content'>
+        <project_file path='as\page_content\PageContentMC.as' filetype='as'/>
+        <project_file path='as\page_content\TextFieldMC.as' filetype='as'/>
+      </project_folder>
+      <project_folder expanded='true' name='style'>
+        <project_file path='style\StatusMessageMC.css' filetype='css'/>
+      </project_folder>
+      <project_folder expanded='true' name='shape'>
+        <project_file path='as\shape\RectangleMC.as' filetype='as'/>
+      </project_folder>
+    </project_folder>
+    <project_folder expanded='true' name='page'>
+      <project_file path='page\index.xml' filetype='xml'/>
     </project_folder>
     <project_file path='prototype.fla' filetype='fla'/>
     <project_file path='xml_editor.fla' filetype='fla'/>

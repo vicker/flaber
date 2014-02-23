@@ -5,11 +5,12 @@ class as.global.StatusMessageMC extends MovieClip
 	// MovieClip							mini_mc	=>	 content_field, icon_mc
 	// MovieClip							full_mc	=>  content_field
 
-	private var display_mode:String;			// mini mode or full mode
+	private var display_mode:String;							// mini mode or full mode
+	private var style_sheet:TextField.StyleSheet;		// stylesheet for the textfields
 
-	private var temp_interval:Number;		// temporary interval for animations
+	private var temp_interval:Number;						// temporary interval for animations
 	
-	private var mc_ref:MovieClip				// reference back to the status message mc
+	private var mc_ref:MovieClip								// reference back to the status message mc
 	
 	// ***********
 	// constructor
@@ -26,16 +27,18 @@ class as.global.StatusMessageMC extends MovieClip
 		// setup listeners
 		setup_mini_mc ();
 		
-		var temp_format:TextFormat;
-		temp_format = new TextFormat;
-		temp_format.bold = false;
-		
+		// setup textfields
 		mc_ref.mini_mc.content_field.html = true;
 		mc_ref.full_mc.content_field.html = true;
 		
-		mc_ref.mini_mc.content_field.setTextFormat (temp_format);
-		mc_ref.full_mc.content_field.setTextFormat (temp_format);
+		// setup stylesheet
+		style_sheet = new TextField.StyleSheet ();
+		style_sheet.load ("style/StatusMessageMC.css");
 		
+		mc_ref.mini_mc.content_field.styleSheet = style_sheet;
+		mc_ref.full_mc.content_field.styleSheet = style_sheet;
+		
+		// setup full mc's scroll bar
 		mc_ref.full_mc.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.full_mc.getNextHighestDepth ());
 		mc_ref.full_mc.scroll_bar.set_scroll_ref (mc_ref.full_mc.content_field);
 	}
@@ -126,43 +129,23 @@ class as.global.StatusMessageMC extends MovieClip
 		clearInterval (temp_interval);
 		temp_interval = setInterval (this, "set_transparent", 5000);
 		
-		// setting different textfomat
-		var temp_format:TextFormat;
-		temp_format = new TextFormat ();
-		
-		switch (t)
+		// adding tags
+		if (t != "")
 		{
-			case "bold":
+			mc_ref.mini_mc.content_field.htmlText = "<" + t + ">" + s + "</" + t + ">";
+			
+			if (t != "tooltip")
 			{
-				temp_format.bold = true;
-				temp_format.font = "Verdana";
-				temp_format.color = 0xFF0000;
-				temp_format.size = 10;
-				break;
-			}
-			default:
-			{
-				temp_format.color = 0x000000;
-				temp_format.size = 10;
-				break;
+				mc_ref.full_mc.content_field.htmlText = "<" + t + ">" + _root.sys_func.get_time () + " - " + s + "</" + t + ">" + mc_ref.full_mc.content_field.htmlText;
 			}
 		}
-		
-		// adding in mini
-		var temp_length:Number;
-		
-		mc_ref.mini_mc.content_field.htmlText = s;
-		mc_ref.mini_mc.content_field.setTextFormat (temp_format);
-		temp_length = s.length;
-		
-		trace (mc_ref.full_mc.content_field.text);
-		
-		// adding in full
-		mc_ref.full_mc.content_field.htmlText = s + "\n" + mc_ref.full_mc.content_field.htmlText;
-		
-		mc_ref.full_mc.content_field.setTextFormat (0, temp_length, temp_format);
+		else
+		{
+			mc_ref.mini_mc.content_field.htmlText = s;
+			mc_ref.full_mc.content_field.htmlText = _root.sys_func.get_time () + " - " + s + mc_ref.full_mc.content_field.htmlText;
+		}
 		mc_ref.full_mc.scroll_bar.check_scroll ();
-
+		
 		// placing mini icon
 		var temp_loader:MovieClipLoader;
 		
