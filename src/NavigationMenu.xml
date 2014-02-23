@@ -10,8 +10,10 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		  <name>lib_navigation_item_1</name>
 		</menu_style>
     <text_format>
-	    <font>Arial</font>
-	    <size>18</size>
+	    <font>Verdana</font>
+	    <size>15</size>
+		 <italic>true</italic>
+		 <underline>true</underline>
 		</text_format>
   </config>
 	<data>

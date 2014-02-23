@@ -49,6 +49,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		<ImageMC depth="6">
 			<x>300</x>
 			<y>130</y>
+			<width>100</width>
+			<height>100</height>
+			<rotation>-45</rotation>
 			<url>img/methodology.png</url>
 		</ImageMC>
 	</data>

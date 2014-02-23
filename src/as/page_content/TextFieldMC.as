@@ -8,6 +8,8 @@ class as.page_content.TextFieldMC extends MovieClip
 	
 	// private variables
 	private var mc_ref:MovieClip;						// interface for the textfield mc
+
+	private var interval_id:Number;					// temp store for interval id
 	
 	private var edit_mode:Boolean;					// edit mode flag
 	
@@ -65,6 +67,50 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
+		_root.edit_panel_mc.set_function (true, false, false, true);
+	}
+
+	// ***************
+	// resize function
+	// ***************
+	public function resize_function (n:Number):Void
+	{
+		// calling to go
+		if (n == 1)
+		{
+			mc_ref.content_field.border = true;
+			
+			clearInterval (interval_id);
+			interval_id = setInterval (mc_ref, "resize_interval_function", 75);
+		}
+		// calling to stop
+		else
+		{
+			mc_ref.content_field.border = false;
+			
+			// if scroll bar exists, need to adjust
+			if (mc_ref.scroll_bar)
+			{
+				mc_ref.scroll_bar.set_scroll_ref (mc_ref.content_field);
+			}
+			
+			clearInterval (interval_id);
+		}
+	}
+	
+	// ************************
+	// resize interval function
+	// ************************
+	public function resize_interval_function ():Void
+	{
+		var target_width:Number;
+		var target_height:Number;
+		
+		target_width = Math.max (mc_ref.content_field._xmouse, 10);
+		target_height = Math.max (mc_ref.content_field._ymouse, 10);
+		
+		mc_ref.content_field._width = target_width;
+		mc_ref.content_field._height = target_height;
 	}
 
 	// *****************
@@ -169,6 +215,12 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		// building root node
 		root_node = out_xml.createElement ("TextFieldMC");
+		root_node.attributes.depth = mc_ref.getDepth ();
+		
+		if (mc_ref.scroll_bar)
+		{
+			root_node.attributes.scroll_bar = true;
+		}
 		
 		// x of textfield
 		temp_node = out_xml.createElement ("x");
@@ -184,13 +236,13 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		// width of textfield
 		temp_node = out_xml.createElement ("width");
-		temp_node_2 = out_xml.createTextNode (mc_ref._width.toString ());
+		temp_node_2 = out_xml.createTextNode (mc_ref.content_field._width.toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
 		// height of textfield
 		temp_node = out_xml.createElement ("height");
-		temp_node_2 = out_xml.createTextNode (mc_ref._height.toString ());
+		temp_node_2 = out_xml.createTextNode (mc_ref.content_field._height.toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
@@ -205,7 +257,8 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		for (var i = 0; i < temp_length; i++)
 		{
-			temp_node_2 = temp_xml.firstChild.childNodes [i];
+			// using clone to prevent node removal
+			temp_node_2 = temp_xml.firstChild.childNodes [i].cloneNode (true);
 			temp_node.appendChild (temp_node_2);
 		}
 		root_node.appendChild (temp_node);

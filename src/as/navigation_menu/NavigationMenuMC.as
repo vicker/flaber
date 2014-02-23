@@ -40,6 +40,17 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 		setup_edit_mode_bg ();
 	}
 
+	// **********
+	// destructor
+	// **********
+	public function destroy ():Void
+	{
+		for (var i in item_mc_array)
+		{
+			item_mc_array [i].removeMovieClip ();
+		}
+	}
+
 	// ******************
 	// setup edit mode bg
 	// ******************
@@ -74,7 +85,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 	}
 		
 	// *************
-	// load root_xml
+	// load root xml
 	// *************
 	public function load_root_xml (s:String):Void
 	{
@@ -92,49 +103,59 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 			// when xml loading is success
 			if (b)
 			{
-				var temp_config:XMLNode;
-				var temp_data:XMLNode;
-				
-				// try to find out the config node and data node
-				for (var i in root_xml.firstChild.childNodes)
-				{
-					
-					var temp_node:XMLNode;
-					var temp_name:String;
-					
-					temp_node = root_xml.firstChild.childNodes [i];
-					temp_name = temp_node.nodeName;
-					
-					switch (temp_name)
-					{
-						// config node
-						case "config":
-						{
-							temp_config = temp_node;
-							break;
-						}
-						// data node
-						case "data":
-						{
-							temp_data = temp_node;
-							break;
-						}
-						// exception
-						default:
-						{
-							_root.status_mc.add_message (this.class_ref.file_name + " node skipped with node name '" + temp_name + "'", "critical");
-						}
-					}
-				}
-				
-				this.class_ref.set_config_xml (temp_config);
-				this.class_ref.set_data_xml (temp_data);
+				this.class_ref.set_root_xml (this);
 			}
 			else
 			{
 				_root.status_mc.add_message (this.class_ref.file_name + " constructor load xml fail.", "critical");
 			}
 		}
+	}
+	
+	// ************
+	// set root_xml
+	// ************
+	public function set_root_xml (x:XML):Void
+	{
+		destroy ();
+		
+		var temp_config:XMLNode;
+		var temp_data:XMLNode;
+		
+		// try to find out the config node and data node
+		for (var i in x.firstChild.childNodes)
+		{
+			
+			var temp_node:XMLNode;
+			var temp_name:String;
+			
+			temp_node = x.firstChild.childNodes [i];
+			temp_name = temp_node.nodeName;
+			
+			switch (temp_name)
+			{
+				// config node
+				case "config":
+				{
+					temp_config = temp_node;
+					break;
+				}
+				// data node
+				case "data":
+				{
+					temp_data = temp_node;
+					break;
+				}
+				// exception
+				default:
+				{
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+				}
+			}
+		}
+		
+		set_config_xml (temp_config);
+		set_data_xml (temp_data);
 	}
 	
 	// *****************
@@ -245,6 +266,27 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
+		_root.edit_panel_mc.set_function (true, false, false, true);
+	}
+
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_navigation_menu";
+		temp_name = "Navigation Menu Properties Window";
+		temp_width = 450;
+		temp_height = 250;
+		
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
 	// ***********
@@ -282,7 +324,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 	// **********
 	// export_xml
 	// **********
-	public function export_xml ():Void
+	public function export_xml ():XML
 	{
 		_root.status_mc.add_message ("Exporting navigation menu...", "normal");
 		
@@ -376,5 +418,23 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 		out_xml = new XML (out_string);
 		out_xml.contentType = "text/xml";
 		//out_xml.sendAndLoad ("update_xml.php?target_file=" + loaded_file, return_xml);
+		
+		return out_xml;
+	}
+
+	// ***************
+	// get text format
+	// ***************
+	public function get_text_format ():TextFormat
+	{
+		return text_format;
+	}
+	
+	// **************
+	// get menu style
+	// **************
+	public function get_menu_style ():Object
+	{
+		return menu_style;
 	}
 }
