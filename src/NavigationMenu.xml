@@ -10,7 +10,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		  <name>lib_navigation_item_1</name>
 		</menu_style>
     <text_format>
-	    <font>Verdana</font>
+	    <font>Tunga</font>
 	    <size>15</size>
 		 <italic>true</italic>
 		 <underline>true</underline>

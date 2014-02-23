@@ -13,8 +13,6 @@ class as.shape.RectangleMC extends MovieClip
 	private var line_style:String;
 	private var fill_color:Number;
 
-	private var interval_id:Number;			// temp store for interval id
-
 	private var edit_mode:Boolean;			// edit mode flag
 	
 	// ***********
@@ -23,6 +21,7 @@ class as.shape.RectangleMC extends MovieClip
 	public function RectangleMC ()
 	{
 		mc_ref = this;
+		fill_color = null;
 		
 		edit_mode = false;
 	}
@@ -32,12 +31,19 @@ class as.shape.RectangleMC extends MovieClip
 	// *******
 	public function draw_it ():Void
 	{
+		// remind that clear will also remove lineStyle
 		mc_ref.clear ();
 		
 		if (fill_color != null)
 		{
 			mc_ref.beginFill (fill_color);
 		}
+		
+		var temp_style:Array;
+		temp_style = new Array ();
+		temp_style = line_style.split ("|");
+		
+		mc_ref.lineStyle (parseInt (temp_style [0]), parseInt (temp_style [1]), parseInt (temp_style [2]));
 		
 		mc_ref.lineTo (rect_width, 0);
 		mc_ref.lineTo (rect_width, rect_height);
@@ -105,12 +111,7 @@ class as.shape.RectangleMC extends MovieClip
 				// line style of the line of rectangle
 				case "line_style":
 				{
-					var temp_style:Array;
-					temp_style = new Array ();
-					temp_style = temp_value.split ("|");
 					line_style = temp_value;
-					
-					mc_ref.lineStyle (parseInt (temp_style [0]), parseInt (temp_style [1]), parseInt (temp_style [2]));
 					break;
 				}
 				// fill color of the rectangle mc
@@ -210,13 +211,15 @@ class as.shape.RectangleMC extends MovieClip
 		// calling to go
 		if (n == 1)
 		{
-			clearInterval (interval_id);
-			interval_id = setInterval (mc_ref, "resize_interval_function", 75);
+			mc_ref.onMouseMove = function ()
+			{
+				resize_interval_function ();
+			}
 		}
 		// calling to stop
 		else
 		{
-			clearInterval (interval_id);
+			delete mc_ref.onMouseMove;
 		}
 	}
 	
@@ -244,20 +247,21 @@ class as.shape.RectangleMC extends MovieClip
 		// calling to go
 		if (n == 1)
 		{
-			clearInterval (interval_id);
-			
 			var initial_rotation:Number;
 			var initial_degree:Number;
 			
 			initial_rotation = mc_ref._rotation;
 			initial_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
 			
-			interval_id = setInterval (mc_ref, "rotate_interval_function", 75, initial_rotation, initial_degree);
+			mc_ref.onMouseMove = function ()
+			{
+				rotate_interval_function (initial_rotation, initial_degree);
+			}
 		}
 		// calling to stop
 		else
 		{
-			clearInterval (interval_id);
+			delete mc_ref.onMouseMove;
 		}
 	}
 	
@@ -343,10 +347,13 @@ class as.shape.RectangleMC extends MovieClip
 		root_node.appendChild (temp_node);
 		
 		// fillcolor of rectangle
-		temp_node = out_xml.createElement ("fill_color");
-		temp_node_2 = out_xml.createTextNode ("0x" + fill_color.toString (16));
-		temp_node.appendChild (temp_node_2);
-		root_node.appendChild (temp_node);
+		if (fill_color != null)
+		{
+			temp_node = out_xml.createElement ("fill_color");
+			temp_node_2 = out_xml.createTextNode ("0x" + fill_color.toString (16));
+			temp_node.appendChild (temp_node_2);
+			root_node.appendChild (temp_node);
+		}
 		
 		// alpha of rectangle
 		temp_node = out_xml.createElement ("alpha");

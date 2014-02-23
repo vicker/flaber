@@ -4,8 +4,8 @@
 class as.properties.NavigationMenuMC extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip					// reference to the movie clip
-	private var target_ref:MovieClip				// reference to the target
+	private var mc_ref:MovieClip;					// reference to the movie clip
+	private var target_ref:MovieClip;			// reference to the target
 	
 	// ***********
 	// constructor
@@ -31,18 +31,14 @@ class as.properties.NavigationMenuMC extends MovieClip
 		
 		// graphic style
 		var temp_style:Object;
+		var temp_num:Number;
 		
 		temp_style = target_ref.get_menu_style ();
+		temp_num = _root.sys_func.list_select_item (mc_ref.graphic_style_list, temp_style.name);
 		
-		for (var i = 0; i < mc_ref.graphic_style_list.length; i++)
+		if (temp_num != -1)
 		{
-			if (mc_ref.graphic_style_list.getItemAt (i).data == temp_style.name)
-			{
-				mc_ref.graphic_style_list.selectedIndex = i;
-				mc_ref.preview_mc.attachMovie (mc_ref.graphic_style_list.getItemAt (i).data, "preview_item", 1);
-				
-				break;
-			}
+			mc_ref.preview_mc.attachMovie (mc_ref.graphic_style_list.getItemAt (temp_num).data, "preview_item", 1);
 		}
 		
 		// font style
@@ -52,52 +48,19 @@ class as.properties.NavigationMenuMC extends MovieClip
 		text_format = target_ref.get_text_format ();
 		
 		// font
-		for (var i = 0; i < mc_ref.font_combobox.length; i++)
-		{
-			if (mc_ref.font_combobox.getItemAt (i).data == text_format.font)
-			{
-				mc_ref.font_combobox.selectedIndex = i;
-				break;
-			}
-		}
+		_root.sys_func.combobox_select_item (mc_ref.font_combobox, text_format.font);
 		
 		// font size
-		var size_found:Boolean;
-		
-		size_found = false;
-		
-		for (var i = 0; i < mc_ref.font_size_combobox.length; i++)
-		{
-			if (parseInt (mc_ref.font_size_combobox.getItemAt (i).data) == text_format.size)
-			{
-				mc_ref.font_size_combobox.selectedIndex = i;
-				size_found = true;
-				break;
-			}
-		}
-		
-		if (size_found == false)
-		{
-			mc_ref.font_size_combobox.text = text_format.size;
-		}
+		_root.sys_func.combobox_select_item (mc_ref.font_size_combobox, text_format.size);
 		
 		// weight
-		if (text_format.bold == true)
-		{
-			mc_ref.bold_button.selected = true;
-		}
+		mc_ref.bold_button.selected = text_format.bold;
 		
 		// italic
-		if (text_format.italic == true)
-		{
-			mc_ref.italic_button.selected = true;
-		}
+		mc_ref.italic_button.selected = text_format.italic;
 		
 		// underline
-		if (text_format.underline == true)
-		{
-			mc_ref.underline_button.selected = true;
-		}
+		mc_ref.underline_button.selected = text_format.underline;
 		
 		// color
 		if (text_format.color)
@@ -316,29 +279,20 @@ class as.properties.NavigationMenuMC extends MovieClip
 				temp_node_2.appendChild (temp_node_3);
 				temp_node.appendChild (temp_node_2);
 				
-				if (this.class_ref.bold_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("bold");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
+				temp_node_2 = config_xml.createElement ("bold");
+				temp_node_3 = config_xml.createTextNode (this.class_ref.bold_button.selected.toString ());
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
 				
-				if (this.class_ref.italic_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("italic");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
+				temp_node_2 = config_xml.createElement ("italic");
+				temp_node_3 = config_xml.createTextNode (this.class_ref.italic_button.selected.toString ());
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
 				
-				if (this.class_ref.underline_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("underline");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
+				temp_node_2 = config_xml.createElement ("underline");
+				temp_node_3 = config_xml.createTextNode (this.class_ref.underline_button.selected.toString ());
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
 				
 				if (this.class_ref.font_color_palette.get_color_string () != null)
 				{

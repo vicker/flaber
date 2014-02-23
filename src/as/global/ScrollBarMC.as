@@ -82,6 +82,7 @@ class as.global.ScrollBarMC extends MovieClip
 			
 			// move the very first step and then set the countdown for continuous movement
 			this.class_ref.scroll_step (-1);
+			
 			clearInterval (this.class_ref.temp_interval);
 			this.class_ref.temp_interval = setInterval (this.class_ref, "scroll_step_countdown", 500, -1);
 		}
@@ -183,8 +184,10 @@ class as.global.ScrollBarMC extends MovieClip
 			var temp_box_y:Number;
 			temp_box_y = this.class_ref.box_mc._ymouse * this.class_ref.box_mc._height / 400;
 			
-			clearInterval (this.class_ref.temp_interval);
-			this.class_ref.temp_interval = setInterval (this.class_ref, "box_track_mouse", 100, temp_box_y);
+			this.class_ref.onMouseMove = function ()
+			{
+				box_track_mouse (temp_box_y);
+			}
 		}
 		
 		// box_mc onrelease listener
@@ -192,7 +195,7 @@ class as.global.ScrollBarMC extends MovieClip
 		{
 			this.gotoAndStop ("normal");
 			
-			clearInterval (this.class_ref.temp_interval);
+			delete this.class_ref.onMouseMove;
 		}
 		
 		// box_mc onreleaseoutside listener

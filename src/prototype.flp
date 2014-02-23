@@ -8,6 +8,8 @@
         <project_file path='as\global\ColorPaletteMC.as' filetype='as'/>
         <project_file path='as\global\ComponentStyle.as' filetype='as'/>
         <project_file path='as\global\EditPanelMC.as' filetype='as'/>
+        <project_file path='as\global\Flaber.as' filetype='as'/>
+        <project_file path='as\global\LinkPanelMC.as' filetype='as'/>
         <project_file path='as\global\MCFilters.as' filetype='as'/>
         <project_file path='as\global\Observer.as' filetype='as'/>
         <project_file path='as\global\ScrollBarMC.as' filetype='as'/>
@@ -28,6 +30,7 @@
       <project_folder expanded='true' name='properties'>
         <project_file path='as\properties\NavigationItemMC.as' filetype='as'/>
         <project_file path='as\properties\NavigationMenuMC.as' filetype='as'/>
+        <project_file path='as\properties\TextFieldMC.as' filetype='as'/>
       </project_folder>
       <project_folder expanded='true' name='shape'>
         <project_file path='as\shape\RectangleMC.as' filetype='as'/>
@@ -36,13 +39,16 @@
         <project_file path='style\StatusMessageMC.css' filetype='css'/>
       </project_folder>
     </project_folder>
+    <project_folder expanded='true' name='function'>
+      <project_file path='function\get_dir.php' filetype='php'/>
+      <project_file path='function\update_xml.php' filetype='php'/>
+    </project_folder>
     <project_folder expanded='true' name='page'>
       <project_file path='page\index.xml' filetype='xml'/>
       <project_file path='page\page2.xml' filetype='xml'/>
     </project_folder>
     <project_file path='prototype.fla' filetype='fla'/>
     <project_file path='xml_editor.fla' filetype='fla'/>
-    <project_file path='update_xml.php' filetype='php'/>
     <project_file path='NavigationMenu.xml' filetype='xml'/>
   </project_folder>
 </flash_project>

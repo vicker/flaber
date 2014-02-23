@@ -319,11 +319,35 @@ class as.navigation_menu.NavigationItemMC extends MovieClip
 		return (root_node);
 	}
 
+	// ***************
+	// get text format
+	// ***************
+	public function get_text_format ():TextFormat
+	{
+		return (mc_ref.content_field.getTextFormat ());
+	}
+
 	// *****************
 	// get content field
 	// *****************
 	public function get_content_field ():String
 	{
 		return (mc_ref.content_field.text);
+	}
+	
+	// *************
+	// get link type
+	// *************
+	public function get_link_type ():Number
+	{
+		return (link_type);
+	}
+	
+	// ************
+	// get link url
+	// ************
+	public function get_link_url ():String
+	{
+		return (link_url);
 	}
 }

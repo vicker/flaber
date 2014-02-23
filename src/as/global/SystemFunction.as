@@ -164,4 +164,85 @@ class as.global.SystemFunction
 		
 		return temp_string; 
 	}
+
+	// ********************
+	// combobox select item
+	// ********************
+	public function combobox_select_item (c:mx.controls.ComboBox, s:String):Number
+	{
+		// find inside the combobox
+		for (var i = 0; i < c.length; i++)
+		{
+			if (s == c.getItemAt (i).data)
+			{
+				c.selectedIndex = i;
+				return (i);
+			}
+		}
+		
+		// if not found but editable
+		if (c.editable == true)
+		{
+			c.text = s;
+			return (null);
+		}
+		
+		// if not found and not editable
+		return (-1);
+	}
+
+	// ****************
+	// list select item
+	// ****************
+	public function list_select_item (l:mx.controls.List, s:String):Number
+	{
+		// find inside the list
+		for (var i = 0; i < l.length; i++)
+		{
+			if (s == l.getItemAt (i).data)
+			{
+				l.selectedIndex = i;
+				return (i);
+			}
+		}
+		
+		// if not found
+		return (-1);
+	}
+
+	// **********************
+	// button toggle selected
+	// **********************
+	public function button_toggle_selected (b:mx.controls.Button)
+	{
+		if (b.toggle == true)
+		{
+			if (b.selected == true)
+			{
+				b.selected = false;
+			}
+			else
+			{
+				b.selected = true;
+			}
+		}
+	}
+
+	// *****************
+	// string to boolean
+	// *****************
+	public function string_to_boolean (s:String):Boolean
+	{
+		if (s.toLowerCase () == "true")
+		{
+			return true;
+		}
+		
+		if (s.toLowerCase () == "false")
+		{
+			return false;
+		}
+		
+		return null;
+	}
 }
