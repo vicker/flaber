@@ -9,8 +9,6 @@ class as.page_content.TextFieldMC extends MovieClip
 	// private variables
 	private var mc_ref:MovieClip;						// interface for the textfield mc
 
-	private var interval_id:Number;					// temp store for interval id
-	
 	private var edit_mode:Boolean;					// edit mode flag
 	
 	// ***********
@@ -67,7 +65,7 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, false, false, true);
+		_root.edit_panel_mc.set_function (true, true, false, true);
 	}
 
 	// ***************
@@ -80,8 +78,10 @@ class as.page_content.TextFieldMC extends MovieClip
 		{
 			mc_ref.content_field.border = true;
 			
-			clearInterval (interval_id);
-			interval_id = setInterval (mc_ref, "resize_interval_function", 75);
+			mc_ref.onMouseMove = function ()
+			{
+				resize_interval_function ();
+			}
 		}
 		// calling to stop
 		else
@@ -94,7 +94,7 @@ class as.page_content.TextFieldMC extends MovieClip
 				mc_ref.scroll_bar.set_scroll_ref (mc_ref.content_field);
 			}
 			
-			clearInterval (interval_id);
+			delete mc_ref.onMouseMove;
 		}
 	}
 	
@@ -111,6 +111,26 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		mc_ref.content_field._width = target_width;
 		mc_ref.content_field._height = target_height;
+	}
+
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_textfield";
+		temp_name = "Textfield Properties Window";
+		temp_width = 470;
+		temp_height = 460;
+		
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
 	// *****************
@@ -144,6 +164,8 @@ class as.page_content.TextFieldMC extends MovieClip
 	// ***************
 	public function set_data_xml (x:XMLNode):Void
 	{
+		mc_ref.content_field.htmlText = "";
+		
 		for (var i in x.childNodes)
 		{
 			var temp_node:XMLNode;

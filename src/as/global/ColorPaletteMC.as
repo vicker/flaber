@@ -4,13 +4,16 @@
 class as.global.ColorPaletteMC extends MovieClip
 {
 	// MC variables
-	// MovieClip				current_mc
 	// MovieClip				selection_mc
   
 	// private variables
 	private var mc_ref:MovieClip;	  				// interface for the normal palette
+	private var panel_ref:MovieClip;				// reference to the edit panel
+	private var panel_num:Number;					// specify edit panel want to do hook with what
 	
 	private var color_array:Array;				// array to store the color range
+	
+	private var lock_flag:Boolean;				// states that user is updating, dont allow changing
   
 	// ***********
 	// constructor
@@ -18,16 +21,42 @@ class as.global.ColorPaletteMC extends MovieClip
 	public function ColorPaletteMC ()
 	{
 		mc_ref = this;
+		panel_ref = null;
 		color_array = new Array (0, 51, 102, 153, 204, 255);
 		
 		build_selection_mc ();
 		build_current_mc ();
-		build_current_textinput ();
+		
+		close_selection_mc ();
+	}
+	
+	// *****************
+	// open selection mc
+	// *****************
+	public function open_selection_mc ():Void
+	{
+		lock_flag = true;
+		
+		mc_ref.selection_mc._visible = true;
+		mc_ref.selection_mc.enabled = true;
+		
+		mc_ref.selection_mc.color_input_box.set_color_num (mc_ref.current_mc.get_color_num ());
+	}
+	
+	// ******************
+	// close selection mc
+	// ******************
+	public function close_selection_mc ():Void
+	{
+		lock_flag = false;
 		
 		mc_ref.selection_mc._visible = false;
 		mc_ref.selection_mc.enabled = false;
 		
-		setup_current_mc ();
+		if (panel_ref != null)
+		{
+			panel_ref.palette_call (panel_num);
+		}
 	}
 	
 	// ******************
@@ -35,6 +64,15 @@ class as.global.ColorPaletteMC extends MovieClip
 	// ******************
 	public function build_selection_mc ():Void
 	{
+		// selection bg
+		var temp_xml:XML;
+		
+		temp_xml = new XML ("<RectangleMC><x>-10</x><y>-10</y><width>220</width><height>180</height><corner>0</corner><line_style>1|0x666666|100</line_style><fill_color>0xFFFFFF</fill_color><alpha>100</alpha></RectangleMC>");
+		
+		mc_ref.selection_mc.attachMovie ("lib_shape_rectangle", "selection_bg", -5);
+		mc_ref.selection_mc.selection_bg.set_data_xml (temp_xml.firstChild);
+		
+		// selection palette
 		var temp_length:Number;
 		
 		temp_length = color_array.length;
@@ -79,20 +117,52 @@ class as.global.ColorPaletteMC extends MovieClip
 					temp_mc.set_color_rgb (color_array [loop_num_2], color_array [loop_num_3], color_array [loop_num]);
 					temp_mc.set_palette_mc (this);
 					
-					// onRelease override
+					// onRollOver override
 					temp_mc ["class_ref"] = mc_ref;
+					
+					temp_mc.onRollOver = function ()
+					{
+						this.class_ref.selection_mc.color_input_box.set_color_num (this.get_color_num ());
+						this.class_ref.selection_mc.color_input_textinput.text = this.get_color_code ();
+					}
+					
+					// onRelease override
 					temp_mc.onRelease = function ()
 					{
-						this.gotoAndStop ("normal");
-						
-						this.class_ref.current_mc.set_color_num (this.get_color_num ());
-						this.class_ref.current_textinput.text = this.get_color_code ();
-						
-						this.class_ref.selection_mc._visible = false;
-						this.class_ref.selection_mc.enabled = false;
+						this.class_ref.set_color_num (this.get_color_num ());
+						this.class_ref.close_selection_mc ();
 					}
 				}
 			}
+		}
+		
+		// selection input
+		mc_ref.selection_mc.attachMovie ("lib_color_box_large", "color_input_box", -3, {_x:85, _y:140});
+		mc_ref.selection_mc.createClassObject (mx.controls.TextInput, "color_input_textinput", -2, {_x:110, _y:140, _width:60, _height:20});
+		mc_ref.selection_mc.createClassObject (mx.controls.Button, "color_input_button", -1, {_x:180, _y:140, _width:20, _height:20});
+		
+		mc_ref.selection_mc.color_input_textinput.setStyle ("styleName", "textinput_style");
+		mc_ref.selection_mc.color_input_button.icon = "lib_button_tick";
+		
+		// setup color input textinput listener
+		var temp_listener:Object;
+		
+		temp_listener = new Object ();
+		temp_listener ["class_ref"] = mc_ref;
+		
+		temp_listener.change = function ()
+		{
+			this.class_ref.selection_mc.color_input_box.set_color_num (_root.sys_func.color_code_to_num (this.class_ref.selection_mc.color_input_textinput.text));
+		}
+		
+		mc_ref.selection_mc.color_input_textinput.addEventListener ("change", temp_listener);
+		
+		// setup color input button action
+		mc_ref.selection_mc.color_input_button ["class_ref"] = mc_ref;
+		mc_ref.selection_mc.color_input_button.onRelease = function ()
+		{
+			this.class_ref.current_mc.set_color_num (this.class_ref.selection_mc.color_input_box.get_color_num ());
+			this.class_ref.close_selection_mc ();
 		}
 	}
 	
@@ -101,56 +171,28 @@ class as.global.ColorPaletteMC extends MovieClip
 	// ****************
 	public function build_current_mc ():Void
 	{
-		mc_ref.attachMovie ("lib_color_box_large", "current_mc", 1, {_x:1, _y:1});
-	}
-	
-	// ***********************
-	// build current textinput
-	// ***********************
-	public function build_current_textinput ():Void
-	{
-		mc_ref.createClassObject (mx.controls.TextInput, "current_textinput", 2, {_x:25, _y:0, _width:60, _height:20});
-		mc_ref.current_textinput.setStyle ("styleName", "textinput_style");
+		mc_ref.attachMovie ("lib_color_box_large_arrow", "current_mc", 1, {_x:1, _y:1});
 		
-		var temp_listener:Object;
-		temp_listener = new Object ();
-		temp_listener ["class_ref"] = mc_ref;
-		temp_listener.change = function ()
-		{
-			this.class_ref.current_mc.set_color_num (_root.sys_func.color_code_to_num (this.class_ref.current_textinput.text));
-		}
-		
-		mc_ref.current_textinput.addEventListener ("change", temp_listener);
-	}
-	
-	// ****************
-	// setup current mc
-	// ****************
-	public function setup_current_mc ():Void
-	{
 		mc_ref.current_mc ["class_ref"] = mc_ref;
-		mc_ref.current_mc.onPress = function ()
+		mc_ref.current_mc.onRelease = function ()
 		{
 			if (this.class_ref.selection_mc._visible == true)
 			{
-				this.class_ref.selection_mc._visible = false;
-				this.class_ref.selection_mc.enabled = false;
+				this.class_ref.close_selection_mc ();
 			}
 			else
 			{
-				this.class_ref.selection_mc._visible = true;
-				this.class_ref.selection_mc.enabled = true;
+				this.class_ref.open_selection_mc ();
 			}
 		}
 	}
-	
+		
 	// *************
 	// set color num
 	// *************
 	public function set_color_num (n:Number):Void
 	{
 		mc_ref.current_mc.set_color_num (n);
-		mc_ref.current_textinput.text = _root.sys_func.color_num_to_code (n);
 	}
 	
 	// ****************
@@ -158,6 +200,24 @@ class as.global.ColorPaletteMC extends MovieClip
 	// ****************
 	public function get_color_string ():String
 	{
-		return (_root.sys_func.color_code_to_string (mc_ref.current_textinput.text));
+		return (_root.sys_func.color_code_to_string (mc_ref.current_mc.get_color_code ()));
+	}
+	
+	// *************
+	// get lock flag
+	// *************
+	public function get_lock_flag ():Boolean
+	{
+		return (lock_flag);
+	}
+	
+	// *************
+	// set panel ref
+	// *************
+	// only used for textfield edit panel which requires dynamic update
+	public function set_panel_ref (m:MovieClip, n:Number):Void
+	{
+		panel_ref = m;
+		panel_num = n;
 	}
 }

@@ -107,7 +107,7 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 			}
 			else
 			{
-				_root.status_mc.add_message (this.class_ref.file_name + " constructor load xml fail.", "critical");
+				_root.status_mc.add_message (this.class_ref.file_name + " load root xml fail.", "critical");
 			}
 		}
 	}
@@ -208,7 +208,18 @@ class as.navigation_menu.NavigationMenuMC extends MovieClip
 					// since text format still have many nodes, so need to iterate again
 					for (var j in temp_node.childNodes)
 					{
-						text_format [temp_node.childNodes [j].nodeName] = temp_node.childNodes [j].firstChild.nodeValue;
+						var temp_value_2:String;
+						
+						temp_value_2 = temp_node.childNodes [j].firstChild.nodeValue;
+						
+						// try to set boolean value to it
+						text_format [temp_node.childNodes [j].nodeName] = _root.sys_func.string_to_boolean (temp_value_2);
+						
+						// if get null means the input is not boolean, then set original
+						if (text_format [temp_node.childNodes [j].nodeName] == null)
+						{
+							text_format [temp_node.childNodes [j].nodeName] = temp_value_2;
+						}
 					}
 					break;
 				}

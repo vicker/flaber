@@ -12,8 +12,6 @@ class as.page_content.ImageMC extends MovieClip
 
 	private var mc_url:String;
 
-	private var interval_id:Number;					// temp store for interval id
-
 	private var edit_mode:Boolean;					// edit mode flag
 	
 	// constructor
@@ -179,13 +177,15 @@ class as.page_content.ImageMC extends MovieClip
 		// calling to go
 		if (n == 1)
 		{
-			clearInterval (interval_id);
-			interval_id = setInterval (mc_ref, "resize_interval_function", 75);
+			mc_ref.onMouseMove = function ()
+			{
+				resize_interval_function ();
+			}
 		}
 		// calling to stop
 		else
 		{
-			clearInterval (interval_id);
+			delete mc_ref.onMouseMove;
 		}
 	}
 	
@@ -212,20 +212,21 @@ class as.page_content.ImageMC extends MovieClip
 		// calling to go
 		if (n == 1)
 		{
-			clearInterval (interval_id);
-			
 			var initial_rotation:Number;
 			var initial_degree:Number;
 			
 			initial_rotation = mc_ref.clip_mc._rotation;
 			initial_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
 			
-			interval_id = setInterval (mc_ref, "rotate_interval_function", 75, initial_rotation, initial_degree);
+			mc_ref.onMouseMove = function ()
+			{
+				rotate_interval_function (initial_rotation, initial_degree);
+			}
 		}
 		// calling to stop
 		else
 		{
-			clearInterval (interval_id);
+			delete mc_ref.onMouseMove;
 		}
 	}
 	

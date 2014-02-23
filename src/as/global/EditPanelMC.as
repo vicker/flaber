@@ -7,8 +7,6 @@ class as.global.EditPanelMC extends MovieClip
 	private var mc_ref:MovieClip;						// interface for the edit panel mc
 	private var target_ref:MovieClip;				// reference to the controlling mc
 	
-	private var interval_id:Number;					// temp store for interval id
-	
 	// ***********
 	// constructor
 	// ***********
@@ -134,7 +132,10 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.startDrag ();
 			
-			this.class_ref.interval_id = setInterval (this.class_ref.target_ref, "pull_edit_panel", 75);
+			this.class_ref.onMouseMove = function ()
+			{
+				target_ref.pull_edit_panel ();
+			}
 		}
 		
 		// onrelease override
@@ -142,7 +143,7 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.stopDrag ();
 			
-			clearInterval (this.class_ref.interval_id);
+			delete this.class_ref.onMouseMove;
 		}
 		
 		// onreleaseoutside override
@@ -164,7 +165,10 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.resize_function (1);
 			
-			this.class_ref.interval_id = setInterval (this.class_ref.target_ref, "pull_edit_panel", 75);
+			this.class_ref.onMouseMove = function ()
+			{
+				target_ref.pull_edit_panel ();
+			}
 		}
 		
 		// onrelease override
@@ -172,7 +176,7 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.resize_function (-1);
 				
-			clearInterval (this.class_ref.interval_id);
+			delete this.class_ref.onMouseMove;
 		}
 		
 		// onreleaseoutside override
@@ -194,7 +198,10 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.rotate_function (1);
 			
-			this.class_ref.interval_id = setInterval (this.class_ref.target_ref, "pull_edit_panel", 75);
+			this.class_ref.onMouseMove = function ()
+			{
+				target_ref.pull_edit_panel ();
+			}
 		}
 		
 		// onrelease override
@@ -202,7 +209,7 @@ class as.global.EditPanelMC extends MovieClip
 		{
 			this.class_ref.target_ref.rotate_function (-1);
 				
-			clearInterval (this.class_ref.interval_id);
+			delete this.class_ref.onMouseMove;
 		}
 		
 		// onreleaseoutside override
@@ -223,8 +230,6 @@ class as.global.EditPanelMC extends MovieClip
 		mc_ref.properties_button.onRelease = function ()
 		{
 			this.class_ref.target_ref.properties_function ();
-			
-			clearInterval (this.class_ref.interval_id);
 		}
 	}
 }

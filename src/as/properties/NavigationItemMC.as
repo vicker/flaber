@@ -4,8 +4,8 @@
 class as.properties.NavigationItemMC extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip					// reference to the movie clip
-	private var target_ref:MovieClip				// reference to the target
+	private var mc_ref:MovieClip;					// reference to the movie clip
+	private var target_ref:MovieClip;			// reference to the target
 	
 	// ***********
 	// constructor
@@ -31,6 +31,30 @@ class as.properties.NavigationItemMC extends MovieClip
 		
 		// item label
 		mc_ref.item_label_textinput.text = target_ref.get_content_field ();
+		
+		// link type and url
+		switch (target_ref.get_link_type ())
+		{
+			case 0:
+			{
+				// internal link
+				mc_ref.internal_radiobutton.selected = true;
+				mc_ref.link_radiobuttongroup.dispatchEvent({type:"click"});
+				
+				_root.sys_func.combobox_select_item (mc_ref.link_combobox, target_ref.get_link_url ());
+				
+				break;
+			}
+			case 1:
+			{
+				// external link
+				mc_ref.external_radiobutton.selected = true;
+				mc_ref.link_radiobuttongroup.dispatchEvent({type:"click"});
+				
+				mc_ref.link_textinput.text = target_ref.get_link_url ();
+				break;
+			}
+		}
 	}
 	
 	// **********************
@@ -38,19 +62,22 @@ class as.properties.NavigationItemMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:120, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:200, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "item_label_textinput", 3, {_x:90, _y:100, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 4, {_x:90, _y:160, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 5, {_x:170, _y:160, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 6, {_x:90, _y:180, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 7, {_x:90, _y:180, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:110, _y:40, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:190, _y:40, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "item_label_textinput", 3, {_x:80, _y:100, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 4, {_x:80, _y:160, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 5, {_x:160, _y:160, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 6, {_x:80, _y:180, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 7, {_x:80, _y:180, _width:150, _height:20});
 		
 		setup_internal_radiobutton ();
 		setup_external_radiobutton ();
 		setup_link_radiobuttongroup ();
 		setup_link_textinput ();
 		setup_link_combobox ();
+		setup_apply_button ();
+		setup_ok_button ();
+		setup_cancel_button ();
 	}
 	
 	// *********************
@@ -73,24 +100,6 @@ class as.properties.NavigationItemMC extends MovieClip
 		
 		mc_ref.internal_radiobutton.setStyle ("styleName", "radiobutton_style");
 		mc_ref.external_radiobutton.setStyle ("styleName", "radiobutton_style");
-	}
-	
-	// ***************
-	// data validation
-	// ***************
-	public function data_validation ():Boolean
-	{
-		if (mc_ref.x_textinput.text == "")
-		{
-			mc_ref.x_textinput.text = "0";
-		}
-		
-		if (mc_ref.y_textinput.text == "")
-		{
-			mc_ref.y_textinput.text = "0";
-		}
-		
-		return true;
 	}
 	
 	// **************************
@@ -150,6 +159,8 @@ class as.properties.NavigationItemMC extends MovieClip
 	// ********************
 	public function setup_link_textinput ():Void
 	{
+		mc_ref.link_textinput.text = "http://";
+		
 		mc_ref.link_textinput.enabled = false;
 		mc_ref.link_textinput.visible = false;
 	}
@@ -159,10 +170,9 @@ class as.properties.NavigationItemMC extends MovieClip
 	// *******************
 	public function setup_link_combobox ():Void
 	{
-		//TODO hardcoding array now, should be from PHP
 		var temp_array:Array;
 		
-		temp_array = new Array ("index.xml", "page2.xml");
+		temp_array = _root.flaber.get_page_dir_array ();
 		
 		for (var i = 0; i < temp_array.length; i++)
 		{
@@ -173,6 +183,24 @@ class as.properties.NavigationItemMC extends MovieClip
 		mc_ref.link_combobox.visible = false;
 	}
 
+	// ***************
+	// data validation
+	// ***************
+	public function data_validation ():Boolean
+	{
+		if (mc_ref.x_textinput.text == "")
+		{
+			mc_ref.x_textinput.text = "0";
+		}
+		
+		if (mc_ref.y_textinput.text == "")
+		{
+			mc_ref.y_textinput.text = "0";
+		}
+		
+		return true;
+	}
+	
 	// ******************
 	// setup apply button
 	// ******************
@@ -182,101 +210,51 @@ class as.properties.NavigationItemMC extends MovieClip
 		mc_ref.apply_button.onRelease = function ()
 		{
 			if (this.class_ref.data_validation () == true)
-			{		
-				var config_xml:XML;
-				var config_node:XMLNode;
+			{
+				var item_xml:XML;
+				var item_node:XMLNode;
 				var temp_node:XMLNode;
 				var temp_node_2:XMLNode;
-				var temp_node_3:XMLNode;
 				
-				config_xml = new XML ();
+				item_xml = new XML ();
 				
-				config_node = config_xml.createElement ("config");
+				item_node = item_xml.createElement ("NavigationItemMC");
+				item_node.attributes.style = "global";
 				
-				temp_node = config_xml.createElement ("x");
-				temp_node_2 = config_xml.createTextNode (this.class_ref.x_textinput.text);
+				temp_node = item_xml.createElement ("x");
+				temp_node_2 = item_xml.createTextNode (this.class_ref.x_textinput.text);
 				temp_node.appendChild (temp_node_2);
-				config_node.appendChild (temp_node);
+				item_node.appendChild (temp_node);
 				
-				temp_node = config_xml.createElement ("y");
-				temp_node_2 = config_xml.createTextNode (this.class_ref.y_textinput.text);
+				temp_node = item_xml.createElement ("y");
+				temp_node_2 = item_xml.createTextNode (this.class_ref.y_textinput.text);
 				temp_node.appendChild (temp_node_2);
-				config_node.appendChild (temp_node);
+				item_node.appendChild (temp_node);
 				
-				temp_node = config_xml.createElement ("menu_style");
-				temp_node_2 = config_xml.createElement ("name");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.graphic_style_list.selectedItem.data);
-				temp_node_2.appendChild (temp_node_3);
+				temp_node = item_xml.createElement ("text");
+				temp_node_2 = item_xml.createTextNode (this.class_ref.item_label_textinput.text);
 				temp_node.appendChild (temp_node_2);
-				config_node.appendChild (temp_node);
+				item_node.appendChild (temp_node);
 				
-				temp_node = config_xml.createElement ("text_format");
-				
-				temp_node_2 = config_xml.createElement ("font");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.font_combobox.selectedItem.data);
-				temp_node_2.appendChild (temp_node_3);
+				temp_node = item_xml.createElement ("type");
+				temp_node_2 = item_xml.createTextNode (this.class_ref.link_radiobuttongroup.selectedData);
 				temp_node.appendChild (temp_node_2);
+				item_node.appendChild (temp_node);
 				
-				temp_node_2 = config_xml.createElement ("size");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.font_size_combobox.text);
-				temp_node_2.appendChild (temp_node_3);
+				temp_node = item_xml.createElement ("url");
+				
+				if (this.class_ref.link_radiobuttongroup.selectedData == "0")
+				{
+					temp_node_2 = item_xml.createTextNode (this.class_ref.link_combobox.value);
+				}
+				else
+				{
+					temp_node_2 = item_xml.createTextNode (this.class_ref.link_textinput.text);
+				}
 				temp_node.appendChild (temp_node_2);
+				item_node.appendChild (temp_node);
 				
-				if (this.class_ref.bold_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("bold");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
-				
-				if (this.class_ref.italic_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("italic");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
-				
-				if (this.class_ref.underline_button.selected == true)
-				{
-					temp_node_2 = config_xml.createElement ("underline");
-					temp_node_3 = config_xml.createTextNode ("true");
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
-				
-				if (this.class_ref.font_color_palette.get_color_string () != null)
-				{
-					temp_node_2 = config_xml.createElement ("color");
-					temp_node_3 = config_xml.createTextNode (this.class_ref.font_color_palette.get_color_string ());
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
-				
-				config_node.appendChild (temp_node);
-				
-				var update_xml:XML;
-				
-				update_xml = this.class_ref.target_ref.export_xml ();
-				
-				for (var i in update_xml.childNodes)
-				{
-					for (var j in update_xml.childNodes [i].childNodes)
-					{
-						var temp_node:XMLNode;
-						
-						temp_node = update_xml.childNodes [i].childNodes [j];
-						if (temp_node.nodeName == "config")
-						{
-							temp_node.removeNode ();
-							
-							update_xml.childNodes [i].appendChild (config_node);
-						}
-					}
-				}
-				
-				this.class_ref.target_ref.set_root_xml (update_xml);
+				this.class_ref.target_ref.set_data_xml (item_node, this.class_ref.target_ref.get_text_format ());
 				this.class_ref.target_ref.broadcaster_event (true);
 			}
 		}
