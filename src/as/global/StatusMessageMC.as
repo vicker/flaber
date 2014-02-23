@@ -1,4 +1,6 @@
-﻿// StatusMessageMC class
+﻿// *********************
+// StatusMessageMC class
+// *********************
 class as.global.StatusMessageMC extends MovieClip
 {
 	// MC variables
@@ -64,6 +66,12 @@ class as.global.StatusMessageMC extends MovieClip
 		{
 			clearInterval (temp_interval);
 		}
+		
+		// hide the mini mc text when transparent reach a certain amount
+		if (mc_ref._alpha < 40 && n < 0)
+		{
+			mc_ref.mini_mc.content_field._visible = false;
+		}
 	}
 	
 	// *************
@@ -77,6 +85,7 @@ class as.global.StatusMessageMC extends MovieClip
 		mc_ref.mini_mc.onRollOver = function ()
 		{
 			this.class_ref._alpha = 100;
+			this.class_ref.mini_mc.content_field._visible = true;
 			clearInterval (this.class_ref.temp_interval);
 		}
 		
@@ -126,6 +135,7 @@ class as.global.StatusMessageMC extends MovieClip
 	{
 		// make the mc appear first
 		mc_ref._alpha = 100;
+		mc_ref.mini_mc.content_field._visible = true;
 		clearInterval (temp_interval);
 		temp_interval = setInterval (this, "set_transparent", 5000);
 		

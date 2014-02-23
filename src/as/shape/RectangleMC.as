@@ -11,14 +11,22 @@ class as.shape.RectangleMC extends MovieClip
 	private var rect_height:Number;
 	private var rect_corner:Number;
 	private var fill_color:Number;
+
+	private var edit_mode:Boolean;			// edit mode flag
 	
+	// ***********
 	// constructor
+	// ***********
 	public function RectangleMC ()
 	{
 		mc_ref = this;
+		
+		edit_mode = false;
 	}
 	
+	// *******
 	// draw_it
+	// *******
 	public function draw_it ():Void
 	{
 		if (fill_color != null)
@@ -36,24 +44,128 @@ class as.shape.RectangleMC extends MovieClip
 			mc_ref.endFill ();
 		}
 	}
-	
-	// set_dimension
-	public function set_dimension (w:Number, h:Number, c:Number):Void
+
+	// ***************
+	// data_xml setter
+	// ***************
+	public function set_data_xml (x:XMLNode):Void
 	{
-		rect_width = w;
-		rect_height = h;
-		rect_corner = c;
+		for (var i in x.childNodes)
+		{
+			var temp_node:XMLNode;
+			var temp_name:String;
+			var temp_value:String;
+			
+			temp_node = x.childNodes [i];
+			temp_name = temp_node.nodeName;
+			temp_value = temp_node.firstChild.nodeValue;
+			
+			switch (temp_name)
+			{
+				// x position of the rectangle mc
+				case "x":
+				{
+					mc_ref._x = parseInt (temp_value);
+					break;
+				}
+				// y position of the rectangle mc
+				case "y":
+				{
+					mc_ref._y = parseInt (temp_value);
+					break;
+				}
+				// width of the rectangle mc
+				case "width":
+				{
+					rect_width = parseInt (temp_value);
+					break;
+				}
+				// height of the rectangle mc
+				case "height":
+				{
+					rect_height = parseInt (temp_value);
+					break;
+				}
+				// corner radius of the rectangle mc
+				case "corner":
+				{
+					rect_corner = parseInt (temp_value);
+					break;
+				}
+				// line style of the line of rectangle
+				case "line_style":
+				{
+					var temp_style:Array;
+					temp_style = new Array ();
+					temp_style = temp_value.split ("|");
+					
+					mc_ref.lineStyle (parseInt (temp_style [0]), parseInt (temp_style [1]), parseInt (temp_style [2]));
+					break;
+				}
+				// fill color of the rectangle mc
+				case "fill_color":
+				{
+					fill_color = parseInt (temp_value);
+					break;
+				}
+				// alpha of the whole rectangle mc
+				case "alpha":
+				{
+					mc_ref._alpha = parseInt (temp_value);
+					break;
+				}
+			}
+			
+			draw_it ();
+		}		
 	}
-	
-	// set_line_style
-	public function set_line_style (t:Number, r:Number, a:Number):Void
+
+	// *******************
+	// onrollover override
+	// *******************
+	public function onRollOver ()
 	{
-		mc_ref.lineStyle (t, r, a);
+		// react only in edit mode
+		if (edit_mode == true)
+		{
+			_root.mc_filters.set_brightness_filter (mc_ref);
+			
+			pull_edit_panel ();
+		}
 	}
-	
-	// set_fill_color
-	public function set_fill_color (c:Number):Void
+
+	// ******************
+	// onrollout override
+	// ******************
+	public function onRollOut ()
 	{
-		fill_color = c;
+		// react only in edit mode
+		if (edit_mode == true)
+		{
+			_root.mc_filters.remove_filter (mc_ref);
+		}
+	}
+
+	// ***************
+	// pull edit panel
+	// ***************
+	public function pull_edit_panel ():Void
+	{
+		var temp_x:Number;
+		var temp_y:Number;
+		
+		temp_x = mc_ref._x;
+		temp_y = mc_ref._y + mc_ref._height;
+		
+		_root.edit_panel_mc.set_target_ref (mc_ref);
+		_root.edit_panel_mc.set_position (temp_x, temp_y);
+	}
+
+	// *****************
+	// broadcaster event
+	// *****************
+	public function broadcaster_event (o:Object):Void
+	{
+		edit_mode = new Boolean (o);
 	}
 }

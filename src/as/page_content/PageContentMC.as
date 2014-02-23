@@ -12,7 +12,8 @@ class as.page_content.PageContentMC extends MovieClip
 	private var mc_ref:MovieClip;					// reference back to the page content mc
 	
 	private var file_name:String;					// for tracer
-	private var export_flag:Boolean;				// state that this mc have to be exported
+	private var loaded_file:String;				// loaded file name
+
 
 	// ***********
 	// constructor
@@ -24,7 +25,18 @@ class as.page_content.PageContentMC extends MovieClip
 		content_mc_array = new Array ();
 		
 		file_name = "(PageContentMC.as)";
-		export_flag = true;
+	}
+	
+	// **********
+	// destructor
+	// **********
+	public function destroy ():Void
+	{
+		for (var i in content_mc_array)
+		{
+			_root.mode_broadcaster.remove_observer (content_mc_array [i]);
+			content_mc_array [i].removeMovieClip ();
+		}
 	}
 	
 	// *************
@@ -32,6 +44,11 @@ class as.page_content.PageContentMC extends MovieClip
 	// *************
 	public function load_root_xml (s:String):Void
 	{
+		loaded_file = s;
+		
+		// destroying old contents
+		destroy ();
+		
 		// xml data loading
 		var root_xml:XML;
 		root_xml = new XML ();
@@ -39,7 +56,6 @@ class as.page_content.PageContentMC extends MovieClip
 		root_xml.ignoreWhite = true;
 		root_xml ["break_cache"] = new Date ().getTime ();
 		root_xml.sendAndLoad ("page/" + s, root_xml, "POST");
-		// root_xml.load ("page/" + s + "?break_cache=" + new Date ().getTime ());
 		
 		root_xml.onLoad = function (b:Boolean)
 		{
@@ -86,7 +102,7 @@ class as.page_content.PageContentMC extends MovieClip
 				// exception
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
 				}
 			}
 		}		
@@ -223,11 +239,38 @@ class as.page_content.PageContentMC extends MovieClip
 			
 			switch (temp_node.nodeName)
 			{
+				// TextField
 				case "TextFieldMC":
 				{
 					lib_name = "lib_page_content_textfield";
 					temp_name = "text_field_";
 					break;
+				}
+				// Image
+				case "ImageMC":
+				{
+					lib_name = "lib_page_content_image";
+					temp_name = "image_";
+					break;
+				}
+				// Link
+				case "LinkMC":
+				{
+					lib_name = "lib_page_content_link";
+					temp_name = "link_";
+					break;
+				}
+				// Rectangle Shape
+				case "RectangleMC":
+				{
+					lib_name = "lib_shape_rectangle";
+					temp_name = "rectangle_";
+					break;
+				}
+				// exception
+				default:
+				{
+					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 				}
 			}
 			
@@ -236,6 +279,8 @@ class as.page_content.PageContentMC extends MovieClip
 			
 			content_mc_array [temp_id] = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id);
 			content_mc_array [temp_id].set_data_xml (temp_node);
+			
+			_root.mode_broadcaster.add_observer (content_mc_array [temp_id]);
 		}
 	}
 
@@ -244,8 +289,7 @@ class as.page_content.PageContentMC extends MovieClip
 	// **********
 	public function export_xml ():Void
 	{
-		/*
-		_root.status_mc.add_message ("Exporting navigation menu...", "normal");
+		_root.status_mc.add_message ("Exporting page content...", "normal");
 		
 		var out_xml:XML;
 		var out_string:String;
@@ -264,7 +308,7 @@ class as.page_content.PageContentMC extends MovieClip
 		out_xml = new XML ();
 		
 		// building root node
-		root_node = out_xml.createElement ("NavigationMenu");
+		root_node = out_xml.createElement ("PageContent");
 		root_node.attributes ["xmlns"] = "http://www.w3schools.com";
 		root_node.attributes ["xmlns:xsi"] ="http://www.w3.org/2001/XMLSchema-instance";
 		out_xml.appendChild (root_node);
@@ -272,41 +316,51 @@ class as.page_content.PageContentMC extends MovieClip
 		// building config node
 		config_node = out_xml.createElement ("config");
 			
-			// x of navigation menu
+			// x of page content
 			temp_node = out_xml.createElement ("x");
 			temp_node_2 = out_xml.createTextNode (mc_ref._x.toString ());
 			temp_node.appendChild (temp_node_2);
 			config_node.appendChild (temp_node);
 			
-			// y of navigation menu
+			// y of page content
 			temp_node = out_xml.createElement ("y");
 			temp_node_2 = out_xml.createTextNode (mc_ref._y.toString ());
 			temp_node.appendChild (temp_node_2);
 			config_node.appendChild (temp_node);
 			
-			// menu style of navigation menu
-			temp_node = out_xml.createElement ("menu_style");
-			for (var i in menu_style)
-			{
-				temp_node_2 = out_xml.createElement (i);
-				temp_node_3 = out_xml.createTextNode (menu_style [i]);
-				temp_node_2.appendChild (temp_node_3);
-				temp_node.appendChild (temp_node_2);
-			}
+			// bg color of page content
+			temp_node = out_xml.createElement ("bg_color");
+			
+			var temp_color:Color;
+			temp_color = new Color (mc_ref.bg_color);
+			
+			temp_node_2 = out_xml.createTextNode ("0x" + temp_color.getRGB ().toString (16));
+			temp_node.appendChild (temp_node_2);
 			config_node.appendChild (temp_node);
 			
-			// text format of navigation menu
-			temp_node = out_xml.createElement ("text_format");
-			for (var i in text_format)
-			{
-				if (text_format [i] != null && i.indexOf ("getTextExtent") == -1)
-				{
-					temp_node_2 = out_xml.createElement (i);
-					temp_node_3 = out_xml.createTextNode (text_format [i]);
-					temp_node_2.appendChild (temp_node_3);
-					temp_node.appendChild (temp_node_2);
-				}
-			}
+			// bg image of navigation menu
+			temp_node = out_xml.createElement ("bg_image");
+			
+			temp_node_2 = out_xml.createElement ("x");
+			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._x);
+			temp_node_2.appendChild (temp_node_3);
+			temp_node.appendChild (temp_node_2);
+			
+			temp_node_2 = out_xml.createElement ("y");
+			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._y);
+			temp_node_2.appendChild (temp_node_3);
+			temp_node.appendChild (temp_node_2);
+			
+			temp_node_2 = out_xml.createElement ("url");
+			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._url);
+			temp_node_2.appendChild (temp_node_3);
+			temp_node.appendChild (temp_node_2);
+			
+			temp_node_2 = out_xml.createElement ("alpha");
+			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._alpha);
+			temp_node_2.appendChild (temp_node_3);
+			temp_node.appendChild (temp_node_2);
+			
 			config_node.appendChild (temp_node);
 			
 		root_node.appendChild (config_node);
@@ -315,9 +369,9 @@ class as.page_content.PageContentMC extends MovieClip
 		data_node = out_xml.createElement ("data");
 			
 			// calling each navigation item instance to return their xml
-			for (var i in item_mc_array)
+			for (var i in content_mc_array)
 			{
-				temp_node = item_mc_array [i].export_xml ();
+				temp_node = content_mc_array [i].export_xml ();
 				data_node.appendChild (temp_node);
 			}
 			
@@ -336,7 +390,7 @@ class as.page_content.PageContentMC extends MovieClip
 		out_string = out_string + out_xml.toString ();
 		out_xml = new XML (out_string);
 		out_xml.contentType = "text/xml";
-		out_xml.sendAndLoad ("update_xml.php?target_object=navigation_menu", return_xml);
-		*/
+		trace (out_xml);
+		// out_xml.sendAndLoad ("update_xml.php?target_file=" + loaded_file, return_xml);
 	}
 }
