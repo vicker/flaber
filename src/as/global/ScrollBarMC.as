@@ -6,10 +6,9 @@ class as.global.ScrollBarMC extends MovieClip
 	// MC variables
 	// MovieClip		up_mc
 	// MovieClip		down_mc
-	// Button			trail_button				using button not mc becos of the sensitive hit area
+	// Button			trail_mc				using button not mc becos of the sensitive hit area
 	// MovieClip		box_mc
 	
-	private var root_y:Number;						// the _y value of this mc counting from root
 	private var original_box_mc_y:Number;		// same usage as the name
 	
 	private var scroll_height:Number;			// height of the scrolling area
@@ -26,30 +25,12 @@ class as.global.ScrollBarMC extends MovieClip
 	public function ScrollBarMC ()
 	{
 		mc_ref = this;
-		find_root_y ();
 		setup_up_mc ();
 		setup_down_mc ();
 		setup_box_mc ();
-		setup_trail_button ();
+		setup_trail_mc ();
 		
 		original_box_mc_y = mc_ref.box_mc._y;
-	}
-	
-	// ***********
-	// find root y
-	// ***********
-	public function find_root_y ()
-	{
-		var temp_ref:MovieClip;
-		
-		root_y = mc_ref._y;
-		
-		temp_ref = mc_ref._parent;
-		while (temp_ref != _root)
-		{
-			root_y = root_y + temp_ref._y;
-			temp_ref = temp_ref._parent;
-		}
 	}
 	
 	// ***********
@@ -182,11 +163,14 @@ class as.global.ScrollBarMC extends MovieClip
 			this.gotoAndStop ("down")
 			
 			var temp_box_y:Number;
-			temp_box_y = this.class_ref.box_mc._ymouse * this.class_ref.box_mc._height / 400;
+			var temp_scroll:Number;
+			
+			temp_box_y = _root._ymouse;
+			temp_scroll = this.class_ref.scroll_ref.scroll;
 			
 			this.class_ref.onMouseMove = function ()
 			{
-				box_track_mouse (temp_box_y);
+				box_track_mouse (temp_box_y, temp_scroll);
 			}
 		}
 		
@@ -208,16 +192,16 @@ class as.global.ScrollBarMC extends MovieClip
 	// ******************
 	// setup trail button
 	// ******************
-	public function setup_trail_button ():Void
+	public function setup_trail_mc ():Void
 	{	
 		// tell the mc about the class mc...
-		mc_ref.trail_button.class_ref = mc_ref;
+		mc_ref.trail_mc.class_ref = mc_ref;
 		
-		// trail_button handcursor setting
-		mc_ref.trail_button.useHandCursor = false;
+		// trail_mc handcursor setting
+		mc_ref.trail_mc.useHandCursor = false;
 		
-		// trail_button onpress listener
-		mc_ref.trail_button.onPress = function ()
+		// trail_mc onpress listener
+		mc_ref.trail_mc.onPress = function ()
 		{
 			var scroll_height:Number;
 			var text_height:Number;
@@ -247,14 +231,14 @@ class as.global.ScrollBarMC extends MovieClip
 			}
 		}
 		
-		// trail_button onrelease listener
-		mc_ref.trail_button.onRelease = function ()
+		// trail_mc onrelease listener
+		mc_ref.trail_mc.onRelease = function ()
 		{
 			clearInterval (this.class_ref.temp_interval);
 		}
 		
-		// trail_button onreleaseoutside listener
-		mc_ref.trail_button.onReleaseOutside = function ()
+		// trail_mc onreleaseoutside listener
+		mc_ref.trail_mc.onReleaseOutside = function ()
 		{
 			this.onRelease ();
 		}
@@ -277,10 +261,8 @@ class as.global.ScrollBarMC extends MovieClip
 		// scroll_ref onscroller listener
 		scroll_ref.onScroller = function ()
 		{
-			var temp_position:Number;
-			
-			temp_position = (this.scroll - 1) * this.class_ref.box_displacement;
-			this.class_ref.box_mc._y = this.class_ref.original_box_mc_y + temp_position;
+			// when scroll, have to move the box too
+			this.class_ref.check_box ();
 		}
 	}
 	
@@ -313,7 +295,7 @@ class as.global.ScrollBarMC extends MovieClip
 		var temp_scale:Number;
 		
 		// defining the box height and scroll status
-		current_height = mc_ref.trail_button._height;
+		current_height = mc_ref.trail_mc._height;
 		total_height = scroll_ref.textHeight;
 		new_height = current_height * (scroll_ref._height / total_height);
 		
@@ -324,12 +306,12 @@ class as.global.ScrollBarMC extends MovieClip
 			
 			mc_ref.up_mc.enabled = false;
 			mc_ref.down_mc.enabled = false;
-			mc_ref.trail_button.enabled = false;
+			mc_ref.trail_mc.enabled = false;
 			mc_ref.box_mc.enabled = false;
 			
 			mc_ref.up_mc._alpha = 50;
 			mc_ref.down_mc._alpha = 50;
-			mc_ref.trail_button._alpha = 0;
+			mc_ref.trail_mc._alpha = 0;
 			mc_ref.box_mc._alpha = 50;
 			
 			// making the box_mc back to original position
@@ -340,51 +322,43 @@ class as.global.ScrollBarMC extends MovieClip
 			// bring back the scroll online
 			mc_ref.up_mc.enabled = true;
 			mc_ref.down_mc.enabled = true;
-			mc_ref.trail_button.enabled = true;
+			mc_ref.trail_mc.enabled = true;
 			mc_ref.box_mc.enabled = true;
 			
 			mc_ref.up_mc._alpha = 100;
 			mc_ref.down_mc._alpha = 100;
-			mc_ref.trail_button._alpha = 100;
+			mc_ref.trail_mc._alpha = 100;
 			mc_ref.box_mc._alpha = 100;
 		}
 		
 		mc_ref.box_mc._height = new_height;
 		
 		// defining the displacement per scroll
-		box_displacement = (mc_ref.trail_button._height - mc_ref.box_mc._height) / (scroll_ref.maxscroll - 1);
+		box_displacement = (mc_ref.trail_mc._height - mc_ref.box_mc._height) / (scroll_ref.maxscroll - 1);
+	}
+	
+	// *********
+	// check_box
+	// *********
+	public function check_box ():Void
+	{
+		var temp_position:Number;
+		
+		temp_position = (mc_ref.scroll_ref.scroll - 1) * box_displacement;
+		mc_ref.box_mc._y = mc_ref.original_box_mc_y + temp_position;
 	}
 	
 	// ***************
 	// box_track_mouse
 	// ***************
-	public function box_track_mouse (n):Void
+	public function box_track_mouse (n, s):Void
 	{
-		var current_y:Number;
-		var temp_scroll_amount:Number;
-		var box_adjustment:Number;
+		var temp_distance:Number;
 		
-		current_y = _root._ymouse;
+		temp_distance = _root._ymouse - n;
 		
-		// slight adjustment due to the position of mouse y within box
-		box_adjustment = n;
-		current_y = current_y - box_adjustment;
-		
-		// temp_scroll_amount = Math.floor ((current_y - original_y) / box_displacement);
-		temp_scroll_amount = Math.ceil ((current_y - root_y - original_box_mc_y) / box_displacement);
-		
-		// for adverse situation... high speed scrolling
-		if (_root._ymouse > root_y + mc_ref._height)
-		{
-			temp_scroll_amount = scroll_ref.maxscroll;
-		}
-		
-		if (_root._ymouse < root_y)
-		{
-			temp_scroll_amount = 1;
-		}
-
-		scroll_ref.scroll = temp_scroll_amount;
+		scroll_ref.scroll = s + Math.round (temp_distance / box_displacement);
+		check_box ();
 	}
 	
 	// ****************************
@@ -393,7 +367,7 @@ class as.global.ScrollBarMC extends MovieClip
 	public function set_scroll_ref (t:TextField):Void
 	{
 		scroll_ref = t;
-
+		
 		// modifying the buttons and handle in order to fit the content
 		var temp_width:Number;
 		var temp_height:Number;
@@ -416,11 +390,8 @@ class as.global.ScrollBarMC extends MovieClip
 		
 		// adjusting trail and box
 		new_height = temp_height - (2 * mc_ref.up_mc._height) - 6;
-		mc_ref.trail_button._height = new_height;
+		mc_ref.trail_mc._height = new_height;
 		mc_ref.box_mc._height = new_height;
-
-		// recheck root_y value
-		find_root_y ();
 		
 		// first time checking
 		mc_ref.check_scroll ();

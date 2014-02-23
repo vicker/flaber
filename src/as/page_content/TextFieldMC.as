@@ -9,8 +9,6 @@ class as.page_content.TextFieldMC extends MovieClip
 	// private variables
 	private var mc_ref:MovieClip;						// interface for the textfield mc
 
-	private var edit_mode:Boolean;					// edit mode flag
-	
 	// ***********
 	// constructor
 	// ***********
@@ -20,8 +18,6 @@ class as.page_content.TextFieldMC extends MovieClip
 		mc_ref.content_field.html = true;
 		mc_ref.content_field.multiline = true;
 		mc_ref.content_field.wordWrap = true;
-		
-		edit_mode = false;
 	}
 
 	// *******************
@@ -30,13 +26,9 @@ class as.page_content.TextFieldMC extends MovieClip
 	// because rollover will damage textfield anchor tag so need to hide out the event first
 	public function onRollOver_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.set_brightness_filter (mc_ref);
-			
-			pull_edit_panel ();
-		}
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
 	}
 	
 	// ******************
@@ -45,11 +37,16 @@ class as.page_content.TextFieldMC extends MovieClip
 	// because rollout will damage textfield anchor tag so need to hide out the event first
 	public function onRollOut_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.remove_filter (mc_ref);
-		}
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ()
+	{
+		pull_edit_panel ();
 	}
 
 	// ***************
@@ -65,7 +62,7 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, true, false, true);
+		_root.edit_panel_mc.set_function (true, true, false, true, true);
 	}
 
 	// ***************
@@ -134,13 +131,20 @@ class as.page_content.TextFieldMC extends MovieClip
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
+	// ***************
+	// delete function
+	// ***************
+	public function delete_function ():Void
+	{
+		_root.page_mc.destroy_one (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
 	public function broadcaster_event (o:Object):Void
 	{
-		edit_mode = new Boolean (o);
-		if (edit_mode == true)
+		if (o == true)
 		{
 			mc_ref.onRollOver = function ()
 			{
@@ -151,11 +155,17 @@ class as.page_content.TextFieldMC extends MovieClip
 			{
 				onRollOut_event ();
 			}
+			
+			mc_ref.onPress = function ()
+			{
+				onPress_event ();
+			}
 		}
 		else
 		{
 			delete mc_ref.onRollOver;
 			delete mc_ref.onRollOut;
+			delete mc_ref.onPress;
 		}
 	}
 	

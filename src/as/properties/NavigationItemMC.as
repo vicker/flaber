@@ -15,7 +15,6 @@ class as.properties.NavigationItemMC extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
 	}
 	
 	// **************
@@ -62,13 +61,15 @@ class as.properties.NavigationItemMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:110, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:190, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "item_label_textinput", 3, {_x:80, _y:100, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 4, {_x:80, _y:160, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 5, {_x:160, _y:160, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 6, {_x:80, _y:180, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 7, {_x:80, _y:180, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:110, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:190, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "item_label_textinput", 3, {_x:80, _y:95, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 4, {_x:80, _y:155, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 5, {_x:160, _y:155, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 6, {_x:80, _y:175, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 7, {_x:80, _y:175, _width:150, _height:20});
+		
+		setup_component_style ();
 		
 		setup_internal_radiobutton ();
 		setup_external_radiobutton ();

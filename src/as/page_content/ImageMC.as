@@ -11,16 +11,12 @@ class as.page_content.ImageMC extends MovieClip
 	private var mc_loader:MovieClipLoader;			// loader for the image mc
 
 	private var mc_url:String;
-
-	private var edit_mode:Boolean;					// edit mode flag
 	
 	// constructor
 	public function ImageMC ()
 	{
 		mc_ref = this;
 		mc_loader = new MovieClipLoader ();
-		
-		edit_mode = false;
 	}
 	
 	// ***************
@@ -101,27 +97,28 @@ class as.page_content.ImageMC extends MovieClip
 	// *******************
 	// onrollover override
 	// *******************
-	public function onRollOver ()
+	public function onRollOver_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.set_brightness_filter (mc_ref);
-			
-			pull_edit_panel ();
-		}
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
 	}
 
 	// ******************
 	// onrollout override
 	// ******************
-	public function onRollOut ()
+	public function onRollOut_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.remove_filter (mc_ref);
-		}
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ()
+	{
+		pull_edit_panel ();
 	}
 
 	// ***************
@@ -166,7 +163,7 @@ class as.page_content.ImageMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, true, true, true);
+		_root.edit_panel_mc.set_function (true, true, true, true, true);
 	}
 
 	// ***************
@@ -265,12 +262,42 @@ class as.page_content.ImageMC extends MovieClip
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
+	// ***************
+	// delete function
+	// ***************
+	public function delete_function ():Void
+	{
+		_root.page_mc.destroy_one (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
 	public function broadcaster_event (o:Object):Void
 	{
-		edit_mode = new Boolean (o);
+		if (o == true)
+		{
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event ();
+			}
+			
+			mc_ref.onRollOut = function ()
+			{
+				onRollOut_event ();
+			}
+			
+			mc_ref.onPress = function ()
+			{
+				onPress_event ();
+			}
+		}
+		else
+		{
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRollOut;
+			delete mc_ref.onPress;
+		}
 	}
 
 	// **********
@@ -322,7 +349,7 @@ class as.page_content.ImageMC extends MovieClip
 		
 		// url of image
 		temp_node = out_xml.createElement ("url");
-		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._url);
+		temp_node_2 = out_xml.createTextNode (mc_ref.mc_url);
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		

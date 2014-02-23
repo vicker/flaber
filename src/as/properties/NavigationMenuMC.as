@@ -15,7 +15,6 @@ class as.properties.NavigationMenuMC extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
 	}
 	
 	// **************
@@ -74,15 +73,17 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 3, {_x:20, _y:100, _width:110, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 4, {_x:150, _y:100, _width:50, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "bold_button", 5, {_x:20, _y:130, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "italic_button", 6, {_x:50, _y:130, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "underline_button", 7, {_x:80, _y:130, _width:20, _height:20});
-		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 8, {_x:115, _y:130});
-		mc_ref.createClassObject (mx.controls.List, "graphic_style_list", 9, {_x:260, _y:40, _width:150, _height:80});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 3, {_x:20, _y:95, _width:110, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 4, {_x:150, _y:95, _width:50, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "bold_button", 5, {_x:20, _y:125, _width:20, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "italic_button", 6, {_x:50, _y:125, _width:20, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "underline_button", 7, {_x:80, _y:125, _width:20, _height:20});
+		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 8, {_x:115, _y:125});
+		mc_ref.createClassObject (mx.controls.List, "graphic_style_list", 9, {_x:260, _y:35, _width:150, _height:80});
+		
+		setup_component_style ();
 		
 		setup_font_combobox ();
 		setup_font_size_combobox ();
@@ -90,6 +91,7 @@ class as.properties.NavigationMenuMC extends MovieClip
 		setup_italic_button ();
 		setup_underline_button ();
 		setup_graphic_style_list ();
+		setup_add_button ();
 		setup_apply_button ();
 		setup_ok_button ();
 		setup_cancel_button ();
@@ -187,7 +189,7 @@ class as.properties.NavigationMenuMC extends MovieClip
 		
 		var graphic_array:Array;
 		
-		graphic_array = new Array ("lib_navigation_item_1", "lib_navigation_item_2");
+		graphic_array = new Array ("lib_navigation_item_1", "lib_navigation_item_2", "lib_navigation_item_3");
 		
 		for (var i in graphic_array)
 		{
@@ -228,6 +230,17 @@ class as.properties.NavigationMenuMC extends MovieClip
 		}
 		
 		return true;
+	}
+	
+	// ****************
+	// setup add button
+	// ****************
+	public function setup_add_button ():Void
+	{
+		mc_ref.add_button.onRelease = function ()
+		{
+			_root.navigation_menu.add_one ();
+		}
 	}
 	
 	// ******************

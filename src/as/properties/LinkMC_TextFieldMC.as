@@ -23,7 +23,6 @@ class as.properties.LinkMC_TextFieldMC extends MovieClip
 		handling_flag = false;
 		
 		setup_component_object ();
-		setup_component_style ();
 		setup_mouse_focus ();
 	}
 	
@@ -51,10 +50,10 @@ class as.properties.LinkMC_TextFieldMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:60, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:140, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:270, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:370, _y:40, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:60, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:140, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:270, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:370, _y:35, _width:40, _height:20});
 		
 		mc_ref.createClassObject (mx.controls.TextArea, "content_textarea", 5, {_x:40, _y:160, _width:370, _height:200});
 		
@@ -72,19 +71,17 @@ class as.properties.LinkMC_TextFieldMC extends MovieClip
 		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 15, {_x:250, _y:130});
 		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 17, {_x:180, _y:370});
 		
-		setup_content_textarea ();
+		setup_component_style ();
 		
+		setup_content_textarea ();
 		setup_bold_button ();
 		setup_italic_button ();
 		setup_underline_button ();
-		
 		setup_left_button ();
 		setup_center_button ();
 		setup_right_button ();
-		
 		setup_font_combobox ();
 		setup_font_size_combobox ();
-		
 		setup_cancel_button ();
 		setup_apply_button ();
 		setup_ok_button ();

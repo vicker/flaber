@@ -41,6 +41,7 @@ class as.global.ColorPaletteMC extends MovieClip
 		mc_ref.selection_mc.enabled = true;
 		
 		mc_ref.selection_mc.color_input_box.set_color_num (mc_ref.current_mc.get_color_num ());
+		mc_ref.selection_mc.color_input_textinput.text = _root.sys_func.color_num_to_code (mc_ref.current_mc.get_color_num ());
 	}
 	
 	// ******************

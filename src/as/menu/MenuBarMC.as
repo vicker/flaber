@@ -7,6 +7,7 @@ class as.menu.MenuBarMC extends MovieClip
 	private var mc_ref:MovieClip;						// interface for the navigation item mc
 
 	private var file_name:String;						// for tracer
+	private var edit_mode:Boolean						// storing the current edit_mode
 	
 	// ***********
 	// constructor
@@ -19,6 +20,8 @@ class as.menu.MenuBarMC extends MovieClip
 		
 		build_menu ();
 		hide_menu ();
+		
+		edit_mode = false;
 	}
 	
 	// **********
@@ -46,9 +49,9 @@ class as.menu.MenuBarMC extends MovieClip
 		menu_xml.load ("MenuBar.xml");
 	}
 	
-	// ***************
-	// setup file menu
-	// ***************
+	// *****************
+	// setup menu action
+	// *****************
 	public function setup_menu_action ():Void
 	{
 		// reference http://www.darronschall.com/weblog/archives/000062.cfm
@@ -67,17 +70,45 @@ class as.menu.MenuBarMC extends MovieClip
 				// New Page
 				case o.menu.file_new:
 				{
-					trace ("new file");
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_new_page_save_confirm";
+					temp_name = "Save Confirmation";
+					temp_width = 200;
+					temp_height = 130;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
 					break;
 				}
-
+				
 				// Open Page
 				case o.menu.file_open:
 				{
-					trace ("open file");
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_open_page_save_confirm";
+					temp_name = "Save Confirmation";
+					temp_width = 200;
+					temp_height = 130;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
 					break;
 				}
-
+				
 				// Save Page
 				case o.menu.file_save:
 				{
@@ -85,7 +116,7 @@ class as.menu.MenuBarMC extends MovieClip
 					_root.save_broadcaster.broadcast ();
 					break;
 				}
-
+				
 				// Logout Admin
 				case o.menu.file_logout:
 				{
@@ -127,6 +158,52 @@ class as.menu.MenuBarMC extends MovieClip
 				case o.menu.insert_shape_rectangle:
 				{
 					_root.page_mc.add_new_item ("RectangleMC", null);
+					break;
+				}
+				
+				// ***********
+				// Modify Menu
+				// ***********
+				
+				// Web Properties
+				case o.menu.modify_web:
+				{
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_web_properties";
+					temp_name = "Web Properties";
+					temp_width = 230;
+					temp_height = 290;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
+					break;
+				}
+				
+				// Page Properties
+				case o.menu.modify_page:
+				{
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_page_properties";
+					temp_name = "Page Properties";
+					temp_width = 700;
+					temp_height = 510;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
 					break;
 				}
 				
@@ -181,9 +258,9 @@ class as.menu.MenuBarMC extends MovieClip
 			// change to action mode
 			case 0:
 			{
-				if (_root.sys_func.get_edit_mode () == true)
+				if (edit_mode == true)
 				{
-					_root.sys_func.set_edit_mode (false);
+					edit_mode = false;
 					
 					_root.mode_broadcaster.set_changed_flag ();
 					_root.mode_broadcaster.broadcast (false);
@@ -202,9 +279,9 @@ class as.menu.MenuBarMC extends MovieClip
 			// change to edit mode
 			case 1:
 			{
-				if (_root.sys_func.get_edit_mode () == false)
+				if (edit_mode == false)
 				{
-					_root.sys_func.set_edit_mode (true);
+					edit_mode = true;
 					
 					_root.mode_broadcaster.set_changed_flag ();
 					_root.mode_broadcaster.broadcast (true);
@@ -214,4 +291,12 @@ class as.menu.MenuBarMC extends MovieClip
 			}
 		}
 	}
+
+	// *************
+	// get edit mode
+	// *************
+	public function get_edit_mode ():Boolean
+	{
+		return edit_mode;
+	}	
 }

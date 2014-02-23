@@ -14,8 +14,6 @@ class as.dialogue.AdminLogin extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
-		
 		build_enter_listener ();
 	}
 	
@@ -54,8 +52,9 @@ class as.dialogue.AdminLogin extends MovieClip
 	{
 		mc_ref.createClassObject (mx.controls.TextInput, "password_textinput", 1, {_x:35, _y:35, _width:125, _height:20});
 		
-		setup_password_textinput ();
+		setup_component_style ();
 		
+		setup_password_textinput ();
 		setup_ok_button ();
 		setup_cancel_button ();
 	}
@@ -65,7 +64,7 @@ class as.dialogue.AdminLogin extends MovieClip
 	// *********************
 	public function setup_component_style ():Void
 	{
-		mc_ref.instruction_label.setStyle ("styleName", "label_style");
+		mc_ref.message_label.setStyle ("styleName", "label_style");
 		
 		mc_ref.password_textinput.setStyle ("styleName", "textinput_style");
 	}
@@ -95,18 +94,18 @@ class as.dialogue.AdminLogin extends MovieClip
 	{
 		if (data_validation () == true)
 		{		
-			var img_xml:XML;
+			var admin_xml:XML;
 			
-			img_xml = new XML ();
-			img_xml.ignoreWhite = true;
-			img_xml ["class_ref"] = mc_ref;
-			img_xml.sendAndLoad ("http://www.flysforum.net/vicatfyp/release/1_0/function/admin_login.php?password=" + mc_ref.password_textinput.text, img_xml);
+			admin_xml = new XML ();
+			admin_xml.ignoreWhite = true;
+			admin_xml ["class_ref"] = mc_ref;
+			admin_xml.sendAndLoad ("function/admin_login.php?password=" + mc_ref.password_textinput.text, admin_xml);
 			
-			img_xml.onLoad = function (b:Boolean)
+			admin_xml.onLoad = function (b:Boolean)
 			{
 				if (b)
 				{
-					// if the data retrieved correctly
+					// if it is login successful
 					if (this.firstChild.nodeName == "login")
 					{
 						_root.menu_mc.show_menu ();
