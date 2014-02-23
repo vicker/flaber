@@ -128,6 +128,7 @@ class as.page_content.TextFieldMC extends MovieClip
 		temp_width = 470;
 		temp_height = 460;
 		
+		_root.sys_func.remove_window_mc ();
 		_root.attachMovie ("lib_window", "window_mc", 9999);
 		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
@@ -139,7 +140,6 @@ class as.page_content.TextFieldMC extends MovieClip
 	public function broadcaster_event (o:Object):Void
 	{
 		edit_mode = new Boolean (o);
-		
 		if (edit_mode == true)
 		{
 			mc_ref.onRollOver = function ()
@@ -164,7 +164,14 @@ class as.page_content.TextFieldMC extends MovieClip
 	// ***************
 	public function set_data_xml (x:XMLNode):Void
 	{
+		// reset text
 		mc_ref.content_field.htmlText = "";
+		
+		// reset scroll
+		if (mc_ref.scroll_bar)
+		{
+			mc_ref.scroll_bar.removeMovieClip ();
+		}
 		
 		for (var i in x.childNodes)
 		{
@@ -214,7 +221,7 @@ class as.page_content.TextFieldMC extends MovieClip
 			}
 		}
 		
-		if (x.attributes ["scroll_bar"] == "true")
+		if (x.attributes.scroll_bar == "true")
 		{
 			// setup full mc's scroll bar
 			mc_ref.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.getNextHighestDepth ());
@@ -241,7 +248,7 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		if (mc_ref.scroll_bar)
 		{
-			root_node.attributes.scroll_bar = true;
+			root_node.attributes.scroll_bar = "true";
 		}
 		
 		// x of textfield
@@ -287,5 +294,20 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		// export the xml node to whatever place need this
 		return (root_node);
+	}
+
+	// ***************
+	// get scroll flag
+	// ***************
+	public function get_scroll_flag ():Boolean
+	{
+		if (mc_ref.scroll_bar)
+		{
+			return (true);
+		}
+		else
+		{
+			return (false);
+		}
 	}
 }

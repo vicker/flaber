@@ -129,8 +129,6 @@ class as.global.WindowMC extends MovieClip
 		
 		centering_window ();
 		
-		mc_ref._x = _root.sys_func.get_movie_size ()
-		
 		mc_ref.attachMovie (l, "content_mc", mc_ref.getNextHighestDepth ());
 		mc_ref.content_mc._x = 10;
 		mc_ref.content_mc._y = 30;
@@ -141,16 +139,8 @@ class as.global.WindowMC extends MovieClip
 	// ****************
 	public function centering_window ():Void
 	{
-		var temp_obj:Object;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_obj = _root.sys_func.get_movie_size ();
-		temp_width = temp_obj ["width"];
-		temp_height = temp_obj ["height"];
-		
-		mc_ref._x = (temp_width - frame_width) / 2;
-		mc_ref._y = (temp_height - frame_height) / 2;
+		mc_ref._x = (Stage.width - frame_width) / 2;
+		mc_ref._y = (Stage.height - frame_height) / 2;
 	}
 
 	// ****************

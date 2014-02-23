@@ -90,8 +90,8 @@ class as.global.Broadcaster
 				}
 				case 2:
 				{
-					// exporter broadcaster
-					observers_array [i].export_xml ();
+					// save broadcaster
+					observers_array [i].save_xml ();
 					break;
 				}
 			}

@@ -10,6 +10,7 @@ class as.global.ComponentStyle
 	private var checkbox_style:Object;
 	private var list_style:Object;
 	private var radiobutton_style:Object;
+	private var button_style:Object;
 	
 	// ***********
 	// constructor
@@ -22,6 +23,7 @@ class as.global.ComponentStyle
 		setup_checkbox_style ();
 		setup_list_style ();
 		setup_radiobutton_style ();
+		setup_button_style ();
 	}
 	
 	// *****************
@@ -107,5 +109,20 @@ class as.global.ComponentStyle
 		radiobutton_style.setStyle ("fontFamily", "_sans");
 		radiobutton_style.setStyle ("fontSize", 11);
 		radiobutton_style.setStyle ("fontWeight", "bold");
+	}
+	
+	// ******************
+	// setup button style
+	// ******************
+	public function setup_button_style ():Void
+	{
+		button_style = new mx.styles.CSSStyleDeclaration ();
+		
+		_global.styles.button_style = button_style;
+		
+		button_style.setStyle ("color", 0x666666);
+		button_style.setStyle ("fontFamily", "_sans");
+		button_style.setStyle ("fontSize", 11);
+		button_style.setStyle ("fontWeight", "bold");
 	}
 }

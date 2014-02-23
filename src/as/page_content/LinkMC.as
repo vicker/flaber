@@ -78,7 +78,7 @@ class as.page_content.LinkMC extends MovieClip
 					var lib_name:String;
 					
 					temp_depth = mc_ref.getNextHighestDepth ();
-					temp_name = "text_field_" + temp_depth;
+					temp_name = "textfield_mc";
 					lib_name = "lib_page_content_textfield";
 					
 					content_mc_array [temp_depth] = mc_ref.attachMovie (lib_name, temp_name, temp_depth);
@@ -182,6 +182,27 @@ class as.page_content.LinkMC extends MovieClip
 		_root.edit_panel_mc.set_function (true, false, false, true);
 	}
 
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		var temp_lib:String;
+		var temp_name:String;
+		var temp_width:Number;
+		var temp_height:Number;
+		
+		temp_lib = "lib_properties_link";
+		temp_name = "Link Properties Window";
+		temp_width = 290;
+		temp_height = 330;
+		
+		_root.sys_func.remove_window_mc ();
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
@@ -240,5 +261,21 @@ class as.page_content.LinkMC extends MovieClip
 		
 		// export the xml node to whatever place need this
 		return (root_node);
+	}
+
+	// *************
+	// get link type
+	// *************
+	public function get_link_type ():Number
+	{
+		return (link_type);
+	}
+	
+	// ************
+	// get link url
+	// ************
+	public function get_link_url ():String
+	{
+		return (link_url);
 	}
 }

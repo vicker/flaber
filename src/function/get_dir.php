@@ -16,7 +16,7 @@
 			{
 				while (false !== ($file = readdir($handle)))
 				{
-					if ($file != "." && $file != "..")
+					if ($file != "." && $file != ".." && strpos ($file, ".") != false)
 					{
 						$xml_output = $xml_output . "<file>" . $file . "</file>";
 					}

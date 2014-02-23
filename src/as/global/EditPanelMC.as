@@ -33,19 +33,11 @@ class as.global.EditPanelMC extends MovieClip
 	// ************
 	public function set_position (x:Number, y:Number):Void
 	{
-		var temp_obj:Object;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_obj = _root.sys_func.get_movie_size ();
-		temp_width = temp_obj.width;
-		temp_height = temp_obj.height;
-		
 		// fix position if out bound
 		if (x < 0)	{ x = 0; }
 		if (y < 0)	{ y = 0; }
-		if (x + mc_ref._width > temp_width)		{ x = temp_width - mc_ref._width; }
-		if (y + mc_ref._height > temp_height)	{ y = temp_height - mc_ref._height; }
+		if (x + mc_ref._width > Stage.width)		{ x = Stage.width - mc_ref._width; }
+		if (y + mc_ref._height > Stage.height)		{ y = Stage.height - mc_ref._height; }
 		
 		x = x + 5;
 		y = y - 5;
@@ -114,7 +106,7 @@ class as.global.EditPanelMC extends MovieClip
 	public function throw_away ():Void
 	{
 		mc_ref._x = 0;
-		mc_ref._y = -100;
+		mc_ref._y = -30;
 		
 		mc_ref._visible = false;
 		mc_ref.enabled = false;
