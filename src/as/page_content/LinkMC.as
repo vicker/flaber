@@ -12,8 +12,6 @@ class as.page_content.LinkMC extends MovieClip
 	private var content_mc_array:Array;		// array storing all the content items
 	
 	private var file_name:String;				// for tracer
-
-	private var edit_mode:Boolean;			// edit mode flag
 	
 	// ***********
 	// constructor
@@ -26,7 +24,20 @@ class as.page_content.LinkMC extends MovieClip
 		
 		file_name = "(LinkMC.as)";
 		
-		edit_mode = false;
+		mc_ref.onRelease = function ()
+		{
+			onRelease_event ();
+		}
+		
+		mc_ref.onRollOver = function ()
+		{
+			onRollOver_event_1 ();
+		}
+		
+		mc_ref.onRollOut = function ()
+		{
+			onRollOut_event_1 ();
+		}		
 	}
 	
 	// ***************
@@ -73,16 +84,14 @@ class as.page_content.LinkMC extends MovieClip
 				// textfield inside the link
 				case "TextFieldMC":
 				{
-					var temp_depth:Number;
 					var temp_name:String;
 					var lib_name:String;
 					
-					temp_depth = mc_ref.getNextHighestDepth ();
 					temp_name = "textfield_mc";
 					lib_name = "lib_page_content_textfield";
 					
-					content_mc_array [temp_depth] = mc_ref.attachMovie (lib_name, temp_name, temp_depth);
-					content_mc_array [temp_depth].set_data_xml (temp_node);
+					content_mc_array [0] = mc_ref.attachMovie (lib_name, temp_name, 0);
+					content_mc_array [0].set_data_xml (temp_node);
 					break;
 				}
 				// exception
@@ -95,10 +104,18 @@ class as.page_content.LinkMC extends MovieClip
 		}
 	}
 	
+	// *********************
+	// transition out action
+	// *********************
+	public function transition_out_action ():Void
+	{
+		_root.page_mc.load_root_xml (link_url);
+	}
+	
 	// ******************
 	// onrelease override
 	// ******************
-	public function onRelease ()
+	public function onRelease_event ():Void
 	{
 		switch (link_type)
 		{
@@ -106,7 +123,15 @@ class as.page_content.LinkMC extends MovieClip
 			case 0:
 			{
 				// loading new contents
-				_root.page_mc.load_root_xml (link_url);
+				if (_root.mc_transitions != null)
+				{
+					_root.mc_transitions.set_mc_ref (mc_ref);
+					_root.mc_transitions.start_transition (1);
+				}
+				else
+				{
+					_root.page_mc.load_root_xml (link_url);
+				}
 				break;
 			}
 			// external link
@@ -119,51 +144,64 @@ class as.page_content.LinkMC extends MovieClip
 		}
 	}
 	
-	// *******************
-	// onrollover override
-	// *******************
-	public function onRollOver ()
+	// *********************
+	// onrollover override 1
+	// *********************
+	public function onRollOver_event_1 ():Void
 	{
-		// react as normal link in action mode
-		if (edit_mode == false)
+		var temp_string:String;
+		
+		switch (link_type)
 		{
-			var temp_string:String;
-			
-			switch (link_type)
+			case 0:
 			{
-				case 0:
-				{
-					temp_string = "Internal link - " + link_url;
-					break;
-				}
-				case 1:
-				{
-					temp_string = "External link - " + link_url;
-					break;
-				}
+				temp_string = "Internal link - " + link_url;
+				break;
 			}
-			
-			_root.status_mc.add_message (temp_string , "tooltip");
+			case 1:
+			{
+				temp_string = "External link - " + link_url;
+				break;
+			}
 		}
-		// react differently in edit mode
-		else
-		{
-			_root.mc_filters.set_brightness_filter (mc_ref);
-			
-			pull_edit_panel ();
-		}
+		
+		_root.status_mc.add_message (temp_string , "tooltip");
+		_root.tooltip_mc.set_content (link_url);
 	}
 
-	// ******************
-	// onrollout override
-	// ******************
-	public function onRollOut ()
+	// *********************
+	// onrollover override 2
+	// *********************
+	public function onRollOver_event_2 ():Void
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.remove_filter (mc_ref);
-		}
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
+	}
+
+	// ********************
+	// onrollout override 1
+	// ********************
+	public function onRollOut_event_1 ():Void
+	{
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ********************
+	// onrollout override 2
+	// ********************
+	public function onRollOut_event_2 ():Void
+	{
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ():Void
+	{
+		pull_edit_panel ();
 	}
 
 	// ***************
@@ -179,7 +217,7 @@ class as.page_content.LinkMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, false, false, true);
+		_root.edit_panel_mc.set_function (true, false, false, true, true);
 	}
 
 	// *******************
@@ -203,12 +241,55 @@ class as.page_content.LinkMC extends MovieClip
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
+	// ***************
+	// delete function
+	// ***************
+	public function delete_function ():Void
+	{
+		_root.page_mc.destroy_one (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
 	public function broadcaster_event (o:Object):Void
 	{
-		edit_mode = new Boolean (o);
+		if (o == true)
+		{			
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRelease;
+			
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event_2 ();
+			}
+			
+			mc_ref.onRollOut = function ()
+			{
+				onRollOut_event_2 ();
+			}
+			
+			mc_ref.onPress = function ()
+			{
+				onPress_event ();
+			}
+		}
+		else
+		{
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRelease;
+			delete mc_ref.onPress;
+			
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event_1 ();
+			}
+			
+			mc_ref.onRelease = function ()
+			{
+				onRelease_event ();
+			}
+		}
 	}
 
 	// **********

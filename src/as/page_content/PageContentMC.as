@@ -13,6 +13,7 @@ class as.page_content.PageContentMC extends MovieClip
 	
 	private var file_name:String;					// for tracer
 	private var loaded_file:String;				// loaded file name
+	private var bg_image_url:String;
 
 	private var max_depth:Number;					// the maximum depth of the page content items
 
@@ -24,10 +25,9 @@ class as.page_content.PageContentMC extends MovieClip
 		mc_ref = this; 
 		
 		content_mc_array = new Array ();
-		
-		file_name = "(PageContentMC.as)";
-		
 		max_depth = 0;
+		
+		file_name = "(PageContentMC.as)";		
 	}
 	
 	// **********
@@ -40,6 +40,27 @@ class as.page_content.PageContentMC extends MovieClip
 			_root.mode_broadcaster.remove_observer (content_mc_array [i]);
 			content_mc_array [i].removeMovieClip ();
 		}
+		
+		content_mc_array = new Array ();
+		max_depth = 0;
+	}
+	
+	// *********************
+	// delete one content mc
+	// *********************
+	public function destroy_one (m:MovieClip):Void
+	{
+		for (var i in content_mc_array)
+		{
+			if (content_mc_array [i] == m)
+			{
+				_root.mode_broadcaster.remove_observer (content_mc_array [i]);
+				content_mc_array [i].removeMovieClip ();
+				content_mc_array.splice (i, 1);
+				
+				break;
+			}
+		}
 	}
 	
 	// *************
@@ -47,7 +68,7 @@ class as.page_content.PageContentMC extends MovieClip
 	// *************
 	public function load_root_xml (s:String):Void
 	{
-		loaded_file = "page/" + s;
+		loaded_file = s;
 		
 		// destroying old contents
 		destroy ();
@@ -57,7 +78,7 @@ class as.page_content.PageContentMC extends MovieClip
 		root_xml = new XML ();
 		root_xml ["class_ref"] = this;
 		root_xml.ignoreWhite = true;
-		root_xml.sendAndLoad ("page/" + s + _root.sys_func.get_break_cache (), root_xml, "POST");
+		root_xml.sendAndLoad (s + _root.sys_func.get_break_cache (), root_xml, "POST");
 		
 		root_xml.onLoad = function (b:Boolean)
 		{
@@ -115,6 +136,11 @@ class as.page_content.PageContentMC extends MovieClip
 	// **************
 	public function set_config_xml (x:XMLNode):Void
 	{
+		if (mc_ref.bg_image.clip_mc != null)
+		{
+			mc_ref.bg_image.clip_mc.removeMovieClip ();
+		}
+		
 		// try to parse the config node
 		for (var i in x.childNodes)
 		{
@@ -158,6 +184,11 @@ class as.page_content.PageContentMC extends MovieClip
 				// background image of the page content
 				case "bg_image":
 				{
+					// -1 depth wont be able to be removed, while bg_image non negative will crash transition
+					// so we have to make it one more step... the clip_mc
+					mc_ref.attachMovie ("lib_empty_mc", "bg_image", -1);
+					mc_ref.bg_image.attachMovie ("lib_empty_mc", "clip_mc", 1, {_x:0, _y:0});
+					
 					// since background image still have many nodes, so need to iterate again
 					for (var j in temp_node.childNodes)
 					{
@@ -196,7 +227,9 @@ class as.page_content.PageContentMC extends MovieClip
 								
 								temp_loader = new MovieClipLoader ();
 								temp_loader.addListener (temp_listener);
-								temp_loader.loadClip (temp_value_2, mc_ref.bg_image);
+								temp_loader.loadClip (temp_value_2, mc_ref.bg_image.clip_mc);
+								
+								bg_image_url = temp_value_2;
 								
 								break;
 							}
@@ -287,11 +320,15 @@ class as.page_content.PageContentMC extends MovieClip
 		content_mc_array [temp_id] = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id, {_x: 50, _y:50});
 		
 		// if it is added by loading data, then set the xml data
-		if (x)	{	content_mc_array [temp_id].set_data_xml (x);	}
+		if (x)
+		{
+			content_mc_array [temp_id].broadcaster_event (_root.menu_mc.get_edit_mode ());
+			content_mc_array [temp_id].set_data_xml (x);
+		}
 		// else try to open the properties window, because this is brand new item
 		else
 		{
-			content_mc_array [temp_id].broadcaster_event (_root.sys_func.get_edit_mode ());
+			content_mc_array [temp_id].broadcaster_event (_root.menu_mc.get_edit_mode ());
 			content_mc_array [temp_id].properties_function ();
 		}
 		
@@ -371,30 +408,33 @@ class as.page_content.PageContentMC extends MovieClip
 			temp_node.appendChild (temp_node_2);
 			config_node.appendChild (temp_node);
 			
-			// bg image of navigation menu
-			temp_node = out_xml.createElement ("bg_image");
-			
-			temp_node_2 = out_xml.createElement ("x");
-			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._x);
-			temp_node_2.appendChild (temp_node_3);
-			temp_node.appendChild (temp_node_2);
-			
-			temp_node_2 = out_xml.createElement ("y");
-			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._y);
-			temp_node_2.appendChild (temp_node_3);
-			temp_node.appendChild (temp_node_2);
-			
-			temp_node_2 = out_xml.createElement ("url");
-			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._url);
-			temp_node_2.appendChild (temp_node_3);
-			temp_node.appendChild (temp_node_2);
-			
-			temp_node_2 = out_xml.createElement ("alpha");
-			temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._alpha);
-			temp_node_2.appendChild (temp_node_3);
-			temp_node.appendChild (temp_node_2);
-			
-			config_node.appendChild (temp_node);
+			// bg image of page content
+			if (mc_ref.bg_image.clip_mc != null)
+			{
+				temp_node = out_xml.createElement ("bg_image");
+				
+				temp_node_2 = out_xml.createElement ("x");
+				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._x);
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
+				
+				temp_node_2 = out_xml.createElement ("y");
+				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._y);
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
+				
+				temp_node_2 = out_xml.createElement ("url");
+				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image_url);
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
+				
+				temp_node_2 = out_xml.createElement ("alpha");
+				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image._alpha);
+				temp_node_2.appendChild (temp_node_3);
+				temp_node.appendChild (temp_node_2);
+				
+				config_node.appendChild (temp_node);
+			}
 			
 		root_node.appendChild (config_node);
 		
@@ -404,8 +444,11 @@ class as.page_content.PageContentMC extends MovieClip
 			// calling each navigation item instance to return their xml
 			for (var i in content_mc_array)
 			{
-				temp_node = content_mc_array [i].export_xml ();
-				data_node.appendChild (temp_node);
+				if (content_mc_array [i] != undefined && content_mc_array [i] != null)
+				{
+					temp_node = content_mc_array [i].export_xml ();
+					data_node.appendChild (temp_node);
+				}
 			}
 			
 		root_node.appendChild (data_node);
@@ -425,5 +468,31 @@ class as.page_content.PageContentMC extends MovieClip
 		out_xml.contentType = "text/xml";
 		
 		out_xml.sendAndLoad ("function/update_xml.php?target_file=" + loaded_file, return_xml);
+	
+		trace (out_xml);
+	}
+
+	// ***************
+	// get loaded file
+	// ***************
+	public function get_loaded_file ():String
+	{
+		return (loaded_file);
+	}
+
+	// ***************
+	// set loaded file
+	// ***************
+	public function set_loaded_file (s:String):Void
+	{
+		loaded_file = s;
+	}
+	
+	// ****************
+	// get bg image url
+	// ****************
+	public function get_bg_image_url ():String
+	{
+		return (bg_image_url);
 	}
 }

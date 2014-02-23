@@ -15,7 +15,6 @@ class as.properties.RectangleMC extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
 	}
 	
 	// **************
@@ -54,16 +53,18 @@ class as.properties.RectangleMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:100, _y:100, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:100, _y:125, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "rotation_textinput", 5, {_x:100, _y:150, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "line_width_textinput", 6, {_x:290, _y:100, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "line_alpha_textinput", 7, {_x:290, _y:150, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "fill_alpha_textinput", 8, {_x:480, _y:125, _width:40, _height:20});
-		mc_ref.attachMovie ("lib_normal_palette", "line_color_palette", 9, {_x:290, _y:125});
-		mc_ref.attachMovie ("lib_normal_palette", "fill_color_palette", 10, {_x:480, _y:100});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:100, _y:95, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:100, _y:120, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "rotation_textinput", 5, {_x:100, _y:145, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "line_width_textinput", 6, {_x:290, _y:95, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "line_alpha_textinput", 7, {_x:290, _y:145, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "fill_alpha_textinput", 8, {_x:480, _y:120, _width:40, _height:20});
+		mc_ref.attachMovie ("lib_normal_palette", "line_color_palette", 9, {_x:290, _y:120});
+		mc_ref.attachMovie ("lib_normal_palette", "fill_color_palette", 10, {_x:480, _y:95});
+		
+		setup_component_style ();
 		
 		setup_apply_button ();
 		setup_ok_button ();

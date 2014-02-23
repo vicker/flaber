@@ -3,32 +3,12 @@
 // ********************
 class as.global.SystemFunction
 {
-	// private variables
-	var edit_mode:Boolean;
-	
 	// ***********
 	// constructor
 	// ***********
 	public function SystemFunction ()
 	{
 		// actually nothing is necessary for system function
-		edit_mode = false;
-	}
-	
-	// *************
-	// get edit mode
-	// *************
-	public function get_edit_mode ():Boolean
-	{
-		return edit_mode;
-	}
-	
-	// *************
-	// set edit mode
-	// *************
-	public function set_edit_mode (b:Boolean):Void
-	{
-		edit_mode = b;
 	}
 	
 	// ****************

@@ -21,7 +21,8 @@ class as.global.StatusMessageMC extends MovieClip
 	{
 		mc_ref = this;
 		mc_ref._alpha = 0;
-		mc_ref.useHandCursor = false;
+		
+		draw_frame ();
 		
 		display_mode = "mini";
 		mc_ref.full_mc._visible = false;
@@ -29,9 +30,14 @@ class as.global.StatusMessageMC extends MovieClip
 		// setup listeners
 		setup_mini_mc ();
 		
+		// setup buttons
+		mc_ref.mini_mc.max_button._x = Stage.width - 20;
+		mc_ref.mini_mc.min_button._x = Stage.width - 35;
+		
 		// setup textfields
 		mc_ref.mini_mc.content_field.html = true;
 		mc_ref.full_mc.content_field.html = true;
+		mc_ref.full_mc.content_field._width = Stage.width - 60;
 		
 		// setup stylesheet
 		style_sheet = new TextField.StyleSheet ();
@@ -43,6 +49,36 @@ class as.global.StatusMessageMC extends MovieClip
 		// setup full mc's scroll bar
 		mc_ref.full_mc.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.full_mc.getNextHighestDepth ());
 		mc_ref.full_mc.scroll_bar.set_scroll_ref (mc_ref.full_mc.content_field);
+	}
+	
+	// *******************
+	// draw frame function
+	// *******************
+	public function draw_frame ():Void
+	{
+		// clear all frame first
+		mc_ref.mini_mc.frame_mc.clear ();
+		mc_ref.full_mc.frame_mc.clear ();
+		
+		// draw the mini mc border
+		mc_ref.mini_mc.frame_mc.lineStyle (1, 0x666666, 100);
+		mc_ref.mini_mc.frame_mc.beginFill (0xFFFFFF, 100);
+		mc_ref.mini_mc.frame_mc.moveTo (0, 0);
+		mc_ref.mini_mc.frame_mc.lineTo (Stage.width - 1, 0);
+		mc_ref.mini_mc.frame_mc.lineTo (Stage.width - 1, 22);
+		mc_ref.mini_mc.frame_mc.lineTo (0, 22);
+		mc_ref.mini_mc.frame_mc.lineTo (0, 0);
+		mc_ref.mini_mc.frame_mc.endFill ();
+		
+		// draw the full mc border
+		mc_ref.full_mc.frame_mc.lineStyle (1, 0x666666, 100);
+		mc_ref.full_mc.frame_mc.beginFill (0xFFFFFF, 100);
+		mc_ref.full_mc.frame_mc.moveTo (0, 0);
+		mc_ref.full_mc.frame_mc.lineTo (Stage.width - 1, 0);
+		mc_ref.full_mc.frame_mc.lineTo (Stage.width - 1, 160);
+		mc_ref.full_mc.frame_mc.lineTo (0, 160);
+		mc_ref.full_mc.frame_mc.lineTo (0, 0);
+		mc_ref.full_mc.frame_mc.endFill ();
 	}
 	
 	// ***************
@@ -79,10 +115,11 @@ class as.global.StatusMessageMC extends MovieClip
 	// *************
 	public function setup_mini_mc ():Void
 	{
-		mc_ref.mini_mc.class_ref = mc_ref;
+		mc_ref.mini_mc.frame_mc ["class_ref"] = mc_ref;
+		mc_ref.mini_mc.frame_mc.useHandCursor = false;
 		
 		// onrollover override
-		mc_ref.mini_mc.onRollOver = function ()
+		mc_ref.mini_mc.frame_mc.onRollOver = function ()
 		{
 			this.class_ref._alpha = 100;
 			this.class_ref.mini_mc.content_field._visible = true;
@@ -90,7 +127,7 @@ class as.global.StatusMessageMC extends MovieClip
 		}
 		
 		// onrollout override
-		mc_ref.mini_mc.onRollOut = function ()
+		mc_ref.mini_mc.frame_mc.onRollOut = function ()
 		{
 			switch (this.class_ref.display_mode)
 			{
@@ -105,26 +142,21 @@ class as.global.StatusMessageMC extends MovieClip
 			}
 		}
 		
-		// onrelease override
-		mc_ref.mini_mc.onRelease = function ()
+		// maximum button onrelease override
+		mc_ref.mini_mc.max_button ["class_ref"] = mc_ref;
+		mc_ref.mini_mc.max_button.onRelease = function ()
 		{
-			switch (this.class_ref.display_mode)
-			{
-				case "mini":
-				{
-					this.class_ref.display_mode = "full";
-					this.class_ref.full_mc._visible = true;
-					
-					break;
-				}
-				case "full":
-				{
-					this.class_ref.display_mode = "mini";
-					this.class_ref.full_mc._visible = false;
-					
-					break;
-				}
-			}			
+			clearInterval (this.class_ref.temp_interval);
+			this.class_ref.display_mode = "full";
+			this.class_ref.full_mc._visible = true;
+		}
+		
+		// minimum button onrelease override
+		mc_ref.mini_mc.min_button ["class_ref"] = mc_ref;
+		mc_ref.mini_mc.min_button.onRelease = function ()
+		{
+			this.class_ref.display_mode = "mini";
+			this.class_ref.full_mc._visible = false;
 		}
 	}
 	

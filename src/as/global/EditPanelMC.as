@@ -14,10 +14,55 @@ class as.global.EditPanelMC extends MovieClip
 	{
 		mc_ref = this;
 		
+		draw_frame ();
+		
 		setup_move_button ();
 		setup_resize_button ();
 		setup_rotate_button ();
 		setup_properties_button ();
+		setup_delete_button ();
+		
+		throw_away ();
+	}
+	
+	// **********
+	// draw frame
+	// **********
+	public function draw_frame ():Void
+	{
+		var frame_width:Number;
+		
+		frame_width = 120;
+		
+		// clear all frame first
+		mc_ref.frame_mc.clear ();
+		
+		// draw the outer border
+		mc_ref.frame_mc.lineStyle (1, 0x666666, 100);
+		mc_ref.frame_mc.beginFill (0xFFFFFF, 100);
+		mc_ref.frame_mc.moveTo (0, 0);
+		mc_ref.frame_mc.lineTo (frame_width, 0);
+		mc_ref.frame_mc.lineTo (frame_width, 48);
+		mc_ref.frame_mc.lineTo (0, 48);
+		mc_ref.frame_mc.lineTo (0, 0);
+		mc_ref.frame_mc.endFill ();
+		
+		// draw the shadow
+		mc_ref.frame_mc.lineStyle (0, 0x000000, 0);
+		mc_ref.frame_mc.beginFill (0x000000, 30);
+		mc_ref.frame_mc.moveTo (frame_width, 10);
+		mc_ref.frame_mc.lineTo (frame_width + 3, 10);
+		mc_ref.frame_mc.lineTo (frame_width + 3, 48 + 3);
+		mc_ref.frame_mc.lineTo (0 + 10, 48 + 3);
+		mc_ref.frame_mc.lineTo (0 + 10, 48);
+		mc_ref.frame_mc.lineTo (frame_width, 48);
+		mc_ref.frame_mc.lineTo (frame_width, 10);
+		mc_ref.frame_mc.endFill ();
+		
+		// draw text underline
+		mc_ref.frame_mc.lineStyle (1, 0xCCCCCC, 100);
+		mc_ref.frame_mc.moveTo (5, 23);
+		mc_ref.frame_mc.lineTo (115, 23);
 	}
 	
 	// **************
@@ -26,6 +71,8 @@ class as.global.EditPanelMC extends MovieClip
 	public function set_target_ref (m:MovieClip):Void
 	{
 		target_ref = m;
+		
+		mc_ref.content_field.text = m._name;
 	}
 
 	// ************
@@ -53,7 +100,7 @@ class as.global.EditPanelMC extends MovieClip
 	// ************
 	// set function
 	// ************
-	public function set_function (m:Boolean, z:Boolean, r:Boolean, p:Boolean):Void
+	public function set_function (m:Boolean, z:Boolean, r:Boolean, p:Boolean, d:Boolean):Void
 	{
 		if (m == true)
 		{
@@ -98,6 +145,17 @@ class as.global.EditPanelMC extends MovieClip
 			mc_ref.properties_button.enabled = false;
 			mc_ref.properties_button._alpha = 25;
 		}
+		
+		if (d == true)
+		{
+			mc_ref.delete_button.enabled = true;
+			mc_ref.delete_button._alpha = 100;
+		}
+		else
+		{
+			mc_ref.delete_button.enabled = false;
+			mc_ref.delete_button._alpha = 25;
+		}
 	}
 
 	// **********
@@ -119,9 +177,23 @@ class as.global.EditPanelMC extends MovieClip
 	{
 		mc_ref.move_button ["class_ref"] = mc_ref;
 		
+		// onrollover override
+		mc_ref.move_button.onRollOver = function ()
+		{
+			_root.tooltip_mc.set_content ("Move");
+			_root.status_mc.add_message ("Click and drag to move the object" , "tooltip");
+		}
+		
+		// onrollout override
+		mc_ref.move_button.onRollOut = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+		}
+		
 		// onpress override
 		mc_ref.move_button.onPress = function ()
 		{
+			_root.tooltip_mc.throw_away ();
 			this.class_ref.target_ref.startDrag ();
 			
 			this.class_ref.onMouseMove = function ()
@@ -134,6 +206,7 @@ class as.global.EditPanelMC extends MovieClip
 		mc_ref.move_button.onRelease = function ()
 		{
 			this.class_ref.target_ref.stopDrag ();
+			_root.tooltip_mc.startDrag (true);
 			
 			delete this.class_ref.onMouseMove;
 		}
@@ -152,9 +225,23 @@ class as.global.EditPanelMC extends MovieClip
 	{
 		mc_ref.resize_button ["class_ref"] = mc_ref;
 		
+		// onrollover override
+		mc_ref.resize_button.onRollOver = function ()
+		{
+			_root.tooltip_mc.set_content ("Resize");
+			_root.status_mc.add_message ("Click and drag to resize the object" , "tooltip");
+		}
+		
+		// onrollout override
+		mc_ref.resize_button.onRollOut = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+		}
+		
 		// onpress override
 		mc_ref.resize_button.onPress = function ()
 		{
+			_root.tooltip_mc.throw_away ();
 			this.class_ref.target_ref.resize_function (1);
 			
 			this.class_ref.onMouseMove = function ()
@@ -185,9 +272,23 @@ class as.global.EditPanelMC extends MovieClip
 	{
 		mc_ref.rotate_button ["class_ref"] = mc_ref;
 		
+		// onrollover override
+		mc_ref.rotate_button.onRollOver = function ()
+		{
+			_root.tooltip_mc.set_content ("Rotate");
+			_root.status_mc.add_message ("Click and drag to rotate the object" , "tooltip");
+		}
+		
+		// onrollout override
+		mc_ref.rotate_button.onRollOut = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+		}
+		
 		// onpress override
 		mc_ref.rotate_button.onPress = function ()
 		{
+			_root.tooltip_mc.throw_away ();
 			this.class_ref.target_ref.rotate_function (1);
 			
 			this.class_ref.onMouseMove = function ()
@@ -218,10 +319,54 @@ class as.global.EditPanelMC extends MovieClip
 	{
 		mc_ref.properties_button ["class_ref"] = mc_ref;
 		
+		// onrollover override
+		mc_ref.properties_button.onRollOver = function ()
+		{
+			_root.tooltip_mc.set_content ("Properties");
+			_root.status_mc.add_message ("Click to setup some advanced object properties" , "tooltip");
+		}
+		
+		// onrollout override
+		mc_ref.properties_button.onRollOut = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+		}
+		
 		// onrelease override
 		mc_ref.properties_button.onRelease = function ()
 		{
+			_root.tooltip_mc.throw_away ();
+			this.class_ref.throw_away ();
 			this.class_ref.target_ref.properties_function ();
+		}
+	}
+
+	// *******************
+	// setup delete button
+	// *******************
+	public function setup_delete_button ():Void
+	{
+		mc_ref.delete_button ["class_ref"] = mc_ref;
+		
+		// onrollover override
+		mc_ref.delete_button.onRollOver = function ()
+		{
+			_root.tooltip_mc.set_content ("Delete");
+			_root.status_mc.add_message ("Click to delete the current object" , "tooltip");
+		}
+		
+		// onrollout override
+		mc_ref.delete_button.onRollOut = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+		}
+		
+		// onrelease override
+		mc_ref.delete_button.onRelease = function ()
+		{
+			_root.tooltip_mc.throw_away ();
+			this.class_ref.throw_away ();
+			this.class_ref.target_ref.delete_function ();
 		}
 	}
 }

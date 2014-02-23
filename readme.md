@@ -51,27 +51,32 @@ Flash Player 8 is a must
 
 + flaber/
     + function/
-	+ img/          *666, including all folder contents*
-	+ page/			666, including all folder contents
+	+ img/  *666, including all folder contents*
+	+ page/ *666, including all folder contents*
 	+ style/
+	+ index.html
+	+ flaber.swf
+	+ Flaber.xml    *666*
 	+ MenuBar.xml
-	+ NavigationMenu.xml	666
-	+ release.html
-	+ release.swf
+	+ NavigationMenu.xml	*666*
 
 ***
 
-- Enjoy using FLABER by browsing to the http://installation_path/flaber/release.html
+- Enjoy using FLABER by browsing to the http://installation_path/flaber/index.html
 
 # E. Using FLABER
 
 > Apolgy first I dont have much time to prepare a good documentation. I will improve in the forthcoming releases
 
-There are actually two main viewpoint of FLABER, "Action Mode" and "Edit Mode".
-
 ## E.a. Action Mode
 
+There are actually two main viewpoint of FLABER, "Action Mode" and "Edit Mode".
+
 Action mode is the mode that is in default when anyone browse FLABER. So this can be also called the browsing mode. In this mode, you can browse the web just like any normal web page. Text, Images, Shapes, Links and Navigation Menus are all available.
+
+When you are logged in as an admin, you can enter edit mode by the menu item "Mode"
+
+    Mode > Edit Mode
 
 ## E.b. Edit Mode
 
@@ -83,7 +88,7 @@ In order to change the mode, you need admin login which will be mentioned in nex
 
 You can enter the admin login by:
 
-Pressing "CTRL + E"
+    CTRL + E
 
 > Internet Explorer user may experience problem that "CTRL + E" is mapped to other shortcut function. Try "SHIFT + CTRL + E"
 
@@ -96,29 +101,79 @@ After login, you will notice that a new menu bar come out, here you can access n
 
 ## E.d. Add and Edit Items
 
-Adding new element is simple, you can use the menu bars
+Currently FLABER supports the following page items:
 
-- Insert > TextField
-- Insert > Image
-- etc...
+- TextField
+- Image
+- Links
+- Shapes (Rectangles only)
 
+Adding new element is simple, you can use the "Insert" menu bars
 A window will bring up asking for the item details
 
-Editing existing element will require "Edit Mode".
-Accessable by the menu bar
+    e.g. Insert > TextField
 
-- Mode > Edit Mode
+Editing existing element will require "Edit Mode". (mentioned in chapter E.b.)
 
-After changing to edit mode, you can rollover any elements to bring up a little panel which have numerous editing functions: (from left to right)
-Move | Resize | Rotate | Properties
+After changing to edit mode, you can left click on any elements to bring up a little panel called edit panel which have numerous editing functions:
+(from left to right)
 
-## E.e. XML Editing
+    Move | Resize | Rotate | Properties | Delete
 
-Because not all the functions in FLABER are implemented, you may experienced that serveral items are not changeble right now. For example, background color, wallpaper, etc.
+- Move
+    - Left click and drag to move the item
+- Resize
+    - Left click and drag to resize the item (not all items support)
+- Rotate
+    - Left click and drag to rotate the item (not all items support)
+- Properties
+    - Left click will bring up an advance dialogue box
+- Delete
+    - Left click will remove the item
+
+## E.e. Page Properties
+
+Page properties contain all the settings according to the current opening page, including
+
+- Background Color
+- Backgroung Image
+
+Page Properties are accessible through the menu item "Modify"
+
+    Modify > Page Properties
+
+## E.f. Web Properties
+
+Web properties are similar as page properties, however the target is on the whole web site. Functions includes
+
+- Index Page
+    - that is the first page that FLABER will load when a visitor comes
+- Navigation Menu
+    - whether a navigation menu will be used throughout the web
+- Page Transitions
+    - special animation effects when there are page changes
+
+Web Properties are accessible through the menu item "Modify"
+
+	Modify > Web Properties
+
+## E.g. New / Open and Saving
+
+All of these functions can be found through the menu item "File".
+
+**!!!!!!!!!! ALWAYS REMEMBER TO SAVE THE CONTENT BEFORE EXITING THE WEB !!!!!!!!!!**
+
+## E.h. XML Editing
+
+Actually FLABER is still in development, some of the functions are still not editable through the GUI. For example
+
+- Depth changing
+- Image uploading
 
 And some expert users may like editing codes rather than using the GUI. In this case, you are always welcome to edit the XML files directly.
 
-**For normal users, try not to edit the XML directly which may results unbelievable damage to the FLABER data**
+**!!!!!!!!!!   For non-expert users, try not to edit the XML directly    !!!!!!!!!!**
+**!!!!!!!!!!   which may results unbelievable damage to the FLABER data  !!!!!!!!!!**
 
 The XML files are placed in the following manner:
 
@@ -128,11 +183,14 @@ The XML files are placed in the following manner:
     + function/
 	+ img/
 	+ page/ *all the seperate pages, you can see it like a single html file*
+	    + index.xml
+	    + page2.xml
     + style/
+    + index.html
+    + flaber.swf
+    + Flaber.xml *the so called global config file, controlling the page transitions etc...*
 	+ MenuBar.xml *the menu bar. no fun in here so I dont guess you will need to edit this*
 	+ NavigationMenu.xml *the navigation menu which will appear on EVERY page of the web*
-	+ release.html
-	+ release.swf
 
 ***
 
@@ -156,7 +214,7 @@ Here, I grab the chance to thank some of the people who helped me a lot in the s
 
 ***Dr. Andy CHUN, Hon Wai***
 
-Professor in City University of Hong Kong. He is a great professor who provided lots of knowledge and suggestions to me.
+Professor in City University of Hong Kong. Experts in Artificial Intelligence and Arts. He is a great professor who provided lots of knowledge and suggestions to me.
 
 ***Mr. Tim SHIU, Ka Kei***
 
@@ -166,11 +224,19 @@ A friend of mine and a great programmer in many different languages. He have a v
 
 My girlfriend and also my first-line tester. I already forgot how many times she sitting besides me watching me typing all those crazy Flash codes. Sorry about that and I love you :)
 
-***Ms. CHEUNG, Pui Ling***
+***Ms. Soki HO***
 
-My first fans haha~ Thanks for the testing efforts and kind support.
+College student and one of my user tester. Responsible to test whether the product is usable for user who have no Flash experience.
 
 ***Additional thanks to***
 
 - 00HK Server hosting
 - SourceForge Project hosting
+- Macromedia Flash
+- SEPY ActionScript Editor
+
+- Carmen
+- Kay CHEUNG
+- Michael STOCK
+- Olivia
+- Sam LAM

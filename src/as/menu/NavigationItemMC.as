@@ -16,8 +16,6 @@ class as.menu.NavigationItemMC extends MovieClip
 	private var format_global:Boolean;				// state that if this item is using global textformat
 	private var file_name:String;						// for tracer
 	
-	private var edit_mode:Boolean;					// edit mode flag
-	
 	// ***********
 	// constructor
 	// ***********
@@ -27,33 +25,113 @@ class as.menu.NavigationItemMC extends MovieClip
 		
 		file_name = "(NavigationItemMC.as)";
 		
-		edit_mode = false;
+		mc_ref.onRollOver = function ()
+		{
+			onRollOver_event_1 ();
+		}
+		
+		mc_ref.onRollOut = function ()
+		{
+			onRollOut_event_1 ();
+		}
+		
+		mc_ref.onRelease = function ()
+		{
+			onRelease_event ();
+		}
+		
+		mc_ref.onReleaseOutside = function ()
+		{
+			onReleaseOutside_event ();
+		}
+	}
+	
+	// *********************
+	// onrollover override 1
+	// *********************
+	public function onRollOver_event_1 ()
+	{
+		mc_ref.gotoAndStop ("over");
+		
+		var temp_string:String;
+		
+		temp_string = mc_ref.content_field.text + " - " + link_url;
+		_root.status_mc.add_message (temp_string , "tooltip");
+		_root.tooltip_mc.set_content (link_url);
+	}
+	
+	// *********************
+	// onrollover override 2
+	// *********************
+	public function onRollOver_event_2 ()
+	{
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
+	}
+	
+	// ********************
+	// onrollout override 1
+	// ********************
+	public function onRollOut_event_1 ()
+	{
+		mc_ref.gotoAndStop ("normal");
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ********************
+	// onrollout override 2
+	// ********************
+	public function onRollOut_event_2 ()
+	{
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ()
+	{
+		pull_edit_panel ();
+	}
+
+	// *********************
+	// transition out action
+	// *********************
+	public function transition_out_action ():Void
+	{
+		_root.page_mc.load_root_xml (link_url);
 	}
 	
 	// ******************
 	// onrelease override
 	// ******************
-	public function onRelease ()
+	public function onRelease_event ()
 	{
-		// work as simple button in non edit mode
-		if (edit_mode == false)
+		mc_ref.gotoAndStop ("normal");
+		
+		switch (link_type)
 		{
-			mc_ref.gotoAndStop ("normal");
-			
-			switch (link_type)
+			case 0:
 			{
-				case 0:
+				// loading new contents
+				if (_root.mc_transitions != null)
 				{
-					// loading internal content
+					_root.mc_transitions.set_mc_ref (mc_ref);
+					_root.mc_transitions.start_transition (1);
+				}
+				else
+				{
 					_root.page_mc.load_root_xml (link_url);
-					break;
 				}
-				case 1:
-				{
-					// loading external content
-					_root.sys_func.build_popup (800, 600, "", link_url, 1);
-					break;
-				}
+				break;
+			}
+			case 1:
+			{
+				// loading external content
+				_root.sys_func.build_popup (800, 600, "", link_url, 1);
+				break;
 			}
 		}
 	}
@@ -61,56 +139,11 @@ class as.menu.NavigationItemMC extends MovieClip
 	// *************************
 	// onreleaseoutside override
 	// *************************
-	public function onReleaseOutside ()
+	public function onReleaseOutside_event ()
 	{
-		// work as simple button in non edit mode
-		if (edit_mode = false)
-		{
-			mc_ref.gotoAndStop ("normal");
-		}
+		mc_ref.gotoAndStop ("normal");
 	}
 	
-	// *******************
-	// onrollover override
-	// *******************
-	public function onRollOver ()
-	{
-		// react normally in action mode
-		if (edit_mode == false)
-		{
-			mc_ref.gotoAndStop ("over");
-			
-			var temp_string:String;
-			
-			temp_string = mc_ref.content_field.text + " - " + link_url;
-			_root.status_mc.add_message (temp_string , "tooltip");
-		}
-		// react as movable in edit mode
-		else
-		{
-			_root.mc_filters.set_brightness_filter (mc_ref);
-			
-			pull_edit_panel ();
-		}
-	}
-	
-	// ******************
-	// onrollout override
-	// ******************
-	public function onRollOut ()
-	{
-		// react normally in action mode
-		if (edit_mode == false)
-		{
-			mc_ref.gotoAndStop ("normal");
-		}
-		// react as movable in edit mode
-		else
-		{
-			_root.mc_filters.remove_filter (mc_ref);
-		}
-	}
-
 	// ***************
 	// pull edit panel
 	// ***************
@@ -124,7 +157,7 @@ class as.menu.NavigationItemMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, false, false, true);
+		_root.edit_panel_mc.set_function (true, false, false, true, true);
 	}
 
 	// *******************
@@ -148,12 +181,67 @@ class as.menu.NavigationItemMC extends MovieClip
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
+	// ***************
+	// delete function
+	// ***************
+	public function delete_function ():Void
+	{
+		_root.navigation_menu.destroy_one (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
 	public function broadcaster_event (o:Object):Void
 	{
-		edit_mode = new Boolean (o);
+		if (o == true)
+		{			
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRollOut;
+			delete mc_ref.onRelease;
+			delete mc_ref.onReleaseOutside;
+			
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event_2 ();
+			}
+			
+			mc_ref.onRollOut = function ()
+			{
+				onRollOut_event_2 ();
+			}
+			
+			mc_ref.onPress = function ()
+			{
+				onPress_event ();
+			}
+		}
+		else
+		{
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRollOut;
+			delete mc_ref.onPress;
+			
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event_1 ();
+			}
+			
+			mc_ref.onRollOut = function ()
+			{
+				onRollOut_event_1 ();
+			}
+			
+			mc_ref.onRelease = function ()
+			{
+				onRelease_event ();
+			}
+			
+			mc_ref.onReleaseOutside = function ()
+			{
+				onReleaseOutside_event ();
+			}
+		}
 	}
 
 	// ***************

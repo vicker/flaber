@@ -15,7 +15,6 @@ class as.properties.LinkMC extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
 	}
 	
 	// **************
@@ -72,16 +71,18 @@ class as.properties.LinkMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:110, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:190, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.CheckBox, "textfield_checkbox", 3, {_x:80, _y:100, _width:80, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "textfield_button", 4, {_x:170, _y:100, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.CheckBox, "image_checkbox", 5, {_x:80, _y:130, _width:80, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "image_button", 6, {_x:170, _y:130, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 8, {_x:80, _y:190, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 9, {_x:160, _y:190, _width:60, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 10, {_x:80, _y:210, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 11, {_x:80, _y:210, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:110, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:190, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.CheckBox, "textfield_checkbox", 3, {_x:80, _y:95, _width:80, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "textfield_button", 4, {_x:170, _y:95, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.CheckBox, "image_checkbox", 5, {_x:80, _y:125, _width:80, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "image_button", 6, {_x:170, _y:125, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 8, {_x:80, _y:185, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 9, {_x:160, _y:185, _width:60, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 10, {_x:80, _y:205, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 11, {_x:80, _y:205, _width:150, _height:20});
+		
+		setup_component_style ();
 		
 		setup_textfield_checkbox ();
 		setup_textfield_button ();
@@ -141,15 +142,13 @@ class as.properties.LinkMC extends MovieClip
 			
 			if (this.class_ref.textfield_checkbox.selected == true)
 			{
-				var temp_depth:Number;
 				var temp_name:String;
 				var lib_name:String;
 				
-				temp_depth = mc_ref.getNextHighestDepth ();
 				temp_name = "textfield_mc";
 				lib_name = "lib_page_content_textfield";
 				
-				this.class_ref.target_ref.attachMovie (lib_name, temp_name, temp_depth);
+				this.class_ref.target_ref.attachMovie (lib_name, temp_name, 0);
 			}
 			else
 			{

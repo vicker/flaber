@@ -13,8 +13,6 @@ class as.shape.RectangleMC extends MovieClip
 	private var line_style:Array;
 	private var fill_color:Number;
 
-	private var edit_mode:Boolean;			// edit mode flag
-	
 	// ***********
 	// constructor
 	// ***********
@@ -27,8 +25,6 @@ class as.shape.RectangleMC extends MovieClip
 		rect_corner = 0;
 		line_style = new Array (1, 0x000000, 100);
 		fill_color = 0x000000;
-		
-		edit_mode = false;
 	}
 	
 	// *******
@@ -136,27 +132,28 @@ class as.shape.RectangleMC extends MovieClip
 	// *******************
 	// onrollover override
 	// *******************
-	public function onRollOver ()
+	public function onRollOver_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.set_brightness_filter (mc_ref);
-			
-			pull_edit_panel ();
-		}
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
 	}
 
 	// ******************
 	// onrollout override
 	// ******************
-	public function onRollOut ()
+	public function onRollOut_event ()
 	{
-		// react only in edit mode
-		if (edit_mode == true)
-		{
-			_root.mc_filters.remove_filter (mc_ref);
-		}
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ()
+	{
+		pull_edit_panel ();
 	}
 
 	// ***************
@@ -201,7 +198,7 @@ class as.shape.RectangleMC extends MovieClip
 		
 		_root.edit_panel_mc.set_target_ref (mc_ref);
 		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, true, true, true);
+		_root.edit_panel_mc.set_function (true, true, true, true, true);
 	}
 
 	// ***************
@@ -301,12 +298,42 @@ class as.shape.RectangleMC extends MovieClip
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
+	// ***************
+	// delete function
+	// ***************
+	public function delete_function ():Void
+	{
+		_root.page_mc.destroy_one (mc_ref);
+	}
+
 	// *****************
 	// broadcaster event
 	// *****************
 	public function broadcaster_event (o:Object):Void
 	{
-		edit_mode = new Boolean (o);
+		if (o == true)
+		{
+			mc_ref.onRollOver = function ()
+			{
+				onRollOver_event ();
+			}
+			
+			mc_ref.onRollOut = function ()
+			{
+				onRollOut_event ();
+			}
+			
+			mc_ref.onPress = function ()
+			{
+				onPress_event ();
+			}
+		}
+		else
+		{
+			delete mc_ref.onRollOver;
+			delete mc_ref.onRollOut;
+			delete mc_ref.onPress;
+		}		
 	}
 
 	// **********

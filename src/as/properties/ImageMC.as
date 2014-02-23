@@ -17,8 +17,6 @@ class as.properties.ImageMC extends MovieClip
 		mc_ref = this;
 		
 		setup_component_object ();
-		setup_component_style ();
-		setup_image_library ();
 	}
 	
 	// **************
@@ -136,18 +134,20 @@ class as.properties.ImageMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:40, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:100, _y:100, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:100, _y:125, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "rotation_textinput", 5, {_x:100, _y:150, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "url_textinput", 6, {_x:20, _y:210, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "url_button", 7, {_x:180, _y:210, _width:20, _height:20});
-		mc_ref.createClassObject (mx.containers.ScrollPane, "library_scrollpane", 8, {_x:240, _y:40, _width:350, _height:380});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:100, _y:95, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:100, _y:120, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "rotation_textinput", 5, {_x:100, _y:145, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "url_textinput", 6, {_x:20, _y:205, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.Button, "url_button", 7, {_x:180, _y:205, _width:20, _height:20});
+		mc_ref.createClassObject (mx.containers.ScrollPane, "library_scrollpane", 8, {_x:240, _y:35, _width:350, _height:380});
 		mc_ref.attachMovie ("lib_image_preview_mc", "preview_mc", 9, {_x:20, _y:270});
 		
-		setup_url_button ();
+		setup_component_style ();
+		setup_image_library ();
 		
+		setup_url_button ();		
 		setup_apply_button ();
 		setup_ok_button ();
 		setup_cancel_button ();

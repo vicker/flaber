@@ -20,8 +20,6 @@ class as.menu.NavigationMenuMC extends MovieClip
 	private var file_name:String;					// for tracer
 	private var loaded_file:String;				// loaded file name
 
-	private var edit_mode:Boolean;				// edit mode flag
-
 	// ***********
 	// constructor
 	// ***********
@@ -35,9 +33,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 		
 		file_name = "(NavigationMenuMC.as)";
 		
-		edit_mode = false;
-		
-		setup_edit_mode_bg ();
+		mc_ref.edit_mode_bg_tag._visible = false;
 	}
 
 	// **********
@@ -49,41 +45,69 @@ class as.menu.NavigationMenuMC extends MovieClip
 		{
 			item_mc_array [i].removeMovieClip ();
 		}
+		
+		item_mc_array = new Array ();
 	}
 
 	// ******************
-	// setup edit mode bg
+	// delete one item mc
 	// ******************
-	public function setup_edit_mode_bg ()
+	public function destroy_one (m:MovieClip):Void
 	{
-		// hide the edit mode bg tag
-		mc_ref.edit_mode_bg_tag._visible = false;
-		
-		mc_ref.edit_mode_bg ["class_ref"] = mc_ref;
-		
-		// onrollover override
-		mc_ref.edit_mode_bg.onRollOver = function ()
-		{
-			// react only in edit mode
-			if (this.class_ref.edit_mode == true)
+		for (var i in item_mc_array)		{
+			if (item_mc_array [i] == m)
 			{
-				_root.mc_filters.set_brightness_filter (this.class_ref);
+				item_mc_array [i].removeMovieClip ();
+				item_mc_array [i].splice (i, 1);
 				
-				this.class_ref.pull_edit_panel ();
-			}
-		}
-		
-		// onrollout override
-		mc_ref.edit_mode_bg.onRollOut = function ()
-		{
-			// react only in edit mode
-			if (this.class_ref.edit_mode == true)
-			{
-				_root.mc_filters.remove_filter (this.class_ref);
+				break;
 			}
 		}
 	}
+
+	// ***************
+	// add one item mc
+	// ***************
+	public function add_one ():Void
+	{
+		var temp_mc:MovieClip;
+		temp_mc = mc_ref.attachMovie (menu_style ["name"], "menu_item_" + mc_ref.getNextHighestDepth (), mc_ref.getNextHighestDepth ());
+		item_mc_array.push (temp_mc);
 		
+		var temp_xml:XML;
+		temp_xml = new XML ("<NavigationItemMC style='global'><x>20</x><y>20</y><text>Dummy</text></NavigationItemMC>");
+		temp_mc.set_data_xml (temp_xml.firstChild, text_format);
+		
+		temp_mc.broadcaster_event (_root.menu_mc.get_edit_mode ());
+	}
+
+	// *******************
+	// onrollover override
+	// *******************
+	public function onRollOver_event ()
+	{
+		_root.mc_filters.set_brightness_filter (mc_ref);
+		_root.tooltip_mc.set_content (mc_ref._name);
+		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
+	}
+	
+	// ******************
+	// onrollout override
+	// ******************
+	public function onRollOut_event ()
+	{
+		_root.mc_filters.remove_filter (mc_ref);
+		_root.tooltip_mc.throw_away ();
+	}
+	
+	// ****************
+	// onpress override
+	// ****************
+	public function onPress_event ()
+	{
+		pull_edit_panel ();
+	}
+	
 	// *************
 	// load root xml
 	// *************
@@ -305,25 +329,42 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ***********
 	public function broadcaster_event (o:Object):Void
 	{
-		// change mode flag
-		edit_mode = new Boolean (o);
-		
-		// show / remove the edit mode bg
-		if (edit_mode == true)
+		if (o == true)
 		{
+			// showing the edit mode bg
 			var temp_xml:XML;
 			temp_xml = new XML ("<RectangleMC><x>0</x><y>0</y><width>300</width><height>50</height><corner>0</corner><line_style>2|0x666666|100</line_style><fill_color>0xFFFFFF</fill_color><alpha>10</alpha></RectangleMC>");
 			
+			mc_ref.edit_mode_bg_tag._visible = true;
+			
+			mc_ref.edit_mode_bg ["class_ref"] = mc_ref;
 			mc_ref.edit_mode_bg.set_data_xml (temp_xml.firstChild);
 			mc_ref.edit_mode_bg.draw_it ();
 			
-			mc_ref.edit_mode_bg_tag._visible = true;
+			// listeners
+			mc_ref.edit_mode_bg.onRollOver = function ()
+			{
+				this.class_ref.onRollOver_event ();
+			}
+			
+			mc_ref.edit_mode_bg.onRollOut = function ()
+			{
+				this.class_ref.onRollOut_event ();
+			}
+			
+			mc_ref.edit_mode_bg.onPress = function ()
+			{
+				this.class_ref.onPress_event ();
+			}
 		}
 		else
 		{
 			mc_ref.edit_mode_bg.clear ();
-			
 			mc_ref.edit_mode_bg_tag._visible = false;
+			
+			delete mc_ref.edit_mode_bg.onRollOver;
+			delete mc_ref.edit_mode_bg.onRollOut;
+			delete mc_ref.edit_mode_bg.onPress;
 		}
 		
 		for (var i in item_mc_array)
@@ -404,10 +445,17 @@ class as.menu.NavigationMenuMC extends MovieClip
 		data_node = out_xml.createElement ("data");
 			
 			// calling each navigation item instance to return their xml
-			for (var i in item_mc_array)
+			// MUST keep in sequence so dont use for in...
+			var temp_length:Number;
+			temp_length = item_mc_array.length;
+			
+			for (var i = 0; i < temp_length; i++)
 			{
-				temp_node = item_mc_array [i].export_xml ();
-				data_node.appendChild (temp_node);
+				if (item_mc_array [i] != null)
+				{
+					temp_node = item_mc_array [i].export_xml ();
+					data_node.appendChild (temp_node);
+				}
 			}
 			
 		root_node.appendChild (data_node);
@@ -450,7 +498,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ***************
 	public function get_text_format ():TextFormat
 	{
-		return text_format;
+		return (text_format);
 	}
 	
 	// **************
@@ -458,6 +506,14 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// **************
 	public function get_menu_style ():Object
 	{
-		return menu_style;
+		return (menu_style);
+	}
+	
+	// ***************
+	// get loaded file
+	// ***************
+	public function get_loaded_file ():String
+	{
+		return (loaded_file);
 	}
 }
