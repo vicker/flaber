@@ -3,12 +3,8 @@
 // *************
 class as.page_content.ImageMC extends MovieClip
 {
-	// MC variables
-	// MovieClip			clip_mc
-	
 	// private variables
 	private var mc_ref:MovieClip;						// interface for the image mc
-	private var mc_loader:MovieClipLoader;			// loader for the image mc
 
 	private var mc_url:String;
 	
@@ -16,7 +12,8 @@ class as.page_content.ImageMC extends MovieClip
 	public function ImageMC ()
 	{
 		mc_ref = this;
-		mc_loader = new MovieClipLoader ();
+		
+		mc_ref.attachMovie ("lib_clip_loader_mc", "clip_mc", 1, {_x: 0, _y: 0});
 	}
 	
 	// ***************
@@ -79,19 +76,13 @@ class as.page_content.ImageMC extends MovieClip
 			}			
 		}
 		
-		var load_listener:Object;
-		
-		load_listener = new Object ();
-		load_listener ["class_ref"] = mc_ref;
-		load_listener.onLoadInit = function ()
+		if (temp_width != undefined && temp_height != undefined)
 		{
-			this.class_ref.clip_mc._width = temp_width;
-			this.class_ref.clip_mc._height = temp_height;
-			this.class_ref.clip_mc._rotation = temp_rotation;
+			mc_ref.clip_mc.set_display_dimension (temp_width, temp_height);
 		}
 		
-		mc_loader.addListener (load_listener);
-		mc_loader.loadClip (mc_url, mc_ref.clip_mc);
+		mc_ref.clip_mc._rotation = temp_rotation;
+		mc_ref.clip_mc.set_clip_mc (mc_url);
 	}
 
 	// *******************
@@ -195,10 +186,10 @@ class as.page_content.ImageMC extends MovieClip
 		var target_height:Number;
 		
 		target_height = Math.max (mc_ref._ymouse, 10);
-		target_width = mc_ref.clip_mc._width * (target_height / mc_ref.clip_mc._height);
+		target_width = mc_ref.clip_mc.get_display_dimension () ["width"] * (target_height / mc_ref.clip_mc.get_display_dimension () ["height"]);
 		
-		mc_ref.clip_mc._width = target_width;
-		mc_ref.clip_mc._height = target_height;
+		mc_ref.clip_mc.set_display_dimension (target_width, target_height);
+		mc_ref.clip_mc.update_display_dimension ();
 	}
 
 	// ***************
@@ -331,13 +322,13 @@ class as.page_content.ImageMC extends MovieClip
 
 		// width of image
 		temp_node = out_xml.createElement ("width");
-		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._width.toString ());
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc.get_display_dimension () ["width"].toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
 		// height of image
 		temp_node = out_xml.createElement ("height");
-		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc._height.toString ());
+		temp_node_2 = out_xml.createTextNode (mc_ref.clip_mc.get_display_dimension () ["height"].toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		

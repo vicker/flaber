@@ -46,7 +46,7 @@ class as.menu.MenuBarMC extends MovieClip
 			}
 		}
 		
-		menu_xml.load ("MenuBar.xml");
+		menu_xml.sendAndLoad ("MenuBar.xml" + _root.sys_func.get_break_cache (), menu_xml, "POST");
 	}
 	
 	// *****************
@@ -114,6 +114,27 @@ class as.menu.MenuBarMC extends MovieClip
 				{
 					_root.save_broadcaster.set_changed_flag ();
 					_root.save_broadcaster.broadcast ();
+					break;
+				}
+				
+				// Save As Page
+				case o.menu.file_save_as:
+				{
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_save_as_page";
+					temp_name = "Save As";
+					temp_width = 240;
+					temp_height = 130;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
 					break;
 				}
 				
@@ -222,6 +243,52 @@ class as.menu.MenuBarMC extends MovieClip
 				case o.menu.mode_edit:
 				{
 					this.class_ref.change_mode (1);
+					break;
+				}
+				
+				// **********
+				// Tools Menu
+				// **********
+				
+				// Depth Manager
+				case o.menu.tools_depth:
+				{
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_depth_manager";
+					temp_name = "Depth Manager";
+					temp_width = 220;
+					temp_height = 270;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
+					break;
+				}
+				
+				// Image Uploader
+				case o.menu.tools_image:
+				{
+					var temp_lib:String;
+					var temp_name:String;
+					var temp_width:Number;
+					var temp_height:Number;
+					
+					temp_lib = "lib_dialogue_image_uploader";
+					temp_name = "Image Uploader";
+					temp_width = 375;
+					temp_height = 75;
+					
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
 					break;
 				}
 			}

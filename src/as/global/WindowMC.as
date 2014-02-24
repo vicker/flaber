@@ -82,6 +82,12 @@ class as.global.WindowMC extends MovieClip
 		mc_ref.content_mc._visible = false;
 		mc_ref.content_mc.enabled = false;
 		
+		mc_ref.max_button.enabled = true;
+		mc_ref.max_button._alpha = 100;
+		
+		mc_ref.min_button.enabled = false;
+		mc_ref.min_button._alpha = 25;
+		
 		frame_height = 20;
 		draw_frame ();
 	}
@@ -93,6 +99,12 @@ class as.global.WindowMC extends MovieClip
 	{
 		mc_ref.content_mc._visible = true;
 		mc_ref.content_mc.enabled = false;
+		
+		mc_ref.max_button.enabled = false;
+		mc_ref.max_button._alpha = 25;
+		
+		mc_ref.min_button.enabled = true;
+		mc_ref.min_button._alpha = 100;
 		
 		frame_height = org_height;
 		draw_frame ();
@@ -165,6 +177,10 @@ class as.global.WindowMC extends MovieClip
 		{
 			this.class_ref.maximize_window ();
 		}
+		
+		// default maximum, so it can be disabled
+		mc_ref.max_button.enabled = false;
+		mc_ref.max_button._alpha = 25;
 	}
 	
 	// ******************

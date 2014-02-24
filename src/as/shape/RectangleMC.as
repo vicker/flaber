@@ -20,8 +20,8 @@ class as.shape.RectangleMC extends MovieClip
 	{
 		mc_ref = this;
 		
-		rect_width = 10;
-		rect_height = 10;
+		rect_width = 50;
+		rect_height = 50;
 		rect_corner = 0;
 		line_style = new Array (1, 0x000000, 100);
 		fill_color = 0x000000;

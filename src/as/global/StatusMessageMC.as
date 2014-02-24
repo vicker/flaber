@@ -86,8 +86,16 @@ class as.global.StatusMessageMC extends MovieClip
 	// ***************
 	public function set_transparent ():Void
 	{
-		clearInterval (temp_interval);
-		temp_interval = setInterval (this, "alpha_step", 100, -10);
+		switch (display_mode)
+		{
+			case "mini":
+			{
+				clearInterval (temp_interval);
+				temp_interval = setInterval (mc_ref, "alpha_step", 100, -10);
+					
+					break;
+				}
+			}
 	}
 	
 	// ***************
@@ -129,17 +137,9 @@ class as.global.StatusMessageMC extends MovieClip
 		// onrollout override
 		mc_ref.mini_mc.frame_mc.onRollOut = function ()
 		{
-			switch (this.class_ref.display_mode)
-			{
-				case "mini":
-				{
-					// automatically hide after a period of time
-					clearInterval (this.class_ref.temp_interval);
-					this.class_ref.temp_interval = setInterval (this.class_ref, "set_transparent", 5000);
-					
-					break;
-				}
-			}
+			// automatically hide after a period of time
+			clearInterval (this.class_ref.temp_interval);
+			this.class_ref.temp_interval = setInterval (this.class_ref, "set_transparent", 5000);
 		}
 		
 		// maximum button onrelease override
@@ -149,6 +149,12 @@ class as.global.StatusMessageMC extends MovieClip
 			clearInterval (this.class_ref.temp_interval);
 			this.class_ref.display_mode = "full";
 			this.class_ref.full_mc._visible = true;
+			
+			this.class_ref.mini_mc.min_button.enabled = true;
+			this.class_ref.mini_mc.min_button._alpha = 100;
+			
+			this.class_ref.mini_mc.max_button.enabled = false;
+			this.class_ref.mini_mc.max_button._alpha = 25;
 		}
 		
 		// minimum button onrelease override
@@ -157,7 +163,17 @@ class as.global.StatusMessageMC extends MovieClip
 		{
 			this.class_ref.display_mode = "mini";
 			this.class_ref.full_mc._visible = false;
+			
+			this.class_ref.mini_mc.min_button.enabled = false;
+			this.class_ref.mini_mc.min_button._alpha = 25;
+			
+			this.class_ref.mini_mc.max_button.enabled = true;
+			this.class_ref.mini_mc.max_button._alpha = 100;
 		}
+		
+		// default minimized, so can disable min button
+		mc_ref.mini_mc.min_button.enabled = false;
+		mc_ref.mini_mc.min_button._alpha = 25;
 	}
 	
 	// ***********

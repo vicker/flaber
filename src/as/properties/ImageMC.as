@@ -31,8 +31,8 @@ class as.properties.ImageMC extends MovieClip
 		mc_ref.y_textinput.text = target_ref._y;
 		
 		// dimension
-		mc_ref.width_textinput.text = target_ref.clip_mc._width;
-		mc_ref.height_textinput.text = target_ref.clip_mc._height;
+		mc_ref.width_textinput.text = target_ref.clip_mc.get_display_dimension () ["width"];
+		mc_ref.height_textinput.text = target_ref.clip_mc.get_display_dimension () ["height"];
 		
 		// rotation
 		mc_ref.rotation_textinput.text = target_ref.clip_mc._rotation;

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	
 	$file_name = "(get_dir.php)";
 	$xml_output = "";
@@ -12,7 +12,7 @@
 		if ($target_dir != "")
 		{
 			// if the dir is correct and can be handled, retrieve now...
-			if ($handle = opendir ($target_dir))
+			if ($handle = opendir ("../" . $target_dir))
 			{
 				while (false !== ($file = readdir($handle)))
 				{

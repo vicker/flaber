@@ -116,10 +116,12 @@ class as.menu.NavigationMenuMC extends MovieClip
 		loaded_file = s;
 		
 		// xml data loading
-		var root_xml:XML = new XML ();
+		var root_xml:as.global.XMLExtend;
+		root_xml = new as.global.XMLExtend ();
 		root_xml ["class_ref"] = this;
 		root_xml.ignoreWhite = true;
 		root_xml.sendAndLoad (s + _root.sys_func.get_break_cache (), root_xml, "POST");
+		root_xml.check_progress ("Loading navigation menu...");
 		
 		root_xml.onLoad = function (b:Boolean)
 		{
@@ -473,16 +475,15 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ********
 	public function save_xml ():Void
 	{
-		_root.status_mc.add_message ("Saving navigation menu...", "normal");
-		
 		var out_xml:XML;
-		var return_xml:XML;
+		var return_xml:as.global.XMLExtend;
 		
-		return_xml = new XML ();
+		return_xml = new as.global.XMLExtend ();
 		return_xml.onLoad = function (b: Boolean)
 		{
 			if (b)
 			{
+				this.stop_progress ();
 				_root.status_mc.add_message (return_xml.toString (), "");
 			}
 		}
@@ -491,6 +492,8 @@ class as.menu.NavigationMenuMC extends MovieClip
 		out_xml = export_xml ();
 		out_xml.contentType = "text/xml";
 		out_xml.sendAndLoad ("function/update_xml.php?target_file=" + loaded_file, return_xml);
+		
+		return_xml.check_progress ("Saving navigation menu...");
 	}
 
 	// ***************

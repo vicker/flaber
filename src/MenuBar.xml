@@ -4,9 +4,11 @@
 xmlns="http://www.w3schools.com"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<menuitem type="normal" label="File" instanceName="file">
-		<menuitem type="normal" label="New Page" instanceName="file_new" />
-		<menuitem type="normal" label="Open Page" instanceName="file_open" />
-		<menuitem type="normal" label="Save Page" instanceName="file_save" />
+		<menuitem type="normal" label="New..." instanceName="file_new" />
+		<menuitem type="normal" label="Open..." instanceName="file_open" />
+		<menuitem type="separator" />
+		<menuitem type="normal" label="Save" instanceName="file_save" />
+		<menuitem type="normal" label="Save As..." instanceName="file_save_as" />
 		<menuitem type="separator" />
 		<menuitem type="normal" label="Logout Admin"  instanceName="file_logout"/>
 	</menuitem>
@@ -27,9 +29,8 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 		<menuitem type="radio" label="Edit Mode" groupName="mode_group" instanceName="mode_edit" />
 	</menuitem>
 	<menuitem type="normal" label="Tools" instanceName="tools">
-		<menuitem type="normal" label="Page Manager" instanceName="tools_page"  enabled="false" />
-		<menuitem type="normal" label="Image Manager" instanceName="tools_image"  enabled="false" />
-		<menuitem type="normal" label="Depth Manager" instanceName="tools_depth"  enabled="false" />
+		<menuitem type="normal" label="Image Uploader" instanceName="tools_image" />
+		<menuitem type="normal" label="Depth Manager" instanceName="tools_depth" />
 	</menuitem>
 	<menuitem type="normal" label="About FLABER" instanceName="about" />
 </menu>

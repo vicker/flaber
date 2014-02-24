@@ -12,6 +12,13 @@ SourceForge Project Page
 
 # A. Author's Voice
 
+Thanks for all the supports from the public~ The total download count in sourceforge already reached 1000! To celebrate this moment, release 3 is out!! I hope that you will continue supporting FLABER and enjoy building your Flash web pages.
+
+Vicker LEUNG @ 2006 May 4
+
+Student of City University of Hong Kong, SAR
+
+
 Is been a long time since I started this project. Finally I have a chance to present the very first release. Counting my fingers, this project is running for nearly a year already. I wont say that this product is great, however I will say that you will have fun with it!
 
 Vicker LEUNG @ 2006 Mar 16
@@ -51,8 +58,8 @@ Flash Player 8 is a must
 
 + flaber/
     + function/
-	+ img/  *666, including all folder contents*
-	+ page/ *666, including all folder contents*
+	+ img/  *777 with folder contents 666*
+	+ page/ *777 with folder contents 666*
 	+ style/
 	+ index.html
 	+ flaber.swf
@@ -163,14 +170,25 @@ All of these functions can be found through the menu item "File".
 
 **!!!!!!!!!! ALWAYS REMEMBER TO SAVE THE CONTENT BEFORE EXITING THE WEB !!!!!!!!!!**
 
-## E.h. XML Editing
+## E.h. Depth Manager
 
-Actually FLABER is still in development, some of the functions are still not editable through the GUI. For example
+All the page elements within FLABER are placed in seperate layer (different depth). In order to change the depth of different elements, you can make use of the depth manger.
 
-- Depth changing
-- Image uploading
+    Tools > Depth Manger
 
-And some expert users may like editing codes rather than using the GUI. In this case, you are always welcome to edit the XML files directly.
+Inside depth manager, all the page elements are listed. You can change the depth simply by selecting an item and press either + or - (+ stands for moving up vice versa)
+
+## E.i. Image Uploader
+
+If you want to use your own image files in FLABER, instead of using your FTP clients. You can make use of the image uploader.
+
+    Tools > Image Uploader
+
+By default, all the uploaded files are placed in the IMG folder. And file size is limited to 10MB per file. (Additional limit may be present for some servers. Please contact your server provider for details)
+
+## E.j. XML Editing
+
+Actually FLABER is still in development, some of the functions are still not editable through the GUI. And some expert users may like editing codes rather than using the GUI. In this case, you are always welcome to edit the XML files directly.
 
 **!!!!!!!!!!   For non-expert users, try not to edit the XML directly    !!!!!!!!!!**
 **!!!!!!!!!!   which may results unbelievable damage to the FLABER data  !!!!!!!!!!**
@@ -224,9 +242,9 @@ A friend of mine and a great programmer in many different languages. He have a v
 
 My girlfriend and also my first-line tester. I already forgot how many times she sitting besides me watching me typing all those crazy Flash codes. Sorry about that and I love you :)
 
-***Ms. Soki HO***
+***Mr. Warenix WONG, Ms. Soki HO and Ms. Christy CHUNG***
 
-College student and one of my user tester. Responsible to test whether the product is usable for user who have no Flash experience.
+My three user testers. Responsible to test whether the product is usable for different users.
 
 ***Additional thanks to***
 
@@ -236,7 +254,9 @@ College student and one of my user tester. Responsible to test whether the produ
 - SEPY ActionScript Editor
 
 - Carmen
+- Chris LIANG
 - Kay CHEUNG
+- Leo (ATIX)
 - Michael STOCK
 - Olivia
 - Sam LAM
