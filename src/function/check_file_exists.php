@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$file_name = "(check_file_exists.php)";
 
@@ -7,18 +7,18 @@
 	{
 		$target_file = $_GET ["target_file"];
 		
-		// if the target is well defined, update now...
+		// if the target is well defined, check now...
 		if ($target_file != "")
 		{
 			$target_file = "../" . $target_file;
 			if (is_file ($target_file))
 			{
-				echo ("<exists></exists>");
+				echo ("<exists />");
 				exit;				
 			}
 			else
 			{
-				echo ("<not_exists></not_exists>");
+				echo ("<not_exists />");
 				exit;				
 			}
 		}

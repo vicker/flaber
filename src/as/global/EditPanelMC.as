@@ -21,6 +21,7 @@ class as.global.EditPanelMC extends MovieClip
 		setup_rotate_button ();
 		setup_properties_button ();
 		setup_delete_button ();
+		setup_close_button ();
 		
 		throw_away ();
 	}
@@ -367,6 +368,20 @@ class as.global.EditPanelMC extends MovieClip
 			_root.tooltip_mc.throw_away ();
 			this.class_ref.throw_away ();
 			this.class_ref.target_ref.delete_function ();
+		}
+	}
+	
+	// ******************
+	// setup close button
+	// ******************
+	public function setup_close_button ():Void
+	{
+		mc_ref.close_button ["class_ref"] = mc_ref;
+		
+		// onrelease override
+		mc_ref.close_button.onRelease = function ()
+		{
+			this.class_ref.throw_away ();
 		}
 	}
 }

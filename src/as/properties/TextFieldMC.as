@@ -45,7 +45,7 @@ class as.properties.TextFieldMC extends MovieClip
 		mc_ref.content_textarea.text = target_ref.content_field.htmlText;
 		
 		// scroll bar
-		mc_ref.scroll_button.selected = target_ref.get_scroll_flag ();
+		mc_ref.scroll_button.set_toggle_state (target_ref.get_scroll_flag ());
 	}
 		
 	// **********************
@@ -60,22 +60,23 @@ class as.properties.TextFieldMC extends MovieClip
 		
 		mc_ref.createClassObject (mx.controls.TextArea, "content_textarea", 5, {_x:40, _y:160, _width:370, _height:200});
 		
-		mc_ref.createClassObject (mx.controls.Button, "bold_button", 6, {_x:40, _y:100, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "italic_button", 7, {_x:70, _y:100, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "underline_button", 8, {_x:100, _y:100, _width:20, _height:20});
+		mc_ref.attachMovie ("lib_button_mc", "bold_button", 6, {_x:40, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "italic_button", 7, {_x:70, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "underline_button", 8, {_x:100, _y:100});
 		
-		mc_ref.createClassObject (mx.controls.Button, "left_button", 9, {_x:150, _y:100, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "center_button", 10, {_x:180, _y:100, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "right_button", 11, {_x:210, _y:100, _width:20, _height:20});
+		mc_ref.attachMovie ("lib_button_mc", "left_button", 9, {_x:150, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "center_button", 10, {_x:180, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "right_button", 11, {_x:210, _y:100});
 		
-		mc_ref.createClassObject (mx.controls.Button, "scroll_button", 12, {_x:280, _y:100, _width:20, _height:20});
+		mc_ref.attachMovie ("lib_button_mc", "bullet_button", 12, {_x:250, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "scroll_button", 13, {_x:280, _y:100});
 		
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 13, {_x:40, _y:130, _width:120, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 14, {_x:180, _y:130, _width:50, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 14, {_x:40, _y:130, _width:120, _height:20});
+		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 15, {_x:180, _y:130, _width:50, _height:20});
 		
-		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 15, {_x:250, _y:130});
-		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 16, {_x:250, _y:100});
-		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 17, {_x:180, _y:370});
+		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 16, {_x:250, _y:130});
+		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 17, {_x:320, _y:100});
+		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 18, {_x:180, _y:370});
 		
 		setup_component_style ();
 		
@@ -86,6 +87,7 @@ class as.properties.TextFieldMC extends MovieClip
 		setup_left_button ();
 		setup_center_button ();
 		setup_right_button ();
+		setup_bullet_button ();
 		setup_scroll_button ();
 		setup_font_combobox ();
 		setup_font_size_combobox ();
@@ -116,14 +118,6 @@ class as.properties.TextFieldMC extends MovieClip
 		mc_ref.y_textinput.setStyle ("styleName", "textinput_style");
 		mc_ref.width_textinput.setStyle ("styleName", "textinput_style");
 		mc_ref.height_textinput.setStyle ("styleName", "textinput_style");
-		
-		mc_ref.bold_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.italic_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.underline_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.left_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.center_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.right_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.scroll_button.setStyle ("themeColor", "haloOrange");
 		
 		mc_ref.font_combobox.setStyle ("styleName", "combobox_style");
 		mc_ref.font_size_combobox.setStyle ("styleName", "combobox_style");
@@ -163,6 +157,12 @@ class as.properties.TextFieldMC extends MovieClip
 			case "align":
 			{
 				temp_format.align = val.toString ();
+				break;
+			}
+			// bullet
+			case "bullet":
+			{
+				temp_format.bullet = !temp_format.bullet;
 				break;
 			}
 			// color
@@ -212,17 +212,18 @@ class as.properties.TextFieldMC extends MovieClip
 	// *****************
 	public function setup_bold_button ():Void
 	{
-		mc_ref.bold_button.toggle = true;
-		mc_ref.bold_button.selected = false;
-		mc_ref.bold_button.icon = "lib_button_bold";
+		mc_ref.bold_button.set_toggle_flag (true);
+		mc_ref.bold_button.set_dimension (20, 20);
+		mc_ref.bold_button.set_clip_mc ("lib_button_bold");
+		mc_ref.bold_button.set_tooltip ("Bold");
 		
 		mc_ref.bold_button ["class_ref"] = mc_ref;
 		mc_ref.bold_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
+				this.set_toggle_state (null);
 				this.class_ref.change_textformat ("bold", null);
-				_root.sys_func.button_toggle_selected (this);
 			}
 		}
 	}
@@ -232,16 +233,18 @@ class as.properties.TextFieldMC extends MovieClip
 	// *******************
 	public function setup_italic_button ():Void
 	{
-		mc_ref.italic_button.toggle = true;
-		mc_ref.italic_button.icon = "lib_button_italic";
+		mc_ref.italic_button.set_toggle_flag (true);
+		mc_ref.italic_button.set_dimension (20, 20);
+		mc_ref.italic_button.set_clip_mc ("lib_button_italic");
+		mc_ref.italic_button.set_tooltip ("Italic");
 		
 		mc_ref.italic_button ["class_ref"] = mc_ref;
 		mc_ref.italic_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
+				this.set_toggle_state (null);
 				this.class_ref.change_textformat ("italic", null);
-				_root.sys_func.button_toggle_selected (this);
 			}
 		}
 	}
@@ -251,16 +254,18 @@ class as.properties.TextFieldMC extends MovieClip
 	// **********************
 	public function setup_underline_button ():Void
 	{
-		mc_ref.underline_button.toggle = true;
-		mc_ref.underline_button.icon = "lib_button_underline";
+		mc_ref.underline_button.set_toggle_flag (true);
+		mc_ref.underline_button.set_dimension (20, 20);
+		mc_ref.underline_button.set_clip_mc ("lib_button_underline");
+		mc_ref.underline_button.set_tooltip ("Underline");
 		
 		mc_ref.underline_button ["class_ref"] = mc_ref;
 		mc_ref.underline_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
+				this.set_toggle_state (null);
 				this.class_ref.change_textformat ("underline", null);
-				_root.sys_func.button_toggle_selected (this);
 			}
 		}
 	}
@@ -270,9 +275,9 @@ class as.properties.TextFieldMC extends MovieClip
 	// ******************
 	public function reset_align_button ():Void
 	{
-		mc_ref.left_button.selected = false;
-		mc_ref.center_button.selected = false;
-		mc_ref.right_button.selected = false;
+		mc_ref.left_button.set_toggle_state (false);
+		mc_ref.center_button.set_toggle_state (false);
+		mc_ref.right_button.set_toggle_state (false);
 	}
 	
 	// *****************
@@ -280,17 +285,19 @@ class as.properties.TextFieldMC extends MovieClip
 	// *****************
 	public function setup_left_button ():Void
 	{
-		mc_ref.left_button.toggle = true;
-		mc_ref.left_button.icon = "lib_button_left";
+		mc_ref.left_button.set_toggle_flag (true);
+		mc_ref.left_button.set_dimension (20, 20);
+		mc_ref.left_button.set_clip_mc ("lib_button_left");
+		mc_ref.left_button.set_tooltip ("Left Alignment");
 		
 		mc_ref.left_button ["class_ref"] = mc_ref;
 		mc_ref.left_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
-				this.class_ref.change_textformat ("align", "left");
 				this.class_ref.reset_align_button ();
-				this.selected = true;
+				this.set_toggle_state (true);
+				this.class_ref.change_textformat ("align", "left");
 			}
 		}
 	}
@@ -300,17 +307,19 @@ class as.properties.TextFieldMC extends MovieClip
 	// *******************
 	public function setup_center_button ():Void
 	{
-		mc_ref.center_button.toggle = true;
-		mc_ref.center_button.icon = "lib_button_center";
+		mc_ref.center_button.set_toggle_flag (true);
+		mc_ref.center_button.set_dimension (20, 20);
+		mc_ref.center_button.set_clip_mc ("lib_button_center");
+		mc_ref.center_button.set_tooltip ("Center Alignment");
 		
 		mc_ref.center_button ["class_ref"] = mc_ref;
 		mc_ref.center_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
-				this.class_ref.change_textformat ("align", "center");
 				this.class_ref.reset_align_button ();
-				this.selected = true;
+				this.set_toggle_state (true);
+				this.class_ref.change_textformat ("align", "center");
 			}
 		}
 	}
@@ -320,17 +329,40 @@ class as.properties.TextFieldMC extends MovieClip
 	// ******************
 	public function setup_right_button ():Void
 	{
-		mc_ref.right_button.toggle = true;
-		mc_ref.right_button.icon = "lib_button_right";
+		mc_ref.right_button.set_toggle_flag (true);
+		mc_ref.right_button.set_dimension (20, 20);
+		mc_ref.right_button.set_clip_mc ("lib_button_right");
+		mc_ref.right_button.set_tooltip ("Right Alignment");
 		
 		mc_ref.right_button ["class_ref"] = mc_ref;
 		mc_ref.right_button.onRelease = function ()
 		{
 			if (this.class_ref.sel_flag == true)
 			{
-				this.class_ref.change_textformat ("align", "right");
 				this.class_ref.reset_align_button ();
-				this.selected = true;
+				this.set_toggle_state (true);
+				this.class_ref.change_textformat ("align", "right");
+			}
+		}
+	}
+
+	// *******************
+	// setup bullet button
+	// *******************
+	public function setup_bullet_button ():Void
+	{
+		mc_ref.bullet_button.set_toggle_flag (true);
+		mc_ref.bullet_button.set_dimension (20, 20);
+		mc_ref.bullet_button.set_clip_mc ("lib_button_bullet");
+		mc_ref.bullet_button.set_tooltip ("Bulleted List");
+		
+		mc_ref.bullet_button ["class_ref"] = mc_ref;
+		mc_ref.bullet_button.onRelease = function ()
+		{
+			if (this.class_ref.sel_flag == true)
+			{
+				this.set_toggle_state (null);
+				this.class_ref.change_textformat ("bullet", null);
 			}
 		}
 	}
@@ -340,8 +372,15 @@ class as.properties.TextFieldMC extends MovieClip
 	// *******************
 	public function setup_scroll_button ():Void
 	{
-		mc_ref.scroll_button.toggle = true;
-		mc_ref.scroll_button.icon = "lib_button_scroll";
+		mc_ref.scroll_button.set_toggle_flag (true);
+		mc_ref.scroll_button.set_dimension (20, 20);
+		mc_ref.scroll_button.set_clip_mc ("lib_button_scroll");
+		mc_ref.scroll_button.set_tooltip ("Text Scroller");
+		
+		mc_ref.scroll_button.onRelease = function ()
+		{
+			this.set_toggle_state (null);
+		}
 	}
 	
 	// *******************
@@ -518,7 +557,7 @@ class as.properties.TextFieldMC extends MovieClip
 				
 				item_node = item_xml.createElement ("TextFieldMC");
 				
-				item_node.attributes.scroll_bar = this.class_ref.scroll_button.selected.toString ();
+				item_node.attributes.scroll_bar = this.class_ref.scroll_button.get_toggle_state ().toString ();
 				
 				temp_node = item_xml.createElement ("x");
 				temp_node_2 = item_xml.createTextNode (this.class_ref.x_textinput.text);
@@ -597,17 +636,20 @@ class as.properties.TextFieldMC extends MovieClip
 		temp_format = mc_ref.content_textarea.label.getTextFormat (sel_start, sel_end);
 		
 		// bold
-		mc_ref.bold_button.selected = temp_format.bold;
+		mc_ref.bold_button.set_toggle_state (temp_format.bold || false);
 		
 		// italic
-		mc_ref.italic_button.selected = temp_format.italic;
+		mc_ref.italic_button.set_toggle_state (temp_format.italic || false);
 		
 		// underline
-		mc_ref.underline_button.selected = temp_format.underline;
+		mc_ref.underline_button.set_toggle_state (temp_format.underline || false);
 		
 		// align
 		reset_align_button ();
-		mc_ref [temp_format.align + "_button"].selected = true;
+		mc_ref [temp_format.align + "_button"].set_toggle_state (true);
+		
+		// bullet
+		mc_ref.bullet_button.set_toggle_state (temp_format.bullet || false);
 		
 		// font
 		_root.sys_func.combobox_select_item (mc_ref.font_combobox, temp_format.font);
@@ -664,7 +706,11 @@ class as.properties.TextFieldMC extends MovieClip
 	public function setup_mouse_focus ():Void
 	{
 		// always check the latest focus
-		setInterval (mc_ref, "focus_interval", 500);
+		mc_ref.onMouseMove = function ()
+		{
+			focus_interval ();
+		}
+		//setInterval (mc_ref, "focus_interval", 500);
 		
 		var set_focus:Object;
 		

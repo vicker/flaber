@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 	$password = "flaber";
 	$file_name = "(admin_login.php)";

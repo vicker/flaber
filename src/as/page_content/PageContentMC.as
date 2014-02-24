@@ -25,7 +25,7 @@ class as.page_content.PageContentMC extends MovieClip
 		mc_ref = this; 
 		
 		content_mc_array = new Array ();
-		max_depth = 0;
+		max_depth = -1;
 		
 		file_name = "(PageContentMC.as)";		
 	}
@@ -74,11 +74,12 @@ class as.page_content.PageContentMC extends MovieClip
 		destroy ();
 		
 		// xml data loading
-		var root_xml:XML;
-		root_xml = new XML ();
-		root_xml ["class_ref"] = this;
+		var root_xml:as.global.XMLExtend;
+		root_xml = new as.global.XMLExtend ();
+		root_xml ["class_ref"] = mc_ref;
 		root_xml.ignoreWhite = true;
 		root_xml.sendAndLoad (s + _root.sys_func.get_break_cache (), root_xml, "POST");
+		root_xml.check_progress ("Loading " + s + "...");
 		
 		root_xml.onLoad = function (b:Boolean)
 		{
@@ -89,6 +90,7 @@ class as.page_content.PageContentMC extends MovieClip
 			}
 			else
 			{
+				this.stop_progress ();
 				_root.status_mc.add_message (this.class_ref.file_name + " constructor load xml fail.", "critical");
 			}
 		}
@@ -186,8 +188,8 @@ class as.page_content.PageContentMC extends MovieClip
 				{
 					// -1 depth wont be able to be removed, while bg_image non negative will crash transition
 					// so we have to make it one more step... the clip_mc
-					mc_ref.attachMovie ("lib_empty_mc", "bg_image", -1);
-					mc_ref.bg_image.attachMovie ("lib_empty_mc", "clip_mc", 1, {_x:0, _y:0});
+					mc_ref.attachMovie ("lib_clip_loader_mc", "bg_image", -1);
+//					mc_ref.bg_image.attachMovie ("lib_empty_mc", "clip_mc", 1, {_x:0, _y:0});
 					
 					// since background image still have many nodes, so need to iterate again
 					for (var j in temp_node.childNodes)
@@ -215,19 +217,7 @@ class as.page_content.PageContentMC extends MovieClip
 							// path of the bg image
 							case "url":
 							{
-								var temp_loader:MovieClipLoader;
-								var temp_listener:Object;
-								
-								// if the file doesn't exists... report error
-								temp_listener = new Object ();
-								temp_listener.onLoadError = function ()
-								{
-									_root.status_mc.add_message ("(PageContentMC.as) background image doesn't exists.", "critical");
-								}
-								
-								temp_loader = new MovieClipLoader ();
-								temp_loader.addListener (temp_listener);
-								temp_loader.loadClip (temp_value_2, mc_ref.bg_image.clip_mc);
+								mc_ref.bg_image.set_clip_mc (temp_value_2);
 								
 								bg_image_url = temp_value_2;
 								
@@ -335,6 +325,51 @@ class as.page_content.PageContentMC extends MovieClip
 		_root.mode_broadcaster.add_observer (content_mc_array [temp_id]);
 	}
 	
+	// ***************
+	// rearrange depth
+	// ***************
+	public function rearrange_depth ():Void
+	{
+		var j:Number;
+		
+		j = 0;
+		
+		for (var i = 0; i <= max_depth; i++)
+		{
+			if (content_mc_array [i] != undefined)
+			{
+				// if spaces presents, rearrange to remove the spaces
+				if (content_mc_array [i].getDepth () != j)
+				{
+					content_mc_array [i].swapDepths (j);
+					content_mc_array [j] = content_mc_array [i];
+				}
+				
+				j = j + 1;
+			}
+		}
+		
+		// update back the maximum depth
+		max_depth = j - 1;
+		
+		// splice the array
+		content_mc_array.splice (max_depth + 1, 9999);
+	}
+	
+	// ************
+	// change depth
+	// ************
+	public function change_depth (d:Number, n:Number):Void
+	{
+		var temp_mc:MovieClip;
+		
+		content_mc_array [d].swapDepths (content_mc_array [d + n]);
+		
+		temp_mc = content_mc_array [d];
+		content_mc_array [d] = content_mc_array [d + n];
+		content_mc_array [d + n] = temp_mc;
+	}
+	
 	// ************
 	// set data_xml
 	// ************
@@ -359,11 +394,9 @@ class as.page_content.PageContentMC extends MovieClip
 	// ********
 	public function save_xml ():Void
 	{
-		_root.status_mc.add_message ("Saving page content...", "normal");
-		
 		var out_xml:XML;
 		var out_string:String;
-		var return_xml:XML;
+		var return_xml:as.global.XMLExtend;
 		
 		var root_node:XMLNode;
 		var config_node:XMLNode;
@@ -453,12 +486,16 @@ class as.page_content.PageContentMC extends MovieClip
 			
 		root_node.appendChild (data_node);
 		
-		return_xml = new XML ();
+		return_xml = new as.global.XMLExtend ();
 		return_xml.onLoad = function (b: Boolean)
 		{
 			if (b)
 			{
+				this.stop_progress ();
 				_root.status_mc.add_message (return_xml.toString (), "");
+				
+				// update the page dir array to ensure up to date
+				_root.flaber.preload_page_dir_array ();
 			}
 		}
 		
@@ -468,8 +505,7 @@ class as.page_content.PageContentMC extends MovieClip
 		out_xml.contentType = "text/xml";
 		
 		out_xml.sendAndLoad ("function/update_xml.php?target_file=" + loaded_file, return_xml);
-	
-		trace (out_xml);
+		return_xml.check_progress ("Saving page content...");
 	}
 
 	// ***************
@@ -494,5 +530,13 @@ class as.page_content.PageContentMC extends MovieClip
 	public function get_bg_image_url ():String
 	{
 		return (bg_image_url);
+	}
+	
+	// ********************
+	// get content mc array
+	// ********************
+	public function get_content_mc_array ():Array
+	{
+		return (content_mc_array);
 	}
 }

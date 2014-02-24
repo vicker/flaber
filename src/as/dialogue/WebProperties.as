@@ -241,6 +241,8 @@ class as.dialogue.WebProperties extends MovieClip
 							
 							out_xml.sendAndLoad ("function/update_xml.php?target_file=" + this.target_file, return_xml);
 						}
+						
+						_root.navigation_menu.broadcaster_event (_root.menu_mc.get_edit_mode ());
 					}
 				}
 			}

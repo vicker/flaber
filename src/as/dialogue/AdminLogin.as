@@ -94,12 +94,13 @@ class as.dialogue.AdminLogin extends MovieClip
 	{
 		if (data_validation () == true)
 		{		
-			var admin_xml:XML;
+			var admin_xml:as.global.XMLExtend;
 			
-			admin_xml = new XML ();
+			admin_xml = new as.global.XMLExtend ();
 			admin_xml.ignoreWhite = true;
 			admin_xml ["class_ref"] = mc_ref;
 			admin_xml.sendAndLoad ("function/admin_login.php?password=" + mc_ref.password_textinput.text, admin_xml);
+			admin_xml.check_progress ("Checking password...");
 			
 			admin_xml.onLoad = function (b:Boolean)
 			{
@@ -114,6 +115,7 @@ class as.dialogue.AdminLogin extends MovieClip
 					// if have error
 					else
 					{
+						this.stop_progress ();
 						_root.status_mc.add_message (this.toString (), "");
 					}
 				}

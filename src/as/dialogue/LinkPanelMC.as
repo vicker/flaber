@@ -73,10 +73,15 @@ class as.dialogue.LinkPanelMC extends MovieClip
 		
 		// panel input
 		mc_ref.panel_mc.createClassObject (mx.controls.TextInput, "url_textinput", 1, {_x:0, _y:0, _width:250, _height:20});
-		mc_ref.panel_mc.createClassObject (mx.controls.Button, "url_tick_button", 2, {_x:260, _y:0, _width:20, _height:20});
+//		mc_ref.panel_mc.createClassObject (mx.controls.Button, "url_tick_button", 2, {_x:260, _y:0, _width:20, _height:20});
+		mc_ref.panel_mc.attachMovie ("lib_button_mc", "url_tick_button", 2, {_x:260, _y:0});
 		
 		mc_ref.panel_mc.url_textinput.setStyle ("styleName", "textinput_style");
-		mc_ref.panel_mc.url_tick_button.icon = "lib_button_tick";
+		
+		mc_ref.panel_mc.url_tick_button.set_toggle_flag (false);
+		mc_ref.panel_mc.url_tick_button.set_dimension (20, 20);
+		mc_ref.panel_mc.url_tick_button.set_clip_mc ("lib_button_tick");
+		mc_ref.panel_mc.url_tick_button.set_tooltip ("Accept");
 		
 		// setup tick button action
 		mc_ref.panel_mc.url_tick_button ["class_ref"] = mc_ref;
@@ -98,8 +103,12 @@ class as.dialogue.LinkPanelMC extends MovieClip
 	// ************
 	public function build_button ():Void
 	{
-		mc_ref.createClassObject (mx.controls.Button, "link_button", 1, {_x:0, _y:0, _width:20, _height:20});
-		mc_ref.link_button.icon = "lib_button_link";
+		mc_ref.attachMovie ("lib_button_mc", "link_button", 1, {_x:0, _y:0});
+		
+		mc_ref.link_button.set_toggle_flag (false);
+		mc_ref.link_button.set_dimension (20, 20);
+		mc_ref.link_button.set_clip_mc ("lib_button_link");
+		mc_ref.link_button.set_tooltip ("Link");
 		
 		mc_ref.link_button ["class_ref"] = mc_ref;
 		mc_ref.link_button.onRelease = function ()

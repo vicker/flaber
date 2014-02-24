@@ -5,6 +5,7 @@ class as.dialogue.NewPage extends MovieClip
 {
 	// private variables
 	private var mc_ref:MovieClip;					// reference to the movie clip
+	private var file_name:String;					// for tracer
 	
 	// ***********
 	// constructor
@@ -12,6 +13,8 @@ class as.dialogue.NewPage extends MovieClip
 	public function NewPage ()
 	{
 		mc_ref = this;
+		
+		file_name = "(NewPage.as)";		
 		
 		setup_component_object ();
 	}
@@ -21,11 +24,10 @@ class as.dialogue.NewPage extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "file_textinput", 1, {_x:50, _y:35, _width:135, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "file_textinput", 1, {_x:80, _y:35, _width:110, _height:20});
 		
 		setup_component_style ();
 		
-		setup_file_textinput ();
 		setup_ok_button ();
 		setup_cancel_button ();
 	}
@@ -47,15 +49,13 @@ class as.dialogue.NewPage extends MovieClip
 	// ***************
 	public function data_validation ():Boolean
 	{
+		if (mc_ref.file_textinput.text == "")
+		{
+			_root.status_mc.add_message (mc_ref.file_name + " Please enter a valid page name.", "critical");
+			return false;
+		}
+		
 		return true;
-	}
-
-	// ********************
-	// setup file textinput
-	// ********************
-	public function setup_file_textinput ():Void
-	{
-		mc_ref.file_textinput.text = "page/";
 	}
 
 	// ********
@@ -63,31 +63,30 @@ class as.dialogue.NewPage extends MovieClip
 	// ********
 	public function new_page ():Void
 	{
-		if (data_validation () == true)
-		{		
-			var page_xml:XML;
-			
-			page_xml = new XML ();
-			page_xml.ignoreWhite = true;
-			page_xml ["class_ref"] = mc_ref;
-			
-			page_xml.sendAndLoad ("function/check_file_exists.php?target_file=" + mc_ref.file_textinput.text + ".xml", page_xml);
-			
-			page_xml.onLoad = function (b:Boolean)
+		var page_xml:as.global.XMLExtend;
+		
+		page_xml = new as.global.XMLExtend ();
+		page_xml.ignoreWhite = true;
+		page_xml ["class_ref"] = mc_ref;
+		
+		page_xml.sendAndLoad ("function/check_file_exists.php?target_file=page/" + mc_ref.file_textinput.text + ".xml", page_xml);
+		page_xml.check_progress ("Checking if file exists...");
+		
+		page_xml.onLoad = function (b:Boolean)
+		{
+			if (b)
 			{
-				if (b)
+				// if the file already exists
+				if (this.firstChild.nodeName == "exists")
 				{
-					// if the file already exists
-					if (this.firstChild.nodeName == "exists")
-					{
-						_root.status_mc.add_message (this.class_ref.file_textinput.text + ".xml already exists.", "critical");
-					}
-					// if the file not exists
-					else if (this.firstChild.nodeName == "not_exists")
-					{
-						_root.page_mc.set_loaded_file (this.class_ref.file_textinput.text + ".xml");
-						this.class_ref._parent.close_window ();
-					}
+					this.stop_progress ();
+					_root.status_mc.add_message (this.class_ref.file_textinput.text + ".xml already exists.", "critical");
+				}
+				// if the file not exists
+				else if (this.firstChild.nodeName == "not_exists")
+				{
+					_root.page_mc.set_loaded_file ("page/" + this.class_ref.file_textinput.text + ".xml");
+					this.class_ref._parent.close_window ();
 				}
 			}
 		}
@@ -101,7 +100,10 @@ class as.dialogue.NewPage extends MovieClip
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
-			this.class_ref.new_page ();
+			if (this.class_ref.data_validation () == true)
+			{		
+				this.class_ref.new_page ();
+			}
 		}
 	}
 	

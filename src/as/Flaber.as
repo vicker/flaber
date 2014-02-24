@@ -16,9 +16,6 @@ class as.Flaber
 	// ***********
 	public function Flaber ()
 	{
-		page_dir_array = new Array ();
-		img_dir_array = new Array ();
-		
 		build_root ();
 		build_admin_listener ();
 		config_broadcaster ();
@@ -45,7 +42,7 @@ class as.Flaber
 		_root.attachMovie ("lib_status_message", "status_mc", 3, {_x:0, _y:Stage.height - 184});
 		_root.attachMovie ("lib_edit_panel", "edit_panel_mc", 4, {_x:0, _y:-30});
 		_root.attachMovie ("lib_menu_bar", "menu_mc", 5, {_x:0, _y:0});
-		_root.attachMovie ("lib_tooltip", "tooltip_mc", 6);
+		_root.attachMovie ("lib_tooltip", "tooltip_mc", 10000);
 	}
 	
 	// ***********************
@@ -108,7 +105,7 @@ class as.Flaber
 	// **************
 	private function flaber_startup ():Void
 	{
-		version_number = "1.0 RC2 (http://www.sourceforge.net/projects/flaber)";
+		version_number = "1.0 RC3 (Final) (http://www.sourceforge.net/projects/flaber)";
 		
 		_root.status_mc.add_message ("<flaber_f>F</flaber_f><flaber_l>L</flaber_l><flaber_a>A</flaber_a><flaber_b>B</flaber_b><flaber_e>E</flaber_e><flaber_r>R</flaber_r> " + version_number, "flaber");
 	}
@@ -120,6 +117,7 @@ class as.Flaber
 	{
 		var flaber_xml:XML;
 		flaber_xml = new XML ();
+		flaber_xml ["class_ref"] = this;
 		flaber_xml.ignoreWhite = true;
 		flaber_xml.sendAndLoad ("Flaber.xml" + _root.sys_func.get_break_cache (), flaber_xml, "POST");
 		
@@ -152,7 +150,7 @@ class as.Flaber
 						// Index page
 						case "index_page":
 						{
-							index_page = temp_value;
+							this.class_ref.index_page = temp_value;
 							_root.page_mc.load_root_xml (temp_value);
 							break;
 						}
@@ -176,12 +174,15 @@ class as.Flaber
 	// ****************
 	private function preload_page_dir_array ():Void
 	{
+		// initialize the page dir array
+		this.page_dir_array = new Array ();
+		
 		var dir_xml:XML;
 		
 		dir_xml = new XML ();
 		dir_xml.ignoreWhite = true;
 		dir_xml ["class_ref"] = this;
-		dir_xml.sendAndLoad ("function/get_dir.php?target_dir=../page", dir_xml);
+		dir_xml.sendAndLoad ("function/get_dir.php?target_dir=page", dir_xml);
 		
 		dir_xml.onLoad = function (b:Boolean)
 		{
@@ -215,12 +216,15 @@ class as.Flaber
 	// ***************
 	private function preload_img_dir_array ():Void
 	{
+		// initialize the page dir array
+		this.img_dir_array = new Array ();
+		
 		var img_xml:XML;
 		
 		img_xml = new XML ();
 		img_xml.ignoreWhite = true;
 		img_xml ["class_ref"] = this;
-		img_xml.sendAndLoad ("function/get_dir.php?target_dir=../img", img_xml);
+		img_xml.sendAndLoad ("function/get_dir.php?target_dir=img", img_xml);
 		
 		img_xml.onLoad = function (b:Boolean)
 		{
