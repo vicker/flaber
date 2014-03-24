@@ -1,163 +1,1 @@
-// ****************
-// AdminLogin class
-// ****************
-class as.dialogue.AdminLogin extends MovieClip
-{
-	// private variables
-	private var mc_ref:MovieClip;					// reference to the movie clip
-	
-	// ***********
-	// constructor
-	// ***********
-	public function AdminLogin ()
-	{
-		mc_ref = this;
-		
-		setup_component_object ();
-		build_enter_listener ();
-	}
-	
-	// ***********************
-	// build up enter listener
-	// ***********************
-	public function build_enter_listener ():Void
-	{
-		// is kinder funny here... textinput.enter will not work until the user
-		// try to click on the window mc... which is really not preferable
-		// so key listener is used instead although it is not the best approach
-		
-		// reference http://www.macromedia.com/cfusion/knowledgebase/index.cfm?id=tn_15586
-		
-		var temp_listener:Object;
-		
-		temp_listener = new Object ();
-		temp_listener ["class_ref"] = mc_ref;
-		temp_listener.onKeyDown = function ()
-		{
-			if (Key.getCode () == Key.ENTER)
-			{
-				this.class_ref.login ();
-				Key.removeListener (this);
-			}
-		}
-		
-		Key.addListener (temp_listener);
-	}
-	
-	
-	// **********************
-	// setup component object
-	// **********************
-	public function setup_component_object ():Void
-	{
-		mc_ref.createClassObject (mx.controls.TextInput, "password_textinput", 1, {_x:35, _y:35, _width:125, _height:20});
-		
-		mc_ref.attachMovie ("lib_button_mc", "ok_button", 2, {_x:10, _y:70});
-		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 3, {_x:100, _y:70});
-
-		setup_component_style ();
-		
-		setup_password_textinput ();
-		setup_ok_button ();
-		setup_cancel_button ();
-	}
-	
-	// *********************
-	// setup component style
-	// *********************
-	public function setup_component_style ():Void
-	{
-		mc_ref.message_label.setStyle ("styleName", "label_style");
-		
-		mc_ref.password_textinput.setStyle ("styleName", "textinput_style");
-	}
-	
-	// ***************
-	// data validation
-	// ***************
-	public function data_validation ():Boolean
-	{
-		return true;
-	}
-
-	// ************************
-	// setup password textinput
-	// ************************
-	public function setup_password_textinput ():Void
-	{
-		mc_ref.password_textinput.password = true;
-		
-		Selection.setFocus (mc_ref.password_textinput.label);
-	}
-	
-	// *****
-	// login
-	// *****
-	public function login ():Void
-	{
-		if (data_validation () == true)
-		{		
-			var admin_xml:as.datatype.XMLExtend;
-			
-			admin_xml = new as.datatype.XMLExtend ();
-			admin_xml.ignoreWhite = true;
-			admin_xml ["class_ref"] = mc_ref;
-			admin_xml.sendAndLoad ("function/admin_login.php?password=" + mc_ref.password_textinput.text, admin_xml);
-			admin_xml.check_progress ("Checking password...");
-			
-			admin_xml.onLoad = function (b:Boolean)
-			{
-				if (b)
-				{
-					// if it is login successful
-					if (this.firstChild.nodeName == "login")
-					{
-						_root.menu_mc.show_menu ();
-						_root.status_mc.chase_window ();
-						_root.flaber.set_stored_password (this.class_ref.password_textinput.text);
-						_root.status_mc.add_message ("Logged in successfully", "normal");
-						this.class_ref._parent.close_window ();
-					}
-					// if have error
-					else
-					{
-						this.stop_progress ();
-						_root.status_mc.add_message (this.toString (), "");
-					}
-				}
-			}
-		}
-	}
-	
-	// ***************
-	// setup ok button
-	// ***************
-	public function setup_ok_button ():Void
-	{
-		mc_ref.ok_button.set_toggle_flag (false);
-		mc_ref.ok_button.set_dimension (80, 20);
-		mc_ref.ok_button.set_text ("Ok");
-
-		mc_ref.ok_button ["class_ref"] = mc_ref;
-		mc_ref.ok_button.onRelease = function ()
-		{
-			this.class_ref.login ();
-		}
-	}
-	
-	// *******************
-	// setup cancel button
-	// *******************
-	public function setup_cancel_button ():Void
-	{
-		mc_ref.cancel_button.set_toggle_flag (false);
-		mc_ref.cancel_button.set_dimension (80, 20);
-		mc_ref.cancel_button.set_text ("Cancel");
-
-		mc_ref.cancel_button ["class_ref"] = mc_ref;
-		mc_ref.cancel_button.onRelease = function ()
-		{
-			this.class_ref._parent.close_window ();
-		}
-	}
-}
+﻿// ****************// AdminLogin class// ****************class as.dialogue.AdminLogin extends MovieClip{	// private variables	private var mc_ref:MovieClip;					// reference to the movie clip		// ***********	// constructor	// ***********	public function AdminLogin ()	{		mc_ref = this;				setup_component_object ();		build_enter_listener ();	}		// ***********************	// build up enter listener	// ***********************	public function build_enter_listener ():Void	{		// is kinder funny here... textinput.enter will not work until the user		// try to click on the window mc... which is really not preferable		// so key listener is used instead although it is not the best approach				// reference http://www.macromedia.com/cfusion/knowledgebase/index.cfm?id=tn_15586				var temp_listener:Object;				temp_listener = new Object ();		temp_listener ["class_ref"] = mc_ref;		temp_listener.onKeyDown = function ()		{			if (Key.getCode () == Key.ENTER)			{				this.class_ref.login ();				Key.removeListener (this);			}		}				Key.addListener (temp_listener);	}			// **********************	// setup component object	// **********************	public function setup_component_object ():Void	{		mc_ref.createClassObject (mx.controls.TextInput, "password_textinput", 1, {_x:35, _y:35, _width:125, _height:20});				mc_ref.attachMovie ("lib_button_mc", "ok_button", 2, {_x:10, _y:70});		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 3, {_x:100, _y:70});		setup_component_style ();				setup_password_textinput ();		setup_ok_button ();		setup_cancel_button ();	}		// *********************	// setup component style	// *********************	public function setup_component_style ():Void	{		mc_ref.message_label.setStyle ("styleName", "label_style");				mc_ref.password_textinput.setStyle ("styleName", "textinput_style");	}		// ***************	// data validation	// ***************	public function data_validation ():Boolean	{		return true;	}	// ************************	// setup password textinput	// ************************	public function setup_password_textinput ():Void	{		mc_ref.password_textinput.password = true;				Selection.setFocus (mc_ref.password_textinput.label);	}		// *****	// login	// *****	public function login ():Void	{		if (data_validation () == true)		{					var admin_xml:XML;						admin_xml = new XML ();			admin_xml.ignoreWhite = true;			admin_xml ["class_ref"] = mc_ref;			admin_xml.sendAndLoad ("function/admin_login.php?password=" + mc_ref.password_textinput.text, admin_xml);						admin_xml.onLoad = function (b:Boolean)			{				if (b)				{					// if it is login successful					if (this.firstChild.nodeName == "login")					{						_root.menu_mc.show_menu ();						_root.status_mc.chase_window ();						_root.flaber.set_stored_password (this.class_ref.password_textinput.text);						_root.status_mc.add_message ("Logged in successfully", "normal");						this.class_ref._parent.close_window ();					}					// if have error					else					{						this.stop_progress ();						_root.status_mc.add_message (this.toString (), "");					}				}			}		}	}		// ***************	// setup ok button	// ***************	public function setup_ok_button ():Void	{		mc_ref.ok_button.set_toggle_flag (false);		mc_ref.ok_button.set_dimension (80, 20);		mc_ref.ok_button.set_text ("Ok");		mc_ref.ok_button ["class_ref"] = mc_ref;		mc_ref.ok_button.onRelease = function ()		{			this.class_ref.login ();		}	}		// *******************	// setup cancel button	// *******************	public function setup_cancel_button ():Void	{		mc_ref.cancel_button.set_toggle_flag (false);		mc_ref.cancel_button.set_dimension (80, 20);		mc_ref.cancel_button.set_text ("Cancel");		mc_ref.cancel_button ["class_ref"] = mc_ref;		mc_ref.cancel_button.onRelease = function ()		{			this.class_ref._parent.close_window ();		}	}}
