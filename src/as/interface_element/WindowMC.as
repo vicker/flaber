@@ -1,7 +1,7 @@
-﻿// **************
+// **************
 // WindowMC class
 // **************
-class as.global.WindowMC extends MovieClip
+class as.interface_element.WindowMC extends MovieClip
 {
 	// MC variables
 	// MovieClip					frame_mc
@@ -12,12 +12,9 @@ class as.global.WindowMC extends MovieClip
 	
 	// private variables
 	private var mc_ref:MovieClip;				// interface for the window
-	
+	private var org_height:Number;			// frame's original height
 	private var frame_width:Number;			// frame's width
 	private var frame_height:Number;			// frame's height
-	private var org_height:Number;			// frame's original height
-	
-	private var resize_flag:Boolean;			// state whether resize is finished or not
 	
 	// ***********
 	// constructor
@@ -25,6 +22,7 @@ class as.global.WindowMC extends MovieClip
 	public function WindowMC ()
 	{
 		mc_ref = this;
+		mc_ref.attachMovie ("lib_frame_mc", "frame_mc", -16384, {_x:0, _y:0});
 		
 		org_height = -1;
 		
@@ -40,44 +38,18 @@ class as.global.WindowMC extends MovieClip
 	public function draw_frame ():Void
 	{
 		// clear all frame first
-		mc_ref.frame_mc.clear ();
+		mc_ref.frame_mc.clear_frame ();
+		mc_ref.frame_mc.draw_rect (0, 20, frame_width, frame_height, 1, 0x666666, 100, 0xFFFFFF, 100);
+		mc_ref.frame_mc.draw_rect (0, 0, frame_width, 20, 1, 0x666666, 100, 0xFFFFFF, 100);
 		
-		// draw the outer border
-		mc_ref.frame_mc.lineStyle (1, 0x666666, 100);
-		mc_ref.frame_mc.beginFill (0xFFFFFF, 100);
-		mc_ref.frame_mc.moveTo (0, 20);
-		mc_ref.frame_mc.lineTo (frame_width, 20);
-		mc_ref.frame_mc.lineTo (frame_width, frame_height);
-		mc_ref.frame_mc.lineTo (0, frame_height);
-		mc_ref.frame_mc.lineTo (0, 20);
-		mc_ref.frame_mc.endFill ();
-		
-		// draw the header
-		mc_ref.frame_mc.lineStyle (1, 0x666666, 100);
-		mc_ref.frame_mc.beginFill (0xFFFFFF, 100);
-		mc_ref.frame_mc.lineTo (0, 0);
-		mc_ref.frame_mc.lineTo (frame_width, 0);
-		mc_ref.frame_mc.lineTo (frame_width, 20);
-		mc_ref.frame_mc.lineTo (0, 20);
-		mc_ref.frame_mc.endFill ();
-		
-		// draw the shadow
-		mc_ref.frame_mc.lineStyle (0, 0x000000, 0);
-		mc_ref.frame_mc.beginFill (0x000000, 30);
-		mc_ref.frame_mc.moveTo (frame_width, 10);
-		mc_ref.frame_mc.lineTo (frame_width + 5, 10);
-		mc_ref.frame_mc.lineTo (frame_width + 5, frame_height + 5);
-		mc_ref.frame_mc.lineTo (0 + 10, frame_height + 5);
-		mc_ref.frame_mc.lineTo (0 + 10, frame_height);
-		mc_ref.frame_mc.lineTo (frame_width, frame_height);
-		mc_ref.frame_mc.lineTo (frame_width, 10);
-		mc_ref.frame_mc.endFill ();
+		// drop shadow
+		_root.mc_filters.set_shadow_filter (mc_ref);
 	}
   
 	// ************************
 	// minimize window function
 	// ************************
-	public function minimize_window ()
+	public function minimize_window ():Void
 	{
 		mc_ref.content_mc._visible = false;
 		mc_ref.content_mc.enabled = false;
@@ -88,14 +60,14 @@ class as.global.WindowMC extends MovieClip
 		mc_ref.min_button.enabled = false;
 		mc_ref.min_button._alpha = 25;
 		
-		frame_height = 20;
+		frame_height = 0;
 		draw_frame ();
 	}
 
 	// ************************
 	// maximize window function
 	// ************************
-	public function maximize_window ()
+	public function maximize_window ():Void
 	{
 		mc_ref.content_mc._visible = true;
 		mc_ref.content_mc.enabled = false;
@@ -113,7 +85,7 @@ class as.global.WindowMC extends MovieClip
 	// *********************
 	// close window function
 	// *********************
-	public function close_window ()
+	public function close_window ():Void
 	{
 		mc_ref.removeMovieClip ();
 	}
@@ -205,11 +177,13 @@ class as.global.WindowMC extends MovieClip
 		mc_ref.frame_mc.onPress = function ()
 		{
 			this.class_ref.startDrag ();
+			this.class_ref._alpha = 50;
 		}
 		
 		mc_ref.frame_mc.onRelease = function ()
 		{
 			this.class_ref.stopDrag ();
+			this.class_ref._alpha = 100;
 		}
 	}
 }

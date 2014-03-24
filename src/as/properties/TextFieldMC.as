@@ -1,4 +1,4 @@
-﻿// *****************
+// *****************
 // TextFieldMC class
 // *****************
 class as.properties.TextFieldMC extends MovieClip
@@ -53,30 +53,34 @@ class as.properties.TextFieldMC extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:60, _y:35, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:140, _y:35, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:270, _y:35, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:370, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:40, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:120, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:250, _y:35, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:350, _y:35, _width:40, _height:20});
 		
-		mc_ref.createClassObject (mx.controls.TextArea, "content_textarea", 5, {_x:40, _y:160, _width:370, _height:200});
+		mc_ref.createClassObject (mx.controls.TextArea, "content_textarea", 5, {_x:20, _y:160, _width:370, _height:200});
 		
-		mc_ref.attachMovie ("lib_button_mc", "bold_button", 6, {_x:40, _y:100});
-		mc_ref.attachMovie ("lib_button_mc", "italic_button", 7, {_x:70, _y:100});
-		mc_ref.attachMovie ("lib_button_mc", "underline_button", 8, {_x:100, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "bold_button", 6, {_x:20, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "italic_button", 7, {_x:50, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "underline_button", 8, {_x:80, _y:100});
 		
-		mc_ref.attachMovie ("lib_button_mc", "left_button", 9, {_x:150, _y:100});
-		mc_ref.attachMovie ("lib_button_mc", "center_button", 10, {_x:180, _y:100});
-		mc_ref.attachMovie ("lib_button_mc", "right_button", 11, {_x:210, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "left_button", 9, {_x:130, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "center_button", 10, {_x:160, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "right_button", 11, {_x:190, _y:100});
 		
-		mc_ref.attachMovie ("lib_button_mc", "bullet_button", 12, {_x:250, _y:100});
-		mc_ref.attachMovie ("lib_button_mc", "scroll_button", 13, {_x:280, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "bullet_button", 12, {_x:230, _y:100});
+		mc_ref.attachMovie ("lib_button_mc", "scroll_button", 13, {_x:260, _y:100});
 		
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 14, {_x:40, _y:130, _width:120, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 15, {_x:180, _y:130, _width:50, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "font_combobox", 14, {_x:20, _y:130, _width:120, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "font_size_combobox", 15, {_x:160, _y:130, _width:50, _height:20});
 		
-		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 16, {_x:250, _y:130});
-		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 17, {_x:320, _y:100});
-		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 18, {_x:180, _y:370});
+		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 16, {_x:230, _y:130});
+		mc_ref.attachMovie ("lib_link_panel", "font_link_panel", 17, {_x:300, _y:100});
+		mc_ref.attachMovie ("lib_normal_palette", "bg_color_palette", 18, {_x:100, _y:370});
+
+		mc_ref.attachMovie ("lib_button_mc", "apply_button", 19, {_x:130, _y:400});
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 20, {_x:220, _y:400});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 21, {_x:310, _y:400});
 		
 		setup_component_style ();
 		
@@ -487,7 +491,14 @@ class as.properties.TextFieldMC extends MovieClip
 			// hook with the textarea background
 			case 2:
 			{
-				mc_ref.content_textarea.setStyle ("backgroundColor", mc_ref.bg_color_palette.get_color_string ());
+				var temp_string:String = mc_ref.bg_color_palette.get_color_string ();
+				
+				if (temp_string == null)
+				{
+					temp_string = "0xFFFFFF";
+				}
+				
+				mc_ref.content_textarea.setStyle ("backgroundColor", temp_string);
 				break;
 			}
 		}
@@ -543,6 +554,10 @@ class as.properties.TextFieldMC extends MovieClip
 	// ******************
 	public function setup_apply_button ():Void
 	{
+		mc_ref.apply_button.set_toggle_flag (false);
+		mc_ref.apply_button.set_dimension (80, 20);
+		mc_ref.apply_button.set_text ("Apply");
+
 		mc_ref.apply_button ["class_ref"] = mc_ref;
 		mc_ref.apply_button.onRelease = function ()
 		{
@@ -606,6 +621,10 @@ class as.properties.TextFieldMC extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -619,6 +638,10 @@ class as.properties.TextFieldMC extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{
@@ -652,10 +675,10 @@ class as.properties.TextFieldMC extends MovieClip
 		mc_ref.bullet_button.set_toggle_state (temp_format.bullet || false);
 		
 		// font
-		_root.sys_func.combobox_select_item (mc_ref.font_combobox, temp_format.font);
+		mc_ref.font_combobox.select_item (temp_format.font);
 		
 		// size
-		_root.sys_func.combobox_select_item (mc_ref.font_size_combobox, temp_format.size);
+		mc_ref.font_size_combobox.select_item (temp_format.size);
 		
 		// color
 		if (mc_ref.font_color_palette.get_lock_flag () == false && temp_format.color != null)

@@ -1,7 +1,7 @@
-﻿// *****************
+// *****************
 // TextFieldMC class
 // *****************
-class as.page_content.TextFieldMC extends MovieClip
+class as.page_content.TextFieldMC extends as.page_content.PageElementMC
 {
 	// MC variables
 	// Dynamic Text Field			content_field
@@ -20,54 +20,25 @@ class as.page_content.TextFieldMC extends MovieClip
 		mc_ref.content_field.wordWrap = true;
 	}
 
-	// *******************
-	// onrollover override
-	// *******************
-	// because rollover will damage textfield anchor tag so need to hide out the event first
-	public function onRollOver_event ()
-	{
-		_root.mc_filters.set_brightness_filter (mc_ref);
-		_root.tooltip_mc.set_content (mc_ref._name);
-		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
-	}
-	
-	// ******************
-	// onrollout override
-	// ******************
-	// because rollout will damage textfield anchor tag so need to hide out the event first
-	public function onRollOut_event ()
-	{
-		_root.mc_filters.remove_filter (mc_ref);
-		_root.tooltip_mc.throw_away ();
-	}
-
-	// ****************
-	// onpress override
-	// ****************
-	public function onPress_event ()
-	{
-		pull_edit_panel ();
-	}
-
 	// ***************
 	// pull edit panel
 	// ***************
-	public function pull_edit_panel ():Void
+	public function pull_handler (s:String):Void
 	{
-		var temp_x:Number;
-		var temp_y:Number;
+		if (s == "first")
+		{
+			_root.handler_mc.bring_back ();
+			_root.handler_mc.set_function (["resize", "delete"], ["rotate"]);
+		}
 		
-		temp_x = mc_ref._x;
-		temp_y = mc_ref._y + mc_ref._height;
-		
-		_root.edit_panel_mc.set_target_ref (mc_ref);
-		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, true, false, true, true);
+		_root.handler_mc.set_size (mc_ref.content_field._width, mc_ref.content_field._height);
+		_root.handler_mc.set_position (mc_ref._x, mc_ref._y, 0);
 	}
-
+	
 	// ***************
 	// resize function
 	// ***************
+	// override
 	public function resize_function (n:Number):Void
 	{
 		// calling to go
@@ -78,18 +49,15 @@ class as.page_content.TextFieldMC extends MovieClip
 			mc_ref.onMouseMove = function ()
 			{
 				resize_interval_function ();
+				// since the resize function depends on the handler position
+				// that is why handler mc chasing is necessary
+				pull_handler ("not first");
 			}
 		}
 		// calling to stop
 		else
 		{
 			mc_ref.content_field.border = false;
-			
-			// if scroll bar exists, need to adjust
-			if (mc_ref.scroll_bar)
-			{
-				mc_ref.scroll_bar.set_scroll_ref (mc_ref.content_field);
-			}
 			
 			delete mc_ref.onMouseMove;
 		}
@@ -108,6 +76,11 @@ class as.page_content.TextFieldMC extends MovieClip
 		
 		mc_ref.content_field._width = target_width;
 		mc_ref.content_field._height = target_height;
+		
+		if (mc_ref.scroll_bar)
+		{
+			mc_ref.scroll_bar.set_scroll_ref (mc_ref.content_field);
+		}		
 	}
 
 	// *******************
@@ -115,58 +88,10 @@ class as.page_content.TextFieldMC extends MovieClip
 	// *******************
 	public function properties_function ():Void
 	{
-		var temp_lib:String;
-		var temp_name:String;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_lib = "lib_properties_textfield";
-		temp_name = "Textfield Properties Window";
-		temp_width = 470;
-		temp_height = 460;
-		
 		_root.sys_func.remove_window_mc ();
 		_root.attachMovie ("lib_window", "window_mc", 9999);
-		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.set_window_data ("Textfield Properties Window", 430, 460, "lib_properties_textfield");
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
-	}
-
-	// ***************
-	// delete function
-	// ***************
-	public function delete_function ():Void
-	{
-		_root.page_mc.destroy_one (mc_ref);
-	}
-
-	// *****************
-	// broadcaster event
-	// *****************
-	public function broadcaster_event (o:Object):Void
-	{
-		if (o == true)
-		{
-			mc_ref.onRollOver = function ()
-			{
-				onRollOver_event ();
-			}
-			
-			mc_ref.onRollOut = function ()
-			{
-				onRollOut_event ();
-			}
-			
-			mc_ref.onPress = function ()
-			{
-				onPress_event ();
-			}
-		}
-		else
-		{
-			delete mc_ref.onRollOver;
-			delete mc_ref.onRollOut;
-			delete mc_ref.onPress;
-		}
 	}
 	
 	// ***************
@@ -236,6 +161,14 @@ class as.page_content.TextFieldMC extends MovieClip
 			// setup full mc's scroll bar
 			mc_ref.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.getNextHighestDepth ());
 			mc_ref.scroll_bar.set_scroll_ref (mc_ref.content_field);
+			
+			// if scroll present, dont autosize
+			mc_ref.content_field.autoSize = false;
+		}
+		else
+		{
+			// otherwise make sure all the text appears within sight
+			mc_ref.content_field.autoSize = "left";
 		}
 	}
 

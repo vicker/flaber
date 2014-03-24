@@ -1,13 +1,13 @@
-﻿// ***************
+// ***************
 // MenuBarMC class
 // ***************
 class as.menu.MenuBarMC extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip;						// interface for the navigation item mc
+	private var mc_ref:MovieClip;									// interface for the navigation item mc
 
-	private var file_name:String;						// for tracer
-	private var edit_mode:Boolean						// storing the current edit_mode
+	private var FILE_NAME:String = "(MenuBarMC.as)";		// for tracer
+	private var edit_mode:Boolean									// storing the current edit_mode
 	
 	// ***********
 	// constructor
@@ -15,8 +15,6 @@ class as.menu.MenuBarMC extends MovieClip
 	public function MenuBarMC ()
 	{
 		mc_ref = this;
-		
-		file_name = "(MenuBarMC.as)";
 		
 		build_menu ();
 		hide_menu ();
@@ -27,13 +25,11 @@ class as.menu.MenuBarMC extends MovieClip
 	// **********
 	// build menu
 	// **********
-	public function build_menu ():Void
+	private function build_menu ():Void
 	{
 		mc_ref.createClassObject (mx.controls.MenuBar, "menu_mc", 1, {_x:0, _y:0, _width:Stage.width, _height:20});
 		
-		var menu_xml:XML;
-		
-		menu_xml = new XML ();
+		var menu_xml:XML = new XML ();
 		menu_xml.ignoreWhite = true;
 		menu_xml ["class_ref"] = mc_ref;
 		
@@ -55,62 +51,41 @@ class as.menu.MenuBarMC extends MovieClip
 	public function setup_menu_action ():Void
 	{
 		// reference http://www.darronschall.com/weblog/archives/000062.cfm
-		var temp_listener:Object;
-		
-		temp_listener = new Object ();
+		var temp_listener:Object = new Object ();
 		temp_listener ["class_ref"] = mc_ref;
+
 		temp_listener.change = function (o:Object)
 		{
-			switch (o.menuItem)
+			switch (o.menuItem.attributes ["instanceName"])
 			{
 				// *********
 				// File Menu
 				// *********
 				
 				// New Page
-				case o.menu.file_new:
+				case "file|new":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_new_page_save_confirm";
-					temp_name = "Save Confirmation";
-					temp_width = 200;
-					temp_height = 130;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Save Confirmation", 190, 120, "lib_dialogue_new_page_save_confirm");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
 				}
 				
 				// Open Page
-				case o.menu.file_open:
+				case "file|open":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_open_page_save_confirm";
-					temp_name = "Save Confirmation";
-					temp_width = 200;
-					temp_height = 130;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Save Confirmation", 190, 120, "lib_dialogue_open_page_save_confirm");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
 				}
 				
 				// Save Page
-				case o.menu.file_save:
+				case "file|save":
 				{
 					_root.save_broadcaster.set_changed_flag ();
 					_root.save_broadcaster.broadcast ();
@@ -118,28 +93,18 @@ class as.menu.MenuBarMC extends MovieClip
 				}
 				
 				// Save As Page
-				case o.menu.file_save_as:
+				case "file|save_as":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_save_as_page";
-					temp_name = "Save As";
-					temp_width = 240;
-					temp_height = 130;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Save As", 250, 120, "lib_dialogue_save_as_page");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
 				}
 				
 				// Logout Admin
-				case o.menu.file_logout:
+				case "file|logout":
 				{
 					//TODO should have some mechanism stating that the file is not saved
 					this.class_ref.hide_menu ();
@@ -155,30 +120,37 @@ class as.menu.MenuBarMC extends MovieClip
 				// ***********
 				
 				// Textfield
-				case o.menu.insert_textfield:
+				case "insert|textfield":
 				{
 					_root.page_mc.add_new_item ("TextFieldMC", null);
 					break;
 				}
 				
 				// Image
-				case o.menu.insert_image:
+				case "insert|image":
 				{
 					_root.page_mc.add_new_item ("ImageMC", null);
 					break;
 				}
 				
 				// Link
-				case o.menu.insert_link:
+				case "insert|link":
 				{
 					_root.page_mc.add_new_item ("LinkMC", null);
 					break;
 				}
 				
 				// Shape Rectangle
-				case o.menu.insert_shape_rectangle:
+				case "insert|shape|rectangle":
 				{
 					_root.page_mc.add_new_item ("RectangleMC", null);
+					break;
+				}
+				
+				// Shape Oval
+				case "insert|shape|oval":
+				{
+					_root.page_mc.add_new_item ("OvalMC", null);
 					break;
 				}
 				
@@ -187,42 +159,22 @@ class as.menu.MenuBarMC extends MovieClip
 				// ***********
 				
 				// Web Properties
-				case o.menu.modify_web:
+				case "modify|web":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_web_properties";
-					temp_name = "Web Properties";
-					temp_width = 230;
-					temp_height = 290;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Web Properties", 400, 210, "lib_dialogue_web_properties");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
 				}
 				
 				// Page Properties
-				case o.menu.modify_page:
+				case "modify|page":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_page_properties";
-					temp_name = "Page Properties";
-					temp_width = 700;
-					temp_height = 510;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Page Properties", 700, 500, "lib_dialogue_page_properties");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
@@ -233,14 +185,14 @@ class as.menu.MenuBarMC extends MovieClip
 				// *********
 				
 				// Action Mode
-				case o.menu.mode_action:
+				case "mode|action":
 				{
 					this.class_ref.change_mode (0);
 					break;
 				}
 				
 				// Edit Mode
-				case o.menu.mode_edit:
+				case "mode|edit":
 				{
 					this.class_ref.change_mode (1);
 					break;
@@ -251,50 +203,91 @@ class as.menu.MenuBarMC extends MovieClip
 				// **********
 				
 				// Depth Manager
-				case o.menu.tools_depth:
+				case "tools|depth":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_depth_manager";
-					temp_name = "Depth Manager";
-					temp_width = 220;
-					temp_height = 270;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Depth Manager", 220, 280, "lib_dialogue_depth_manager");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
 					break;
 				}
 				
 				// Image Uploader
-				case o.menu.tools_image:
+				case "tools|image":
 				{
-					var temp_lib:String;
-					var temp_name:String;
-					var temp_width:Number;
-					var temp_height:Number;
-					
-					temp_lib = "lib_dialogue_image_uploader";
-					temp_name = "Image Uploader";
-					temp_width = 375;
-					temp_height = 75;
-					
 					_root.sys_func.remove_window_mc ();
 					_root.attachMovie ("lib_window", "window_mc", 9999);
-					_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+					_root.window_mc.set_window_data ("Image Uploader", 390, 60, "lib_dialogue_image_uploader");
 					_root.window_mc.content_mc.set_target_ref (mc_ref);
 					
+					break;
+				}
+				
+				// Change Password
+				case "tools|password":
+				{
+					_root.sys_func.remove_window_mc ();
+					_root.attachMovie ("lib_window", "window_mc", 9999);
+					_root.window_mc.set_window_data ("Change Password", 210, 250, "lib_dialogue_change_password");
+					_root.window_mc.content_mc.set_target_ref (mc_ref);
+					
+					break;
+				}
+				
+				// ****
+				// Help
+				// ****
+				
+				// WIKI
+				case "help|wiki":
+				{
+					_root.sys_func.build_popup (800, 600, "", "http://www.flysforum.net/flaber/wiki", 1);
+					break;
+				}
+				
+				// Forum
+				case "help|forum":
+				{
+					_root.sys_func.build_popup (800, 600, "", "http://www.flysforum.net/flaber/forum", 1);
+					break;
+				}
+				
+				// SourceForge
+				case "help|sourceforge":
+				{
+					_root.sys_func.build_popup (800, 600, "", "http://www.sourceforge.net/projects/flaber", 1);
+					break;
+				}
+				
+				// Donation
+				case "help|donation":
+				{
+					_root.sys_func.build_popup (800, 600, "", "http://sourceforge.net/project/project_donations.php?group_id=152518", 1);
+					break;
+				}
+				
+				// About FLABER
+				case "help|about":
+				{
+					this.class_ref.about_flaber ();
 					break;
 				}
 			}
 		}
 		
 		mc_ref.menu_mc.addEventListener("change", temp_listener);
+	}
+	
+	// ************
+	// about flaber
+	// ************
+	public function about_flaber ():Void
+	{
+		_root.sys_func.remove_window_mc ();
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data ("About FLABER", 640, 240, "lib_dialogue_about");
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 	
 	// *********
@@ -332,7 +325,7 @@ class as.menu.MenuBarMC extends MovieClip
 					_root.mode_broadcaster.set_changed_flag ();
 					_root.mode_broadcaster.broadcast (false);
 					
-					_root.edit_panel_mc.throw_away ();
+					_root.handler_mc.throw_away ();
 					
 					if (_root.window_mc)
 					{

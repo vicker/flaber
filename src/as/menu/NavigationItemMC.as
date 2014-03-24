@@ -1,7 +1,7 @@
-﻿// **********************
+// **********************
 // NavigationItemMC class
 // **********************
-class as.menu.NavigationItemMC extends MovieClip
+class as.menu.NavigationItemMC extends as.page_content.PageElementMC
 {
 	// MC variables
 	// Dynamic Text Field			content_field
@@ -12,9 +12,9 @@ class as.menu.NavigationItemMC extends MovieClip
 	
 	private var mc_ref:MovieClip;						// interface for the navigation item mc
 	
-	private var style_global:Boolean;				// state that if this item is using global style
-	private var format_global:Boolean;				// state that if this item is using global textformat
-	private var file_name:String;						// for tracer
+	private var style_global:Boolean;				             	 // state that if this item is using global style
+	private var format_global:Boolean;				            	 // state that if this item is using global textformat
+	private var FILE_NAME:String = "(NavigationItemMC.as)";		 	 // for tracer
 	
 	// ***********
 	// constructor
@@ -23,79 +23,27 @@ class as.menu.NavigationItemMC extends MovieClip
 	{
 		mc_ref = this;
 		
-		file_name = "(NavigationItemMC.as)";
-		
 		mc_ref.onRollOver = function ()
 		{
-			onRollOver_event_1 ();
+			onRollOver_event_special ();
 		}
 		
 		mc_ref.onRollOut = function ()
 		{
-			onRollOut_event_1 ();
+			onRollOut_event_special ();
 		}
 		
 		mc_ref.onRelease = function ()
 		{
-			onRelease_event ();
+			onRelease_event_special ();
 		}
 		
 		mc_ref.onReleaseOutside = function ()
 		{
-			onReleaseOutside_event ();
+			onReleaseOutside_event_special ();
 		}
 	}
 	
-	// *********************
-	// onrollover override 1
-	// *********************
-	public function onRollOver_event_1 ()
-	{
-		mc_ref.gotoAndStop ("over");
-		
-		var temp_string:String;
-		
-		temp_string = mc_ref.content_field.text + " - " + link_url;
-		_root.status_mc.add_message (temp_string , "tooltip");
-		_root.tooltip_mc.set_content (link_url);
-	}
-	
-	// *********************
-	// onrollover override 2
-	// *********************
-	public function onRollOver_event_2 ()
-	{
-		_root.mc_filters.set_brightness_filter (mc_ref);
-		_root.tooltip_mc.set_content (mc_ref._name);
-		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
-	}
-	
-	// ********************
-	// onrollout override 1
-	// ********************
-	public function onRollOut_event_1 ()
-	{
-		mc_ref.gotoAndStop ("normal");
-		_root.tooltip_mc.throw_away ();
-	}
-
-	// ********************
-	// onrollout override 2
-	// ********************
-	public function onRollOut_event_2 ()
-	{
-		_root.mc_filters.remove_filter (mc_ref);
-		_root.tooltip_mc.throw_away ();
-	}
-
-	// ****************
-	// onpress override
-	// ****************
-	public function onPress_event ()
-	{
-		pull_edit_panel ();
-	}
-
 	// *********************
 	// transition out action
 	// *********************
@@ -104,10 +52,33 @@ class as.menu.NavigationItemMC extends MovieClip
 		_root.page_mc.load_root_xml (link_url);
 	}
 	
-	// ******************
-	// onrelease override
-	// ******************
-	public function onRelease_event ()
+	// ***************************
+	// onrollover special override
+	// ***************************
+	private function onRollOver_event_special ():Void
+	{
+		mc_ref.gotoAndStop ("over");
+		
+		var temp_string:String = "";
+		temp_string = mc_ref.content_field.text + " - " + link_url;
+		
+		_root.status_mc.add_message (temp_string , "tooltip");
+		_root.tooltip_mc.set_content (link_url);
+	}
+	
+	// **************************
+	// onrollout special override
+	// **************************
+	private function onRollOut_event_special ():Void
+	{
+		mc_ref.gotoAndStop ("normal");
+		_root.tooltip_mc.throw_away ();
+	}
+
+	// **************************
+	// onrelease special override
+	// **************************
+	private function onRelease_event_special ():Void
 	{
 		mc_ref.gotoAndStop ("normal");
 		
@@ -119,7 +90,7 @@ class as.menu.NavigationItemMC extends MovieClip
 				if (_root.mc_transitions != null)
 				{
 					_root.mc_transitions.set_mc_ref (mc_ref);
-					_root.mc_transitions.start_transition (1);
+					_root.mc_transitions.start_transition ("out");
 				}
 				else
 				{
@@ -136,10 +107,10 @@ class as.menu.NavigationItemMC extends MovieClip
 		}
 	}
 	
-	// *************************
-	// onreleaseoutside override
-	// *************************
-	public function onReleaseOutside_event ()
+	// *********************************
+	// onreleaseoutside special override
+	// *********************************
+	private function onReleaseOutside_event_special ():Void
 	{
 		mc_ref.gotoAndStop ("normal");
 	}
@@ -147,37 +118,32 @@ class as.menu.NavigationItemMC extends MovieClip
 	// ***************
 	// pull edit panel
 	// ***************
-	public function pull_edit_panel ():Void
+	private function pull_handler (s:String):Void
 	{
 		var temp_x:Number;
 		var temp_y:Number;
 		
 		temp_x = mc_ref._parent._x + mc_ref._x;
-		temp_y = mc_ref._parent._y + mc_ref._y + mc_ref._height;
+		temp_y = mc_ref._parent._y + mc_ref._y;
 		
-		_root.edit_panel_mc.set_target_ref (mc_ref);
-		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, false, false, true, true);
+		if (s == "first")
+		{
+			_root.handler_mc.bring_back ();
+			_root.handler_mc.set_function (["delete"], ["resize", "rotate"]);
+		}
+
+		_root.handler_mc.set_size (mc_ref._width, mc_ref._height);
+		_root.handler_mc.set_position (temp_x, temp_y, 0);
 	}
 
 	// *******************
 	// properties function
 	// *******************
 	public function properties_function ():Void
-	{
-		var temp_lib:String;
-		var temp_name:String;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_lib = "lib_properties_navigation_item";
-		temp_name = "Navigation Item Properties Window";
-		temp_width = 290;
-		temp_height = 290;
-		
+	{	
 		_root.sys_func.remove_window_mc ();
 		_root.attachMovie ("lib_window", "window_mc", 9999);
-		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.set_window_data ("Navigation Item Properties Window", 300, 280, "lib_properties_navigation_item");
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
@@ -188,7 +154,7 @@ class as.menu.NavigationItemMC extends MovieClip
 	{
 		_root.navigation_menu.destroy_one (mc_ref);
 	}
-
+	
 	// *****************
 	// broadcaster event
 	// *****************
@@ -203,17 +169,22 @@ class as.menu.NavigationItemMC extends MovieClip
 			
 			mc_ref.onRollOver = function ()
 			{
-				onRollOver_event_2 ();
+				onRollOver_event ();
 			}
 			
 			mc_ref.onRollOut = function ()
 			{
-				onRollOut_event_2 ();
+				onRollOut_event ();
 			}
 			
 			mc_ref.onPress = function ()
 			{
 				onPress_event ();
+			}
+			
+			mc_ref.onRelease = function ()
+			{
+				onRelease_event ();
 			}
 		}
 		else
@@ -221,25 +192,26 @@ class as.menu.NavigationItemMC extends MovieClip
 			delete mc_ref.onRollOver;
 			delete mc_ref.onRollOut;
 			delete mc_ref.onPress;
+			delete mc_ref.onRelease;
 			
 			mc_ref.onRollOver = function ()
 			{
-				onRollOver_event_1 ();
+				onRollOver_event_special ();
 			}
 			
 			mc_ref.onRollOut = function ()
 			{
-				onRollOut_event_1 ();
+				onRollOut_event_special ();
 			}
 			
 			mc_ref.onRelease = function ()
 			{
-				onRelease_event ();
+				onRelease_event_special ();
 			}
 			
 			mc_ref.onReleaseOutside = function ()
 			{
-				onReleaseOutside_event ();
+				onReleaseOutside_event_special ();
 			}
 		}
 	}
@@ -287,8 +259,7 @@ class as.menu.NavigationItemMC extends MovieClip
 				// text format of the navigation item
 				case "text_format":
 				{
-					var temp_format:TextFormat;
-					temp_format = new TextFormat ();
+					var temp_format:TextFormat = new TextFormat ();
 					
 					for (var j in x.childNodes)
 					{
@@ -313,7 +284,7 @@ class as.menu.NavigationItemMC extends MovieClip
 				// exception
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+					_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name + "'", "critical");
 				}
 			}
 		}
@@ -346,13 +317,11 @@ class as.menu.NavigationItemMC extends MovieClip
 	// **********
 	public function export_xml ():XMLNode
 	{
-		var out_xml:XML;
+		var out_xml:XML = new XML ();
 		
 		var root_node:XMLNode;
 		var temp_node:XMLNode;
 		var temp_node_2:XMLNode;
-		
-		out_xml = new XML ();
 		
 		// building root node
 		root_node = out_xml.createElement ("NavigationItemMC");

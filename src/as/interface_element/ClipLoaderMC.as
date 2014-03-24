@@ -1,4 +1,4 @@
-﻿// ******************
+// ******************
 // ClipLoaderMC class
 // ******************
 class as.interface_element.ClipLoaderMC extends MovieClip
@@ -15,6 +15,8 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 	
 	private var temp_interval:Number;
 	
+	private var clip_mc_url:String;
+	
 	private var mc_loader:MovieClipLoader;
 
 	// ***********
@@ -24,12 +26,20 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 	{
 		mc_ref = this;
 		
-		mc_ref.attachMovie ("lib_empty_mc", "clip_mc", 1);
-		mc_ref.attachMovie ("lib_progress_mc", "progress_mc", 2, {_x: 5, _y: 5});
+		mc_ref.attachMovie ("lib_empty_mc", "clip_mc", 1, {_x: 0, _y: 0});
 		
 		mc_ref.progress_mc.set_dimension (100, 6);
 		
 		mc_loader = new MovieClipLoader ();
+	}
+
+	// ***********
+	// unload clip
+	// ***********
+	public function unload_clip ():Void
+	{
+		mc_loader.unloadClip (mc_ref.clip_mc);
+		clip_mc_url = "";
 	}
 
 	// *********************
@@ -46,9 +56,7 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 	// *********************
 	public function get_display_dimension ():Object
 	{
-		var temp_dimension:Object;
-		
-		temp_dimension = new Object ();
+		var temp_dimension:Object = new Object ();
 		temp_dimension ["width"] = display_width;
 		temp_dimension ["height"] = display_height;
 		
@@ -66,7 +74,7 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 	// ************************
 	// update display dimension
 	// ************************
-	public function update_display_dimension ():Void
+	private function update_display_dimension ():Void
 	{
 		// scale approach
 		if (display_boundary != null)
@@ -99,10 +107,13 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 	// ***********
 	public function set_clip_mc (s:String):Void
 	{
-		var temp_listener:Object;
-		
-		temp_listener = new Object ();
+		// place the progress bar first
+		mc_ref.attachMovie ("lib_progress_mc", "progress_mc", 2, {_x: 5, _y: 5});
+		mc_ref.progress_mc.set_dimension (100, 6);
+
+		var temp_listener:Object = new Object ();
 		temp_listener ["class_ref"] = mc_ref;
+		
 		temp_listener.onLoadInit = function ()
 		{
 			// store up the original dimensions
@@ -115,16 +126,20 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 			
 			this.class_ref.clip_mc._alpha = 0;
 			this.class_ref.temp_interval = setInterval (this.class_ref, "fade_in_interval", 50);
+
+			// release CPU resources
+			this.class_ref.mc_loader.removeListener (this);
+			
+			// remove the progress bar
+			this.class_ref.progress_mc.removeMovieClip ();				
 		}
 		
 		temp_listener.onLoadProgress = function (m:MovieClip, l:Number, t:Number)
 		{
-			var temp_loaded:Number;
-			var temp_total:Number;
-			var temp_percentage:Number;
-			
-			temp_loaded = l;
-			temp_total = t;
+			var temp_loaded:Number = l;
+			var temp_total:Number = t;
+
+			var temp_percentage:Number = 0;
 			temp_percentage = temp_loaded / temp_total * 100;
 			
 			this.class_ref.progress_mc.set_progress_percentage (temp_percentage);
@@ -133,10 +148,15 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 		temp_listener.onLoadError = function ()
 		{
 			_root.status_mc.add_message ("(ClipLoaderMC.as) Image doesn't exists... " + this.class_ref.clip_mc._url, "critical");
+			
+			// release CPU resources
+			this.class_ref.mc_loader.removeListener (this);
 		}
 		
 		mc_loader.addListener (temp_listener);
 		mc_loader.loadClip (s, mc_ref.clip_mc);
+				
+		clip_mc_url = s;
 	}
 	
 	// ****************
@@ -151,5 +171,13 @@ class as.interface_element.ClipLoaderMC extends MovieClip
 			mc_ref.clip_mc._alpha = 100;
 			clearInterval (temp_interval);
 		}
+	}
+	
+	// ***************
+	// get clip mc url
+	// ***************
+	public function get_clip_mc_url ():String
+	{
+		return (clip_mc_url);
 	}
 }

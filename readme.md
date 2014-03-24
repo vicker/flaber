@@ -1,262 +1,299 @@
-> Directly converted from old readme file dated 16 March 2006
-
 ***
 
 FLABER (FLAsh-based web BuildER)
-Flash it! Drag it! Build it!
 
-SourceForge Project Page
+SourceForge Project Page (Outdated)
 [http://sourceforge.net/projects/flaber](http://sourceforge.net/projects/flaber)
 
 ***
 
 # A. Author's Voice
 
-Thanks for all the supports from the public~ The total download count in sourceforge already reached 1000! To celebrate this moment, release 3 is out!! I hope that you will continue supporting FLABER and enjoy building your Flash web pages.
+There are many memerable moments since the last release till now. FLABER won three awards from a University IT Project Competition. And the first language translation of FLABER (Simplified Chinese) is done by Raymond@openlink.cn. SourceForge records more than 3000 downloads. All of these achievements will never exists without your support! I am sure FLABER will become more famous and perfect with your contribution! Thanks a lot!!
 
-Vicker LEUNG @ 2006 May 4
-
-Student of City University of Hong Kong, SAR
+Vicker LEUNG [at] JULY 17th 2006
 
 
-Is been a long time since I started this project. Finally I have a chance to present the very first release. Counting my fingers, this project is running for nearly a year already. I wont say that this product is great, however I will say that you will have fun with it!
+# B. About FLABER?
 
-Vicker LEUNG @ 2006 Mar 16
+FLABER is a pure ActionScript 2.0 driven Flash Rich Internet Application (RIA). The structure of FLABER is mainly divided into three components - Flash RIA (the graphic user interface and core), PHP (server-side scripting language) and XML (data storage format).
 
-Student of City University of Hong Kong, SAR
+This project is first started as my final year project in City University of Hong Kong. (in other words… homework…) Since the first public release in SourceForge, I received many great feedbacks from the public. That is why I decided to make FLABER an open source product so that everyone can benefits from it :)
 
+# C. Why FLABER?
 
+A well designed and coded web page is very important to attract users. Unfortunately, not everyone is good at designing and coding. Using our FLABER tool, anyone - even a kid - can build a user-friendly and accessible website with great multimedia experience. FLABER not only benefits the web owner, but also improves the user experience.
 
-# B. Why FLABER?
+From a business point of view, web maintenance is always a problem. Companies need to hire an expert in web design or train a staff to update the web contents. This problem will be more crucial if Flash contents are used. With FLABER, companies can cut down resources used in maintaining the web site. Moreover with better content presentation, it may boost their sales as well.
 
-FLABER is a pure ActionScripts 2 driven Flash Rich Internet Application (RIA), while the server side scriptings relies on PHP, data storage mainly using XML.
-
-This project is first started as my personal final year project. (University homework... in other words =.=) And when I developed it further, I want to make it an open source product. So now this project is hosted in SourceForge under General Public License (GPL).
-
-The main usage of FLABER is to allow any people with different skillsets, even you know nothing about Flash can still build up your own personal Flash-based website.
-
-
-
-# C. System Requirements
+# D. System Requirements
 
 **Server side:**
 
-IIS / Apache with PHP 4.0 or above
+- Microsoft IIS or Apache HTTP Server
+- PHP 4.0 or above
 
 **Client side:**
 
-Flash Player 8 is a must
+Any internet browser with Flash Player 8.0 or above
 
-# D. Installation
+# E. Installation Guide
 
-- Go to download the latest package of FLABER from http://sourceforge.net/projects/flaber
-- Unzip the package
-- Copying the whole FLABER folder to your personal web space
-- Change the file and folder permission as follows
+1. Download the latest package of FLABER from SourceForge
+    - If you simply want to use FLABER, download the “flaber” package
+    - If you also want to modify FLABER, download the “flaber_source” package
+2. Unzip the package
+3. Upload the unzipped content to your own web server
+4. Change the file and folder permission as follows
+5. Browse to
+    http://www.your_domain.com/installation_path/flaber/index.html
+6. What's more?!?! Go ahead and enjoy FLABER now~
 
-***
 
-+ flaber/
-    + function/
-	+ img/  *777 with folder contents 666*
-	+ page/ *777 with folder contents 666*
-	+ style/
-	+ index.html
-	+ flaber.swf
-	+ Flaber.xml    *666*
-	+ MenuBar.xml
-	+ NavigationMenu.xml	*666*
+# E.a. Permission Settings
 
-***
+| Folder / File | Permission |
+| ------ | ------ |
+| flaber/ | |
+| flaber/function/ | |
+| flaber/function/password.php | 666 |
+| flaber/img/ | 777 |
+| flaber/img/*.* | 666 |
+| flaber/page/ | 777 |
+| flaber/page/*.* | 666 |
+| flaber/style/ | |
+| index.html | |
+| flaber.swf | |
+| Flaber.xml | 666 |
+| MenuBar.xml | |
+| NavigationMenu.xml | 666 |
 
-- Enjoy using FLABER by browsing to the http://installation_path/flaber/index.html
 
-# E. Using FLABER
+# F. How to use FLABER
 
-> Apolgy first I dont have much time to prepare a good documentation. I will improve in the forthcoming releases
+Please accept my apology first… I don't have much time and experience in preparing a good documentation. If you would like to offer me some help, I will always welcome and appreciated! Your participation is one of the criteria to make FLABER perfect!
 
-## E.a. Action Mode
+# F.a. Site Administrator
 
-There are actually two main viewpoint of FLABER, "Action Mode" and "Edit Mode".
+In order to protect your web page from non-authorized editing, FLABER has an authentication mechanism. The advanced functions such as editing will become accessible, only if the user can provide the administrative password to the system.
 
-Action mode is the mode that is in default when anyone browse FLABER. So this can be also called the browsing mode. In this mode, you can browse the web just like any normal web page. Text, Images, Shapes, Links and Navigation Menus are all available.
+# F.a.i. Login Panel (Updated)
 
-When you are logged in as an admin, you can enter edit mode by the menu item "Mode"
+You can bring up the login panel or context menu anytime by pressing a hotkey when FLABER is within focus. Different operating systems and browsers use different hotkey or mouse click which are listed as follows:
+
+| | IE (Win) | Opera (Win) | Firefox (Win) | Safari (Mac) | Opera (Mac) |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| Mouse | Right mouse click | Right mouse click | Right mouse click | Control + Click | Control + Click |
+| Keyboard | Ctrl + Shift + E | Ctrl + E | Ctrl + E | Not supported | Mac + E |
+
+If the password is correct, a new menu bar will be available at the top with all the advanced functions.
+
+# F.a.ii. Changing Password (Updated)
+
+    Tool > Change Password
+
+Starting from version 1.1, you can change the password in a much simpler way than before by making use of the new change password dialogue box. Simply enter your original password and new password to do the changes.
+
+# F.b. The Mode Concept
+
+In FLABER, it can be divided into two modes (or viewpoint). They are “Action Mode” and “Edit Mode”. Different modes will give the page contents a different behavior and functionality.
+
+# F.b.i. Action Mode
+
+    Mode > Action Mode
+
+This is the default mode when FLABER is opened, you can see it as the “Display Mode”. Within this mode, all the page contents will act normally like those in traditional XHTML web pages. For example, you can highlight and copy the text fields.
+
+# F.b.ii. Edit Mode
 
     Mode > Edit Mode
 
-## E.b. Edit Mode
+This is the mode where you do all the page editings. When you try to mouse over the page elements, they will be highlighted. Clicking on the elements will bring up a small panel known as “ Edit Panel”. Making use of this little panel, you can perform move, resize, rotate, properties and delete functions on the target element.
 
-When you are in edit mode, all the elements is editable. You can try to move your mouse over any element and a small panel will be placed near the element which is called the "Edit Panel".
+# F.b.iii. Mode Switching
 
-In order to change the mode, you need admin login which will be mentioned in next paragraph.
+    Mode > xxxxxx
 
-## E.c. Admin login
+In order to switch between the two operation modes, you have to login as an administrator. For information concerning login, please refer to F.a.i) Login Panel.
 
-You can enter the admin login by:
+After authentication, you can trigger a mode switching using the “Mode” menu item, for example:
 
-    CTRL + E
+    Mode > Edit Mode
 
-> Internet Explorer user may experience problem that "CTRL + E" is mapped to other shortcut function. Try "SHIFT + CTRL + E"
+You will notice the change when you try to mouse over the page elements on the stage. In edit mode, mouse over the page elements will have a highlight effect where action mode don't.
 
+# F.c. Page Functions
 
-The default password is "flaber" without the double quotes.
+    File > xxxxxx
 
-**You can change the password by editing flaber/function/admin_login.php**
+Each screen you browse inside FLABER is known as a page and it is stored in a XML file. You can do many page functions just like you are using other software applications, such as:
 
-After login, you will notice that a new menu bar come out, here you can access numerous functions including mode change.
+- New Page
+- Open Page
+- Save Page
 
-## E.d. Add and Edit Items
+>
+> !!!!!! Since FLABER don't have auto saving mechanism yet, !!!!!!
+>
+> !!!!!! PLEASE ALWAYS REMEMBER TO SAVE THE CONTENTS before leaving FLABER !!!!!!
+>
 
-Currently FLABER supports the following page items:
+# F.d. Page Elements and Editing
 
-- TextField
-- Image
+Currently FLABER supports four page elements including:
+
+- TextFields
+- Images
 - Links
-- Shapes (Rectangles only)
+- Shapes
+    - Rectangles
+    - Oval
+- Navigation Menu
+    - Navigation Item
 
-Adding new element is simple, you can use the "Insert" menu bars
-A window will bring up asking for the item details
+# F.d.i. Adding New Elements
 
-    e.g. Insert > TextField
+    Insert > xxxxxx
 
-Editing existing element will require "Edit Mode". (mentioned in chapter E.b.)
+You can add new elements to the stage using the “Insert” menu item, for example:
 
-After changing to edit mode, you can left click on any elements to bring up a little panel called edit panel which have numerous editing functions:
-(from left to right)
+    Insert > Textfield
 
-    Move | Resize | Rotate | Properties | Delete
+# F.d.ii. Editing Existing Elements
 
-- Move
-    - Left click and drag to move the item
-- Resize
-    - Left click and drag to resize the item (not all items support)
-- Rotate
-    - Left click and drag to rotate the item (not all items support)
-- Properties
-    - Left click will bring up an advance dialogue box
-- Delete
-    - Left click will remove the item
+First of all, make sure you are in Edit Mode. Then you can left click on any page element to bring up a handler object that covers the whole element. This handler replaces the edit panel in previous versions to give you more direct manipulation on the elements.
 
-## E.e. Page Properties
+| | | R |
+| ------ | ------ | ------ |
+| | The Page Element | |
+| B | | Y |
 
-Page properties contain all the settings according to the current opening page, including
+The functions of the handlers are listed as follows
 
-- Background Color
-- Backgroung Image
+| Move | Left click on the page element and drag |
+| ------ | ------ |
+| Resize | Left click on the Yellow Handler (Y) and drag |
+| Scale Resize | Press Shift while resizing |
+| Special Resize (for Sqaure and Circle) | Press Ctrl while resizing |
+| Rotate | Left click on the Blue Handler (B) and drag |
+| Delete | Left click on the Red Handler (R) |
+| Properties | (PC) Right click on the page element (MAC) Control + Click on the page element |
 
-Page Properties are accessible through the menu item "Modify"
+Actually not all the page elements have all the functions, the detailed list is as follows:
+
+| | Move | Resize | Rotate | Properties | Delete |
+| ------ | ------ | ------ | ------ | ------ | ------ |
+| TextField | O | O | | O | O |
+| Image | O | O | O | O | O |
+| Link | O | | | O | O |
+| Shape | O | O | O | O | O |
+| Navigation Menu | O | | | O | |
+| Navigation Item | O |  | | O | O |
+
+# F.e. Page Properties
 
     Modify > Page Properties
 
-## E.f. Web Properties
+Inside page properties, it contains all the settings concerning with the currently opened page including:
 
-Web properties are similar as page properties, however the target is on the whole web site. Functions includes
+- Background Color
+- Background Image
 
-- Index Page
-    - that is the first page that FLABER will load when a visitor comes
+# F.f. Web Properties (Updated)
+
+    Modify > Web Properties
+
+Web properties are quite similar as the page properties, however the target is on the entire web site. Functions include:
+
+- Index Page (the very first page that FLABER will load when started)
+- Status Message (switching on / off the status message bar)
 - Navigation Menu
-    - whether a navigation menu will be used throughout the web
-- Page Transitions
-    - special animation effects when there are page changes
+- Page Transition (special animation effects during page change)
+    - Iris
+    - Fade
+    - Fly
+    - Pixel Dissolve
+    - Wipe
 
-Web Properties are accessible through the menu item "Modify"
+# F.g. Depth Manager (Updated)
 
-	Modify > Web Properties
+    Tools > Depth Manager
 
-## E.g. New / Open and Saving
+All the page elements within FLABER are placed in seperate layers (different depths). In order to change the depth of different elements, you can make use of the depth manager.
 
-All of these functions can be found through the menu item "File".
+Inside depth manager, all the movable page elements are listed. You can change the depth simply by selecting an item and press either the button + or - (+ stands for moving up and - for moving down)
 
-**!!!!!!!!!! ALWAYS REMEMBER TO SAVE THE CONTENT BEFORE EXITING THE WEB !!!!!!!!!!**
+In version 1.1 RC1, you can also edit or delete the page elements through the depth manager. Simply select the target element from the list and press the corresponding button.
 
-## E.h. Depth Manager
-
-All the page elements within FLABER are placed in seperate layer (different depth). In order to change the depth of different elements, you can make use of the depth manger.
-
-    Tools > Depth Manger
-
-Inside depth manager, all the page elements are listed. You can change the depth simply by selecting an item and press either + or - (+ stands for moving up vice versa)
-
-## E.i. Image Uploader
-
-If you want to use your own image files in FLABER, instead of using your FTP clients. You can make use of the image uploader.
+# F.h. Image Uploader
 
     Tools > Image Uploader
 
-By default, all the uploaded files are placed in the IMG folder. And file size is limited to 10MB per file. (Additional limit may be present for some servers. Please contact your server provider for details)
+If you want to use your own image files, you have to upload the file from local to the server. Instead of using your personal FTP clients, you can also make use of the image uploader inside FLABER.
 
-## E.j. XML Editing
+By default, all the upload files are placed inside the “IMG” folder, and file size is limited to “10MB per file”. (Additional limit may be present for some servers. Please contact your server provider for details)
 
-Actually FLABER is still in development, some of the functions are still not editable through the GUI. And some expert users may like editing codes rather than using the GUI. In this case, you are always welcome to edit the XML files directly.
+# F.i. XML Editing
 
-**!!!!!!!!!!   For non-expert users, try not to edit the XML directly    !!!!!!!!!!**
-**!!!!!!!!!!   which may results unbelievable damage to the FLABER data  !!!!!!!!!!**
+Actually FLABER is still under rapid development. Some of the functions are not editable through the GUI. Expert users like you may like code editing rather than using the GUI. In this case, you are always welcome to edit the XML files directly.
 
-The XML files are placed in the following manner:
+> !!!!!! For non-expert users, try not to edit the XML directly        !!!!!!
+>
+> !!!!!! which may results unpredictable corruption to the FLABER data !!!!!!
 
-***
+The following is a brief explanation on the XML documents:
 
-+ flaber/
-    + function/
-	+ img/
-	+ page/ *all the seperate pages, you can see it like a single html file*
-	    + index.xml
-	    + page2.xml
-    + style/
-    + index.html
-    + flaber.swf
-    + Flaber.xml *the so called global config file, controlling the page transitions etc...*
-	+ MenuBar.xml *the menu bar. no fun in here so I dont guess you will need to edit this*
-	+ NavigationMenu.xml *the navigation menu which will appear on EVERY page of the web*
+| Folder / File | Remarks |
+| ----- | ----- |
+| flaber/ | |
+| flaber/function/ | |
+| flaber/img/ | |
+| flaber/page/ | This is where all the pages are placed… |
+| flaber/page/index.xml | Every page is placed in a seperate XML file like HTML |
+| flaber/page/page2.xml | |
+| flaber/style/ | |
+| index.html | |
+| flaber.swf | |
+| Flaber.xml | The is the global config file, controlling the page transitions, etc… |
+| MenuBar.xml | FLABER's menu bar, no editing is suggested except language translation |
+| NavigationMenu.xml | The navigation menu which appears on EVERY page of the web |
 
-***
+# H. Acknowledgements
 
-# F. Contacts
+Here, I grab the chance to thank some of the people who helped me a lot in the success of this project.
 
-For general issues, such as suggestions making, bug reporting, commenting, donation etc. Please kindly move one more step to the SourceForge project forum.
+- Dr. Andy CHUN, Hon Wai *(Associate Professor - City University of Hong Kong)*
 
-[http://sourceforge.net/forum/?group_id=152518](http://sourceforge.net/forum/?group_id=152518)
+    My final year project supervisor, expert in artificial intelligence and a great artist. He is a great professor who provided me with lots of knowledge and suggestions throughout the year.
 
-Your support is always welcome and valuable for me to develope even more products.
+- Mr. Tim SHIU, Ka Ki *(FLABER's Strategic Master & FARSER's founder)*
 
-For other issues, such as joining me as the development team. Please dont hesitate to contact me directly through email.
+    One of my best friend and a great programmer in many different languages. He has a very rigid logic and thinking which really helps me a lot during FLABER's early development, especially those OO concepts.
 
-vicker[at]gmail.com
 
-ICQ also welcomes at 25264936.
+- Mr. Chris LIANG, Li *(FLABER's Strategic and Algorithmic Master)*
 
-# G. Special Thanks
+    Another best friend and great thinker. No algorithm can troubles him. That is why whenever I got some Maths problem in FLABER, I will throw them to Chris XD
 
-Here, I grab the chance to thank some of the people who helped me a lot in the succeed in this project.
 
-***Dr. Andy CHUN, Hon Wai***
+- Ms. Eva SHI, Yi Fan *(FLABER's Tester)*
 
-Professor in City University of Hong Kong. Experts in Artificial Intelligence and Arts. He is a great professor who provided lots of knowledge and suggestions to me.
+    My girlfriend and also my first-line tester. I already forgot how many times she sat beside me watching me typing all those crazy Flash codes. Sorry about that and I love you :)
 
-***Mr. Tim SHIU, Ka Kei***
 
-A friend of mine and a great programmer in many different languages. He have a very rigid logic and thinking which really helps me a lot during development, especially those OO concepts.
+- Mr. Warenix WONG, Ms. Soki HO and Ms. Christy CHUNG *(FLABER's Testers)*
 
-***Ms. Eva SHI, Yi Fan***
+    Three user testers during the second release. They really gave me a lot of comments that I never thought of and are important for all the users. Thanks.
 
-My girlfriend and also my first-line tester. I already forgot how many times she sitting besides me watching me typing all those crazy Flash codes. Sorry about that and I love you :)
 
-***Mr. Warenix WONG, Ms. Soki HO and Ms. Christy CHUNG***
+- FLABER Supporters
 
-My three user testers. Responsible to test whether the product is usable for different users.
+    ATIX, BeVeR, Catherine, Claudio, David Prouty, elomibao, John Petitjean, Kevin Airgid, kristjan dekleva, Liam, Paul, Scott AKA Stri, shauryaanand, Sven Schaetzl, Vesselin Drangajov, Zac Raybould … (Have I missed your name?!?! Let me know!)
 
-***Additional thanks to***
 
-- 00HK Server hosting
-- SourceForge Project hosting
-- Macromedia Flash
-- SEPY ActionScript Editor
-
-- Carmen
-- Chris LIANG
-- Kay CHEUNG
-- Leo (ATIX)
-- Michael STOCK
-- Olivia
-- Sam LAM
+- Special thanks to
+    - 00HK (Project hosting company)
+    - SourceForge (Project hosting community)
+    - Adobe Flash (Development platform)
+    - PSPad (Code editor)
+    - SEPY ActionScript Editor (Code editor)

@@ -1,39 +1,18 @@
-﻿// ********************
+import mx.controls.*;
+
+// ********************
 // SystemFunction class
 // ********************
 class as.global.SystemFunction
 {
-	// ***********
-	// constructor
-	// ***********
-	public function SystemFunction ()
-	{
-		// actually nothing is necessary for system function
-	}
-	
 	// ****************
 	// get current time
 	// ****************
 	public function get_time ():String
 	{
-		var temp_time:Date;
-		var temp_string:String;
-		
-		temp_time = new Date ();
-		temp_string = temp_time.getMinutes ().toString ();
-		
-		if (temp_time.getMinutes () < 10)
-		{
-			temp_string = "0" + temp_string;
-		}
-		
-		temp_string = temp_time.getHours ().toString () + ":" + temp_string;
-		
-		if (temp_time.getHours () < 10)
-		{
-			temp_string = "0" + temp_string;
-		}
-		
+		var temp_time:as.datatype.DateExtend = new as.datatype.DateExtend ();
+		var temp_string:String = "";		
+		temp_string = temp_time.get_full_hours () + ":" + temp_time.get_full_minutes ();
 		return (temp_string);
 	}
 	
@@ -42,7 +21,7 @@ class as.global.SystemFunction
 	// ************
 	public function build_popup (w:Number, h:Number, n:String, u:String, t:Number):Void
 	{
-		var temp_properties:String;
+		var temp_properties:String = "";
 		
 		if (t == 0)
 		{
@@ -53,7 +32,7 @@ class as.global.SystemFunction
 			temp_properties = "toolbar=yes, location=yes, status=yes, menubar=yes, scrollbars=yes, resizable=yes, width=" + w + ", height=" + h;
 		}
 		
-		var temp_script:String;
+		var temp_script:String = "";
 		temp_script = "javascript:popup ('" + u + "','" + n + "','" + temp_properties + "')";
 		getURL (temp_script);
 	}
@@ -63,15 +42,16 @@ class as.global.SystemFunction
 	// ****************
 	public function get_mouse_degree (x:Number, y:Number):Number
 	{
-		var atan2_value:Number;
-				atan2_value = Math.atan2 (_root._ymouse - y, _root._xmouse - x);
-		
-		return (atan2_value / (Math.PI / 180) + 90);
+		var atan2_value:Number = 0;
+		atan2_value = Math.atan2 (_root._ymouse - y, _root._xmouse - x);
+		atan2_value = atan2_value / (Math.PI / 180) + 90;
+		return (atan2_value);
 	}
 	
 	// *****************
 	// color code to num
 	// *****************
+	// #FFFFFF => 16777215
 	public function color_code_to_num (s:String):Number
 	{
 		if (s.charAt (0) == "#")
@@ -94,6 +74,7 @@ class as.global.SystemFunction
 	// ********************
 	// color code to string
 	// ********************
+	// #FFFFFF => 0xFFFFFF
 	public function color_code_to_string (s:String):String
 	{
 		if (s.charAt (0) == "#")
@@ -116,10 +97,10 @@ class as.global.SystemFunction
 	// *****************
 	// color num to code
 	// *****************
+	// 16777215 => #FFFFFF
 	public function color_num_to_code (n:Number):String
 	{
-		var temp_string:String;
-		
+		var temp_string:String = "";
 		temp_string = n.toString (16).toUpperCase ();
 		
 		while (temp_string.length != 6)
@@ -131,68 +112,24 @@ class as.global.SystemFunction
 		return temp_string; 
 	}
 
-	// ********************
-	// combobox select item
-	// ********************
-	public function combobox_select_item (c:mx.controls.ComboBox, s:String):Number
+	// *******************
+	// color num to string
+	// *******************
+	// 16777215 => 0xFFFFFF
+	public function color_num_to_string (n:Number):String
 	{
-		// find inside the combobox
-		for (var i = 0; i < c.length; i++)
-		{
-			if (s == c.getItemAt (i).data)
-			{
-				c.selectedIndex = i;
-				return (i);
-			}
-		}
+		var temp_string:String = "";
+		temp_string = n.toString (16).toUpperCase ();
 		
-		// if not found but editable
-		if (c.editable == true)
+		while (temp_string.length != 6)
 		{
-			c.text = s;
-			return (null);
+			temp_string = "0" + temp_string;
 		}
+		temp_string = "0x" + temp_string;
 		
-		// if not found and not editable
-		return (-1);
+		return temp_string; 
 	}
-
-	// ****************
-	// list select item
-	// ****************
-	public function list_select_item (l:mx.controls.List, s:String):Number
-	{
-		// find inside the list
-		for (var i = 0; i < l.length; i++)
-		{
-			if (s == l.getItemAt (i).data)
-			{
-				l.selectedIndex = i;
-				return (i);
-			}
-		}
-		
-		// if not found
-		return (-1);
-	}
-
-	// **********************
-	// button toggle selected
-	// **********************
-	public function button_toggle_selected (b:mx.controls.Button)
-	{
-		if (b.toggle == true)
-		{
-			if (b.selected == true)
-			{
-				b.selected = false;
-			}
-			else
-			{
-				b.selected = true;
-			}
-		}
-	}
+	
 
 	// *****************
 	// string to boolean

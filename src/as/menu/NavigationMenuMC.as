@@ -1,24 +1,24 @@
-﻿// **********************
+// **********************
 // NavigationMenuMC class
 // **********************
-class as.menu.NavigationMenuMC extends MovieClip
+class as.menu.NavigationMenuMC extends as.page_content.PageElementMC
 {
 	// MC variables
 	// MovieClip					edit_mode_bg
 	
 	// private variables
-	private var data_xml:XMLNode;					// xml data
-	private var config_xml:XMLNode;				// xml config
+	private var data_xml:XMLNode;						// xml data
+	private var config_xml:XMLNode;						// xml config
 	
-	private var text_format:TextFormat;			// text format of the menu items
-	private var menu_style:Object;				// menu style's linkage name
+	private var text_format:TextFormat;					// text format of the menu items
+	private var menu_style:Object;						// menu style's linkage name
 	
-	private var item_mc_array:Array;				// array storing all the menu items
+	private var item_mc_array:Array;					// array storing all the menu items
 	
-	private var mc_ref:MovieClip;					// reference back to the navigation menu mc
+	private var mc_ref:MovieClip;						// reference back to the navigation menu mc
 	
-	private var file_name:String;					// for tracer
-	private var loaded_file:String;				// loaded file name
+	private var FILE_NAME:String = "(NavigationMenuMC.as)";			// for tracer
+	private var loaded_file:String;									// loaded file name
 
 	// ***********
 	// constructor
@@ -26,12 +26,12 @@ class as.menu.NavigationMenuMC extends MovieClip
 	public function NavigationMenuMC ()
 	{
 		mc_ref = this; 
+		mc_ref.attachMovie ("lib_frame_mc", "edit_mode_bg", -16384, {_x:0, _y:0});
 		
 		text_format = new TextFormat ();
 		menu_style = new Object ();
 		item_mc_array = new Array ();
 		
-		file_name = "(NavigationMenuMC.as)";
 		
 		mc_ref.edit_mode_bg_tag._visible = false;
 	}
@@ -54,7 +54,8 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ******************
 	public function destroy_one (m:MovieClip):Void
 	{
-		for (var i in item_mc_array)		{
+		for (var i in item_mc_array)
+		{
 			if (item_mc_array [i] == m)
 			{
 				item_mc_array [i].removeMovieClip ();
@@ -75,37 +76,10 @@ class as.menu.NavigationMenuMC extends MovieClip
 		item_mc_array.push (temp_mc);
 		
 		var temp_xml:XML;
-		temp_xml = new XML ("<NavigationItemMC style='global'><x>20</x><y>20</y><text>Dummy</text></NavigationItemMC>");
+		temp_xml = new XML ("<NavigationItemMC style='global'><x>50</x><y>50</y><text>Dummy</text></NavigationItemMC>");
 		temp_mc.set_data_xml (temp_xml.firstChild, text_format);
 		
 		temp_mc.broadcaster_event (_root.menu_mc.get_edit_mode ());
-	}
-
-	// *******************
-	// onrollover override
-	// *******************
-	public function onRollOver_event ()
-	{
-		_root.mc_filters.set_brightness_filter (mc_ref);
-		_root.tooltip_mc.set_content (mc_ref._name);
-		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
-	}
-	
-	// ******************
-	// onrollout override
-	// ******************
-	public function onRollOut_event ()
-	{
-		_root.mc_filters.remove_filter (mc_ref);
-		_root.tooltip_mc.throw_away ();
-	}
-	
-	// ****************
-	// onpress override
-	// ****************
-	public function onPress_event ()
-	{
-		pull_edit_panel ();
 	}
 	
 	// *************
@@ -116,8 +90,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 		loaded_file = s;
 		
 		// xml data loading
-		var root_xml:as.global.XMLExtend;
-		root_xml = new as.global.XMLExtend ();
+		var root_xml:as.datatype.XMLExtend = new as.datatype.XMLExtend ();
 		root_xml ["class_ref"] = this;
 		root_xml.ignoreWhite = true;
 		root_xml.sendAndLoad (s + _root.sys_func.get_break_cache (), root_xml, "POST");
@@ -132,8 +105,9 @@ class as.menu.NavigationMenuMC extends MovieClip
 			}
 			else
 			{
-				_root.status_mc.add_message (this.class_ref.file_name + " load root xml fail.", "critical");
+				_root.status_mc.add_message (this.class_ref.FILE_NAME + " load root xml fail.", "critical");
 			}
+
 		}
 	}
 	
@@ -174,7 +148,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 				// exception
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+					_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name + "'", "critical");
 				}
 			}
 		}
@@ -250,7 +224,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 				}
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+					_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name + "'", "critical");
 				}
 			}
 		}
@@ -284,7 +258,7 @@ class as.menu.NavigationMenuMC extends MovieClip
 			}
 			else
 			{
-				_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
+				_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_node.nodeName + "'", "critical");
 			}
 		}
 	}
@@ -292,17 +266,16 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ***************
 	// pull edit panel
 	// ***************
-	public function pull_edit_panel ():Void
+	private function pull_handler (s:String):Void
 	{
-		var temp_x:Number;
-		var temp_y:Number;
+		if (s == "first")
+		{
+			_root.handler_mc.bring_back ();
+			_root.handler_mc.set_function ([], ["resize", "rotate", "delete"]);
+		}
 		
-		temp_x = mc_ref._x;
-		temp_y = mc_ref._y + mc_ref._height;
-		
-		_root.edit_panel_mc.set_target_ref (mc_ref);
-		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, false, false, true);
+		_root.handler_mc.set_size (mc_ref._width, mc_ref._height);
+		_root.handler_mc.set_position (mc_ref._x, mc_ref._y, 0);
 	}
 
 	// *******************
@@ -310,19 +283,9 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// *******************
 	public function properties_function ():Void
 	{
-		var temp_lib:String;
-		var temp_name:String;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_lib = "lib_properties_navigation_menu";
-		temp_name = "Navigation Menu Properties Window";
-		temp_width = 450;
-		temp_height = 250;
-		
 		_root.sys_func.remove_window_mc ();
 		_root.attachMovie ("lib_window", "window_mc", 9999);
-		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.set_window_data ("Navigation Menu Properties Window", 450, 240, "lib_properties_navigation_menu");
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
@@ -334,14 +297,10 @@ class as.menu.NavigationMenuMC extends MovieClip
 		if (o == true)
 		{
 			// showing the edit mode bg
-			var temp_xml:XML;
-			temp_xml = new XML ("<RectangleMC><x>0</x><y>0</y><width>300</width><height>50</height><corner>0</corner><line_style>2|0x666666|100</line_style><fill_color>0xFFFFFF</fill_color><alpha>10</alpha></RectangleMC>");
-			
 			mc_ref.edit_mode_bg_tag._visible = true;
 			
 			mc_ref.edit_mode_bg ["class_ref"] = mc_ref;
-			mc_ref.edit_mode_bg.set_data_xml (temp_xml.firstChild);
-			mc_ref.edit_mode_bg.draw_it ();
+			mc_ref.edit_mode_bg.draw_rect (0, 0, 300, 50, 2, 0x666666, 10, 0xFFFFFF, 10);
 			
 			// listeners
 			mc_ref.edit_mode_bg.onRollOver = function ()
@@ -358,15 +317,21 @@ class as.menu.NavigationMenuMC extends MovieClip
 			{
 				this.class_ref.onPress_event ();
 			}
+			
+			mc_ref.edit_mode_bg.onRelease = function ()
+			{
+				this.class_ref.onRelease_event ();
+			}
 		}
 		else
 		{
-			mc_ref.edit_mode_bg.clear ();
+			mc_ref.edit_mode_bg.clear_frame ();
 			mc_ref.edit_mode_bg_tag._visible = false;
 			
 			delete mc_ref.edit_mode_bg.onRollOver;
 			delete mc_ref.edit_mode_bg.onRollOut;
 			delete mc_ref.edit_mode_bg.onPress;
+			delete mc_ref.edit_mode_bg.onRelease;
 		}
 		
 		for (var i in item_mc_array)
@@ -380,8 +345,8 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// **********
 	public function export_xml ():XML
 	{
-		var out_xml:XML;
-		var out_string:String;
+		var out_xml:XML = new XML ();
+		var out_string:String = "<?xml version='1.0'?>";
 		
 		var root_node:XMLNode;
 		var config_node:XMLNode;
@@ -390,10 +355,6 @@ class as.menu.NavigationMenuMC extends MovieClip
 		var temp_node:XMLNode;
 		var temp_node_2:XMLNode;
 		var temp_node_3:XMLNode;
-		
-		out_string = "<?xml version='1.0'?>";
-		
-		out_xml = new XML ();
 		
 		// building root node
 		root_node = out_xml.createElement ("NavigationMenu");
@@ -475,10 +436,9 @@ class as.menu.NavigationMenuMC extends MovieClip
 	// ********
 	public function save_xml ():Void
 	{
-		var out_xml:XML;
-		var return_xml:as.global.XMLExtend;
+		var out_xml:XML = new XML ();
+		var return_xml:as.datatype.XMLExtend = new as.datatype.XMLExtend ();
 		
-		return_xml = new as.global.XMLExtend ();
 		return_xml.onLoad = function (b: Boolean)
 		{
 			if (b)
@@ -488,7 +448,6 @@ class as.menu.NavigationMenuMC extends MovieClip
 			}
 		}
 		
-		out_xml = new XML ();
 		out_xml = export_xml ();
 		out_xml.contentType = "text/xml";
 		out_xml.sendAndLoad ("function/update_xml.php?target_file=" + loaded_file, return_xml);

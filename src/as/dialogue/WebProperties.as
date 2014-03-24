@@ -1,4 +1,4 @@
-﻿// *******************
+// *******************
 // WebProperties class
 // *******************
 class as.dialogue.WebProperties extends MovieClip
@@ -23,15 +23,22 @@ class as.dialogue.WebProperties extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.ComboBox, "index_combobox", 1, {_x:30, _y:35, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.CheckBox, "navigation_checkbox", 2, {_x:30, _y:80, _width:120, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "navigation_textinput", 3, {_x:30, _y:105, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.CheckBox, "transition_checkbox", 4, {_x:30, _y:150, _width:120, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "transition_combobox", 5, {_x:30, _y:175, _width:150, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "index_combobox", 1, {_x:20, _y:35, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "status_on_radiobutton", 2, {_x:220, _y:35, _width:80, _height:20});
+		mc_ref.createClassObject (mx.controls.RadioButton, "status_off_radiobutton", 3, {_x:280, _y:35, _width:80, _height:20});
+		mc_ref.createClassObject (mx.controls.CheckBox, "navigation_checkbox", 4, {_x:20, _y:80, _width:120, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "navigation_textinput", 5, {_x:20, _y:105, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.CheckBox, "transition_checkbox", 6, {_x:220, _y:80, _width:120, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "transition_combobox", 7, {_x:220, _y:105, _width:150, _height:20});
+
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 8, {_x:200, _y:160});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 9, {_x:290, _y:160});
 		
 		setup_component_style ();
 		
 		setup_index_combobox ();
+		setup_status_on_radiobutton ();
+		setup_status_off_radiobutton ();
 		setup_navigation_checkbox ();
 		setup_navigation_textinput ();
 		setup_transition_checkbox ();
@@ -46,12 +53,16 @@ class as.dialogue.WebProperties extends MovieClip
 	public function setup_component_style ():Void
 	{
 		mc_ref.index_label.setStyle ("styleName", "label_style");
+		mc_ref.status_label.setStyle ("styleName", "label_style");
 		
 		mc_ref.navigation_textinput.setStyle ("styleName", "textinput_style");
 		
 		mc_ref.index_combobox.setStyle ("styleName", "combobox_style");
 		mc_ref.transition_combobox.setStyle ("styleName", "combobox_style");
-		
+
+		mc_ref.status_on_radiobutton.setStyle ("styleName", "radiobutton_style");
+		mc_ref.status_off_radiobutton.setStyle ("styleName", "radiobutton_style");
+				
 		mc_ref.navigation_checkbox.setStyle ("styleName", "checkbox_style");
 		mc_ref.transition_checkbox.setStyle ("styleName", "checkbox_style");
 	}
@@ -61,17 +72,53 @@ class as.dialogue.WebProperties extends MovieClip
 	// ********************
 	public function setup_index_combobox ():Void
 	{
-		var temp_array:Array;
-		
+		var temp_array:Array = new Array ();
 		temp_array = _root.flaber.get_page_dir_array ();
 		
 		for (var i = 0; i < temp_array.length; i++)
 		{
-			mc_ref.index_combobox.addItem ({label:temp_array [i], data:temp_array [i]});
+			var temp_string:String = "";
+			temp_string = temp_array [i];
+			
+			mc_ref.index_combobox.addItem ({label:temp_string, data:temp_string});
 		}
 		
-		_root.sys_func.combobox_select_item (mc_ref.index_combobox, _root.flaber.get_index_page ());
+		mc_ref.index_combobox.select_item (_root.flaber.get_index_page ());
 	}
+	
+	// ***************************
+	// setup status on radiobutton
+	// ***************************
+	public function setup_status_on_radiobutton ():Void
+	{
+		mc_ref.status_on_radiobutton.label = "On"
+		mc_ref.status_on_radiobutton.labelPlacement = "right";
+		mc_ref.status_on_radiobutton.data = "on";
+		mc_ref.status_on_radiobutton.groupName = "status_radiobuttongroup";
+		
+		// current status
+		if (_root.flaber.get_status_mc_mode () != "off")
+		{
+			mc_ref.status_on_radiobutton.selected = true;
+		}
+	}
+	
+	// ***************************
+	// setup status off radiobutton
+	// ***************************
+	public function setup_status_off_radiobutton ():Void
+	{
+		mc_ref.status_off_radiobutton.label = "Off"
+		mc_ref.status_off_radiobutton.labelPlacement = "right";
+		mc_ref.status_off_radiobutton.data = "off";
+		mc_ref.status_off_radiobutton.groupName = "status_radiobuttongroup";
+		
+		// current status
+		if (_root.flaber.get_status_mc_mode () == "off")
+		{
+			mc_ref.status_off_radiobutton.selected = true;
+		}
+	}	
 	
 	// *************************
 	// setup navigation checkbox
@@ -157,13 +204,19 @@ class as.dialogue.WebProperties extends MovieClip
 		
 		for (var i in name_array)
 		{
-			mc_ref.transition_combobox.addItem ({label:name_array [i], data:value_array [i]});
+			var temp_name:String = "";
+			var temp_value:String = "";
+			
+			temp_name = name_array [i];
+			temp_value = value_array [i];
+		
+			mc_ref.transition_combobox.addItem ({label:temp_name, data:temp_value});
 		}
 		
 		// current status
 		if (_root.mc_transitions != null)
 		{
-			_root.sys_func.combobox_select_item (mc_ref.transition_combobox, _root.mc_transitions.get_transition_style ());
+			mc_ref.transition_combobox.select_item (_root.mc_transitions.get_transition_style ());
 		}
 		else
 		{
@@ -176,6 +229,10 @@ class as.dialogue.WebProperties extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -183,6 +240,9 @@ class as.dialogue.WebProperties extends MovieClip
 			
 			// index page
 			_root.flaber.set_index_page (this.class_ref.index_combobox.value);
+			
+			// status message
+			_root.flaber.set_status_mc_mode (this.class_ref.status_radiobuttongroup.selectedData);
 			
 			// navigation menu
 			if (this.class_ref.navigation_checkbox.selected == true)
@@ -290,6 +350,11 @@ class as.dialogue.WebProperties extends MovieClip
 			temp_node.appendChild (temp_node_2);
 			root_node.appendChild (temp_node);
 			
+			temp_node = out_xml.createElement ("StatusMessage");
+			temp_node_2 = out_xml.createTextNode (this.class_ref.status_radiobuttongroup.selectedData);
+			temp_node.appendChild (temp_node_2);
+			root_node.appendChild (temp_node);
+			
 			if (this.class_ref.navigation_checkbox.selected == true)
 			{
 				temp_node = out_xml.createElement ("NavigationMenu");
@@ -331,6 +396,10 @@ class as.dialogue.WebProperties extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

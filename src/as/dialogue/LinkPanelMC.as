@@ -1,4 +1,4 @@
-﻿// *****************
+// *****************
 // LinkPanelMC class
 // *****************
 class as.dialogue.LinkPanelMC extends MovieClip
@@ -73,7 +73,6 @@ class as.dialogue.LinkPanelMC extends MovieClip
 		
 		// panel input
 		mc_ref.panel_mc.createClassObject (mx.controls.TextInput, "url_textinput", 1, {_x:0, _y:0, _width:250, _height:20});
-//		mc_ref.panel_mc.createClassObject (mx.controls.Button, "url_tick_button", 2, {_x:260, _y:0, _width:20, _height:20});
 		mc_ref.panel_mc.attachMovie ("lib_button_mc", "url_tick_button", 2, {_x:260, _y:0});
 		
 		mc_ref.panel_mc.url_textinput.setStyle ("styleName", "textinput_style");

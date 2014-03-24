@@ -1,4 +1,4 @@
-﻿<!DOCTYPE
+<!DOCTYPE
  html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-tw">
@@ -7,10 +7,14 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=big5" />
 	<meta name="AUTHOR" content="Vicker" />
 	<meta name="DESCRIPTION" content="FLABER Flash based web builder" />
-	<meta name="KEYWORDS" content="vicker, vickerleung, flaber, flash builder, free, web builder" />
-	<title>FLABER version 1.0 RC3 (Final)</title>
+	<meta name="KEYWORDS" content="vicker, vickerleung, flaber, flash builder, free, web builder, content management system, cms" />
+	<title>FLABER version 1.1 RC1</title>
 </head>
 
+<body>
+
+<!-- ActiveX fix referencing http://www.adobe.com/devnet/activecontent/articles/devletter.html -->
+<script src="function/AC_RunActiveContent.js" type="text/javascript"></script>
 <script type="text/javascript">
 	function popup (u, n, p)
 	{
@@ -18,13 +22,11 @@
 	}
 </script>
 
-<body>
-
-<table style="width: 100%" alt="framing table">
+<table style="width: 100%" summary="framing table">
 	<tr>
 		<td>
 			<span style="color: #666666; font-size: 10px; font-family: verdana, sans-serif; font-weight: bold;">
-				FLABER version 1.0 RC3 (Final) distrubuted on 2006 May 4
+				FLABER version 1.1 RC1 distrubuted on 2006 July 14
 			</span>
 		</td>
 	</tr>
@@ -32,23 +34,32 @@
 		<td>
 			<span style="color: #666666; font-size: 10px; font-family: verdana, sans-serif;">
 				- FLABER (Flash based Web Builder) developed by Vicker LEUNG, Chi Yiu<br/>
-				- Open source project available for download in <a href="http://sourceforge.net/project/showfiles.php?group_id=152518" target="blank">SourceForge</a>
+				- Open source project available for download in <a href="http://sourceforge.net/project/showfiles.php?group_id=152518">SourceForge</a>
 			</span>
 		</td>
 	</tr>
 	<tr>
 		<td>
 			<span style="color: #FF0000; font-size: 10px; font-family: verdana, sans-serif; font-weight: bold;">
-				* FLASH PLAYER 8 or above is necessary which is available <a href="http://www.macromedia.com/shockwave/download/alternates/" target="blank">here</a>
+				* FLASH PLAYER 8 or above is necessary which is available <a href="http://www.macromedia.com/shockwave/download/alternates/">here</a>
 			</span>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,0,0,0" width="800" height="600" id="flaber" align="middle">
-			<param name="allowScriptAccess" value="sameDomain" />
-			<param name="movie" value="flaber.swf" /><param name="quality" value="high" /><param name="bgcolor" value="#ffffff" /><embed src="flaber.swf" quality="high" bgcolor="#ffffff" width="800" height="600" name="flaber" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-			</object>
+			<script type="text/javascript" >
+				AC_FL_RunContent('codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0',
+												 'width','800',
+												 'height','600',
+												 'align','middle',
+												 'src','flaber.swf',
+												 'quality','high',
+												 'bgcolor','#ffffff',
+												 'name','flaber',
+												 'allowscriptaccess','sameDomain',
+												 'pluginspage','http://www.macromedia.com/go/getflashplayer',
+												 'movie','flaber' );
+			</script>
 		</td>
 	</tr>
 </table>

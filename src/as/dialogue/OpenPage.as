@@ -1,4 +1,4 @@
-﻿// **************
+// **************
 // OpenPage class
 // **************
 class as.dialogue.OpenPage extends MovieClip
@@ -21,7 +21,10 @@ class as.dialogue.OpenPage extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.List, "page_list", 1, {_x:10, _y:35, _width:170, _height:110});
+		mc_ref.createClassObject (mx.controls.List, "page_list", 1, {_x:20, _y:35, _width:170, _height:110});
+		
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 2, {_x:20, _y:170});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 3, {_x:110, _y:170});
 		
 		setup_component_style ();
 		
@@ -73,6 +76,10 @@ class as.dialogue.OpenPage extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -86,6 +93,10 @@ class as.dialogue.OpenPage extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{
