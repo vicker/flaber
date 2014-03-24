@@ -1,4 +1,4 @@
-﻿// *********************
+// *********************
 // StatusMessageMC class
 // *********************
 class as.global.StatusMessageMC extends MovieClip
@@ -7,12 +7,12 @@ class as.global.StatusMessageMC extends MovieClip
 	// MovieClip							mini_mc	=>	 content_field, icon_mc
 	// MovieClip							full_mc	=>  content_field
 
-	private var display_mode:String;							// mini mode or full mode
-	private var style_sheet:TextField.StyleSheet;		// stylesheet for the textfields
+	private var display_mode:String;						// mini mode or full mode
+	private var style_sheet:TextField.StyleSheet;			// stylesheet for the textfields
 
 	private var temp_interval:Number;						// temporary interval for animations
 	
-	private var mc_ref:MovieClip								// reference back to the status message mc
+	private var mc_ref:MovieClip							// reference back to the status message mc
 	
 	// ***********
 	// constructor
@@ -21,70 +21,63 @@ class as.global.StatusMessageMC extends MovieClip
 	{
 		mc_ref = this;
 		mc_ref._alpha = 0;
+		mc_ref.full_mc._visible = false;
+
+		mc_ref.mini_mc.attachMovie ("lib_frame_mc", "frame_mc", -16384, {_x:0, _y:0});
+		mc_ref.full_mc.attachMovie ("lib_frame_mc", "frame_mc", -16384, {_x:0, _y:0});
 		
 		draw_frame ();
 		
 		display_mode = "mini";
-		mc_ref.full_mc._visible = false;
-		
-		// setup listeners
-		setup_mini_mc ();
-		
-		// setup buttons
-		mc_ref.mini_mc.max_button._x = Stage.width - 20;
-		mc_ref.mini_mc.min_button._x = Stage.width - 35;
-		
-		// setup textfields
-		mc_ref.mini_mc.content_field.html = true;
-		mc_ref.full_mc.content_field.html = true;
-		mc_ref.full_mc.content_field._width = Stage.width - 60;
 		
 		// setup stylesheet
 		style_sheet = new TextField.StyleSheet ();
 		style_sheet.load ("style/StatusMessageMC.css");
 		
-		mc_ref.mini_mc.content_field.styleSheet = style_sheet;
-		mc_ref.full_mc.content_field.styleSheet = style_sheet;
-		
-		// setup full mc's scroll bar
-		mc_ref.full_mc.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.full_mc.getNextHighestDepth ());
-		mc_ref.full_mc.scroll_bar.set_scroll_ref (mc_ref.full_mc.content_field);
+		// setup interface and listeners
+		setup_mini_mc ();
+		setup_full_mc ();
+	}
+	
+	// ************
+	// chase window
+	// ************
+	public function chase_window ():Void
+	{
+		mc_ref._x = 0;
+		mc_ref._y = Stage.height - 184;
+	}
+	
+	// **********
+	// throw away
+	// **********
+	public function throw_away ():Void
+	{
+		mc_ref._x = 0;
+		mc_ref._y = Stage.height;
 	}
 	
 	// *******************
 	// draw frame function
 	// *******************
-	public function draw_frame ():Void
+	private function draw_frame ():Void
 	{
 		// clear all frame first
 		mc_ref.mini_mc.frame_mc.clear ();
 		mc_ref.full_mc.frame_mc.clear ();
 		
-		// draw the mini mc border
-		mc_ref.mini_mc.frame_mc.lineStyle (1, 0x666666, 100);
-		mc_ref.mini_mc.frame_mc.beginFill (0xFFFFFF, 100);
-		mc_ref.mini_mc.frame_mc.moveTo (0, 0);
-		mc_ref.mini_mc.frame_mc.lineTo (Stage.width - 1, 0);
-		mc_ref.mini_mc.frame_mc.lineTo (Stage.width - 1, 22);
-		mc_ref.mini_mc.frame_mc.lineTo (0, 22);
-		mc_ref.mini_mc.frame_mc.lineTo (0, 0);
-		mc_ref.mini_mc.frame_mc.endFill ();
+		// draw frames
+		var frame_width:Number = 0;
+		frame_width = Stage.width - 1;
 		
-		// draw the full mc border
-		mc_ref.full_mc.frame_mc.lineStyle (1, 0x666666, 100);
-		mc_ref.full_mc.frame_mc.beginFill (0xFFFFFF, 100);
-		mc_ref.full_mc.frame_mc.moveTo (0, 0);
-		mc_ref.full_mc.frame_mc.lineTo (Stage.width - 1, 0);
-		mc_ref.full_mc.frame_mc.lineTo (Stage.width - 1, 160);
-		mc_ref.full_mc.frame_mc.lineTo (0, 160);
-		mc_ref.full_mc.frame_mc.lineTo (0, 0);
-		mc_ref.full_mc.frame_mc.endFill ();
+		mc_ref.mini_mc.frame_mc.draw_rect (0, 0, frame_width, 22, 1, 0x666666, 100, 0xFFFFFF, 100);
+		mc_ref.full_mc.frame_mc.draw_rect (0, 0, frame_width, 160, 1, 0x666666, 100, 0xFFFFFF, 100);
 	}
 	
 	// ***************
 	// set transparent
 	// ***************
-	public function set_transparent ():Void
+	private function set_transparent ():Void
 	{
 		switch (display_mode)
 		{
@@ -93,15 +86,15 @@ class as.global.StatusMessageMC extends MovieClip
 				clearInterval (temp_interval);
 				temp_interval = setInterval (mc_ref, "alpha_step", 100, -10);
 					
-					break;
-				}
+				break;
 			}
+		}
 	}
 	
 	// ***************
 	// alpha step wise
 	// ***************
-	public function alpha_step (n:Number):Void
+	private function alpha_step (n:Number):Void
 	{
 		mc_ref._alpha = mc_ref._alpha + n;
 		
@@ -121,8 +114,16 @@ class as.global.StatusMessageMC extends MovieClip
 	// *************
 	// setup mini mc
 	// *************
-	public function setup_mini_mc ():Void
+	private function setup_mini_mc ():Void
 	{
+		var temp_width:Number = 0;
+		temp_width = Stage.width;
+		
+		mc_ref.mini_mc.max_button._x = temp_width - 20;
+		mc_ref.mini_mc.min_button._x = temp_width - 35;
+		mc_ref.mini_mc.content_field.html = true;
+		mc_ref.mini_mc.content_field.styleSheet = style_sheet;
+
 		mc_ref.mini_mc.frame_mc ["class_ref"] = mc_ref;
 		mc_ref.mini_mc.frame_mc.useHandCursor = false;
 		
@@ -176,6 +177,18 @@ class as.global.StatusMessageMC extends MovieClip
 		mc_ref.mini_mc.min_button._alpha = 25;
 	}
 	
+	// *************
+	// setup full mc
+	// *************
+	private function setup_full_mc ():Void
+	{
+		mc_ref.full_mc.content_field.html = true;
+		mc_ref.full_mc.content_field._width = Stage.width - 60;
+		mc_ref.full_mc.content_field.styleSheet = style_sheet;
+		mc_ref.full_mc.attachMovie ("lib_scroll_bar", "scroll_bar", mc_ref.full_mc.getNextHighestDepth ());
+		mc_ref.full_mc.scroll_bar.set_scroll_ref (mc_ref.full_mc.content_field);
+	}
+	
 	// ***********
 	// add message
 	// ***********
@@ -205,9 +218,7 @@ class as.global.StatusMessageMC extends MovieClip
 		mc_ref.full_mc.scroll_bar.check_scroll ();
 		
 		// placing mini icon
-		var temp_loader:MovieClipLoader;
-		
-		temp_loader = new MovieClipLoader ();
+		var temp_loader:MovieClipLoader = new MovieClipLoader ();
 		temp_loader.loadClip ("img/status_message/flash.gif", mc_ref.mini_mc.icon_mc);
 	}
 }

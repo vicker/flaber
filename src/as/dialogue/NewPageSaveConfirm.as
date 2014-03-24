@@ -1,4 +1,4 @@
-﻿// ************************
+// ************************
 // NewPageSaveConfirm class
 // ************************
 class as.dialogue.NewPageSaveConfirm extends MovieClip
@@ -21,7 +21,10 @@ class as.dialogue.NewPageSaveConfirm extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.Label, "file_label", 1, {_x:20, _y:35, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.Label, "file_label", 1, {_x:20, _y:35, _width:140, _height:20});
+
+		mc_ref.attachMovie ("lib_button_mc", "yes_button", 2, {_x:10, _y:70});
+		mc_ref.attachMovie ("lib_button_mc", "no_button", 3, {_x:90, _y:70});
 		
 		setup_component_style ();
 		
@@ -52,19 +55,9 @@ class as.dialogue.NewPageSaveConfirm extends MovieClip
 	// ********************
 	public function open_new_page_window ():Void
 	{
-		var temp_lib:String;
-		var temp_name:String;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_lib = "lib_dialogue_new_page";
-		temp_name = "New Page";
-		temp_width = 240;
-		temp_height = 130;
-		
 		_root.sys_func.remove_window_mc ();
 		_root.attachMovie ("lib_window", "window_mc", 9999);
-		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
+		_root.window_mc.set_window_data ("New Page", 250, 120, "lib_dialogue_new_page");
 		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 	
@@ -73,6 +66,10 @@ class as.dialogue.NewPageSaveConfirm extends MovieClip
 	// ****************
 	public function setup_yes_button ():Void
 	{
+		mc_ref.yes_button.set_toggle_flag (false);
+		mc_ref.yes_button.set_dimension (70, 20);
+		mc_ref.yes_button.set_text ("Yes");
+
 		mc_ref.yes_button ["class_ref"] = mc_ref;
 		mc_ref.yes_button.onRelease = function ()
 		{
@@ -82,8 +79,7 @@ class as.dialogue.NewPageSaveConfirm extends MovieClip
 			//TODO mechanism to prevent save fail but still close
 			
 			// rebuild page mc
-			_root.page_mc.removeMovieClip ();
-			_root.attachMovie ("lib_page_content", "page_mc", 1, {_x:-1, _y:-1});
+			_root.page_mc.destroy ();
 			
 			// call up new page window
 			this.class_ref.open_new_page_window ();
@@ -95,12 +91,15 @@ class as.dialogue.NewPageSaveConfirm extends MovieClip
 	// ***************
 	public function setup_no_button ():Void
 	{
+		mc_ref.no_button.set_toggle_flag (false);
+		mc_ref.no_button.set_dimension (70, 20);
+		mc_ref.no_button.set_text ("No");
+
 		mc_ref.no_button ["class_ref"] = mc_ref;
 		mc_ref.no_button.onRelease = function ()
 		{
 			// rebuild page mc
-			_root.page_mc.removeMovieClip ();
-			_root.attachMovie ("lib_page_content", "page_mc", 1, {_x:-1, _y:-1});
+			_root.page_mc.destroy ();
 			
 			// call up new page window
 			this.class_ref.open_new_page_window ();

@@ -1,4 +1,4 @@
-﻿// **************
+// **************
 // ButtonMC class
 // **************
 class as.interface_element.ButtonMC extends MovieClip
@@ -23,12 +23,13 @@ class as.interface_element.ButtonMC extends MovieClip
 	public function ButtonMC ()
 	{
 		mc_ref = this;
+		mc_ref.attachMovie ("lib_frame_mc", "normal_frame_mc", -16384);
+		mc_ref.attachMovie ("lib_frame_mc", "highlight_frame_mc", -16382);
+		mc_ref.highlight_frame_mc.swapDepths (mc_ref.content_field);
 		
 		toggle_flag = false;
 		toggle_state = false;
 		tooltip_string = "missing tooltip";
-		
-		mc_ref.attachMovie ("lib_frame_mc", "frame_mc", 1);
 		
 		setup_normal_listener ();
 	}
@@ -43,6 +44,7 @@ class as.interface_element.ButtonMC extends MovieClip
 		if (b == true)
 		{
 			setup_toggle_listener ();
+			mc_ref.normal_frame_mc._visible = false;
 		}
 	}
 
@@ -67,14 +69,14 @@ class as.interface_element.ButtonMC extends MovieClip
 				toggle_state = b;
 			}
 			
-			// redraw the frames
+			// show the correct frames
 			if (toggle_state == true)
 			{
-				draw_highlight_frame ();
+				mc_ref.highlight_frame_mc._visible = true;
 			}
 			else
 			{
-				mc_ref.frame_mc.clear_frame ();
+				mc_ref.highlight_frame_mc._visible = false;
 			}
 		}
 	}
@@ -95,10 +97,16 @@ class as.interface_element.ButtonMC extends MovieClip
 		frame_width = w;
 		frame_height = h;
 		
+		draw_frames ();
+		
+		mc_ref.highlight_frame_mc._visible = false;
 		if (toggle_flag != true)
 		{
-			draw_normal_frame ();
+			mc_ref.normal_frame_mc._visible = true;
 		}
+		
+		mc_ref.content_field._width = w;
+		mc_ref.content_field._y = h / 2 - mc_ref.content_field._height / 2;
 	}
 	
 	// ***********
@@ -107,6 +115,14 @@ class as.interface_element.ButtonMC extends MovieClip
 	public function set_tooltip (s:String):Void
 	{
 		tooltip_string = s;
+	}
+	
+	// ********
+	// set text
+	// ********
+	public function set_text (s:String):Void
+	{
+		mc_ref.content_field.text = s;
 	}
 	
 	// ***********
@@ -120,36 +136,36 @@ class as.interface_element.ButtonMC extends MovieClip
 		mc_ref.clip_mc._y = (frame_height - mc_ref.clip_mc._height) / 2;
 	}
 	
-	// *****************
-	// draw normal frame
-	// *****************
-	public function draw_normal_frame ():Void
+	// ***********
+	// draw frames
+	// ***********
+	private function draw_frames ():Void
 	{
-		mc_ref.frame_mc.draw_frame (0, 0, frame_width, frame_height, 1, 0x666666, 100, 0xFFFFFF, 100);
-	}
-	
-	// ********************
-	// draw highlight frame
-	// ********************
-	public function draw_highlight_frame ():Void
-	{
-		mc_ref.frame_mc.draw_frame (0, 0, frame_width, frame_height, 1, 0xFF9900, 100, 0xFFFFFF, 100);
+		mc_ref.normal_frame_mc.clear_frame ();
+		mc_ref.normal_frame_mc.draw_rect (0, 0, frame_width, frame_height, 1, 0x666666, 100, 0xFFFFFF, 100);
+		mc_ref.highlight_frame_mc.clear_frame ();
+		mc_ref.highlight_frame_mc.draw_rect (0, 0, frame_width, frame_height, 1, 0xFF9900, 100, 0xFFFFFF, 100);
 	}
 	
 	// *********************
 	// setup normal listener
 	// *********************
-	public function setup_normal_listener ():Void
+	private function setup_normal_listener ():Void
 	{
 		mc_ref.onRollOver = function ()
 		{
-			this.draw_highlight_frame ();
-			_root.tooltip_mc.set_content (tooltip_string);
+			this.highlight_frame_mc._visible = true;
+			
+			if (tooltip_string != "missing tooltip")
+			{
+				_root.tooltip_mc.set_content (tooltip_string);
+			}
 		}
 		
 		mc_ref.onRollOut = function ()
 		{
-			this.draw_normal_frame ();
+			this.highlight_frame_mc._visible = false;
+			
 			_root.tooltip_mc.throw_away ();
 		}
 	}
@@ -157,13 +173,13 @@ class as.interface_element.ButtonMC extends MovieClip
 	// *********************
 	// setup toggle listener
 	// *********************
-	public function setup_toggle_listener ():Void
+	private function setup_toggle_listener ():Void
 	{
 		mc_ref.onRollOver = function ()
 		{
 			if (this.toggle_state == false)
 			{
-				this.draw_highlight_frame ();
+				this.highlight_frame_mc._visible = true;
 			}
 			_root.tooltip_mc.set_content (tooltip_string);
 		}
@@ -172,7 +188,7 @@ class as.interface_element.ButtonMC extends MovieClip
 		{
 			if (this.toggle_state == false)
 			{
-				this.frame_mc.clear_frame ();
+				this.highlight_frame_mc._visible = false;
 			}
 			_root.tooltip_mc.throw_away ();
 		}

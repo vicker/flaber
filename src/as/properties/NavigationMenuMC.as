@@ -1,4 +1,4 @@
-﻿// **********************
+// **********************
 // NavigationMenuMC class
 // **********************
 class as.properties.NavigationMenuMC extends MovieClip
@@ -33,7 +33,7 @@ class as.properties.NavigationMenuMC extends MovieClip
 		var temp_num:Number;
 		
 		temp_style = target_ref.get_menu_style ();
-		temp_num = _root.sys_func.list_select_item (mc_ref.graphic_style_list, temp_style.name);
+		temp_num = mc_ref.graphic_style_list.select_item (temp_style.name);
 		
 		if (temp_num != -1)
 		{
@@ -47,19 +47,19 @@ class as.properties.NavigationMenuMC extends MovieClip
 		text_format = target_ref.get_text_format ();
 		
 		// font
-		_root.sys_func.combobox_select_item (mc_ref.font_combobox, text_format.font);
+		mc_ref.font_combobox.select_item (text_format.font);
 		
 		// font size
-		_root.sys_func.combobox_select_item (mc_ref.font_size_combobox, text_format.size);
+		mc_ref.font_size_combobox.select_item (text_format.size);
 		
 		// weight
-		mc_ref.bold_button.selected = text_format.bold;
+		mc_ref.bold_button.set_toggle_state (text_format.bold);
 		
 		// italic
-		mc_ref.italic_button.selected = text_format.italic;
+		mc_ref.italic_button.set_toggle_state (text_format.italic);
 		
 		// underline
-		mc_ref.underline_button.selected = text_format.underline;
+		mc_ref.underline_button.set_toggle_state (text_format.underline);
 		
 		// color
 		if (text_format.color)
@@ -75,13 +75,18 @@ class as.properties.NavigationMenuMC extends MovieClip
 	{
 		mc_ref.createClassObject (mx.controls.TextInput, "x_textinput", 1, {_x:50, _y:35, _width:40, _height:20});
 		mc_ref.createClassObject (mx.controls.TextInput, "y_textinput", 2, {_x:130, _y:35, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_combobox", 3, {_x:20, _y:95, _width:110, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "font_size_combobox", 4, {_x:150, _y:95, _width:50, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "bold_button", 5, {_x:20, _y:125, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "italic_button", 6, {_x:50, _y:125, _width:20, _height:20});
-		mc_ref.createClassObject (mx.controls.Button, "underline_button", 7, {_x:80, _y:125, _width:20, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "font_combobox", 3, {_x:20, _y:95, _width:110, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "font_size_combobox", 4, {_x:150, _y:95, _width:50, _height:20});
+		mc_ref.attachMovie ("lib_button_mc", "bold_button", 5, {_x:20, _y:125});
+		mc_ref.attachMovie ("lib_button_mc", "italic_button", 6, {_x:50, _y:125});
+		mc_ref.attachMovie ("lib_button_mc", "underline_button", 7, {_x:80, _y:125});
 		mc_ref.attachMovie ("lib_normal_palette", "font_color_palette", 8, {_x:115, _y:125});
-		mc_ref.createClassObject (mx.controls.List, "graphic_style_list", 9, {_x:260, _y:35, _width:150, _height:80});
+		mc_ref.createClassObject (as.component.ListExtend, "graphic_style_list", 9, {_x:260, _y:35, _width:150, _height:80});
+		
+		mc_ref.attachMovie ("lib_button_mc", "add_button", 10, {_x:20, _y:180});
+		mc_ref.attachMovie ("lib_button_mc", "apply_button", 11, {_x:150, _y:180});
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 12, {_x:240, _y:180});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 13, {_x:330, _y:180});
 		
 		setup_component_style ();
 		
@@ -113,10 +118,6 @@ class as.properties.NavigationMenuMC extends MovieClip
 		
 		mc_ref.font_combobox.setStyle ("styleName", "combobox_style");
 		mc_ref.font_size_combobox.setStyle ("styleName", "combobox_style");
-		
-		mc_ref.bold_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.italic_button.setStyle ("themeColor", "haloOrange");
-		mc_ref.underline_button.setStyle ("themeColor", "haloOrange");
 		
 		mc_ref.graphic_style_list.setStyle ("styleName", "list_style");
 	}
@@ -158,8 +159,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// *****************
 	public function setup_bold_button ():Void
 	{
-		mc_ref.bold_button.toggle = true;
-		mc_ref.bold_button.icon = "lib_button_bold";
+		mc_ref.bold_button.set_toggle_flag (true);
+		mc_ref.bold_button.set_dimension (20, 20);
+		mc_ref.bold_button.set_clip_mc ("lib_button_bold");
+		mc_ref.bold_button.set_tooltip ("Bold");
 	}
 	
 	// *******************
@@ -167,8 +170,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// *******************
 	public function setup_italic_button ():Void
 	{
-		mc_ref.italic_button.toggle = true;
-		mc_ref.italic_button.icon = "lib_button_italic";
+		mc_ref.italic_button.set_toggle_flag (true);
+		mc_ref.italic_button.set_dimension (20, 20);
+		mc_ref.italic_button.set_clip_mc ("lib_button_italic");
+		mc_ref.italic_button.set_tooltip ("Italic");
 	}
 	
 	// **********************
@@ -176,8 +181,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// **********************
 	public function setup_underline_button ():Void
 	{
-		mc_ref.underline_button.toggle = true;
-		mc_ref.underline_button.icon = "lib_button_underline";
+		mc_ref.underline_button.set_toggle_flag (true);
+		mc_ref.underline_button.set_dimension (20, 20);
+		mc_ref.underline_button.set_clip_mc ("lib_button_underline");
+		mc_ref.underline_button.set_tooltip ("Underline");
 	}
 		
 	// ************************
@@ -237,6 +244,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// ****************
 	public function setup_add_button ():Void
 	{
+		mc_ref.add_button.set_toggle_flag (false);
+		mc_ref.add_button.set_dimension (80, 20);
+		mc_ref.add_button.set_text ("Add");
+
 		mc_ref.add_button.onRelease = function ()
 		{
 			_root.navigation_menu.add_one ();
@@ -248,6 +259,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// ******************
 	public function setup_apply_button ():Void
 	{
+		mc_ref.apply_button.set_toggle_flag (false);
+		mc_ref.apply_button.set_dimension (80, 20);
+		mc_ref.apply_button.set_text ("Apply");
+
 		mc_ref.apply_button ["class_ref"] = mc_ref;
 		mc_ref.apply_button.onRelease = function ()
 		{
@@ -293,21 +308,21 @@ class as.properties.NavigationMenuMC extends MovieClip
 				temp_node.appendChild (temp_node_2);
 				
 				temp_node_2 = config_xml.createElement ("bold");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.bold_button.selected.toString ());
+				temp_node_3 = config_xml.createTextNode (this.class_ref.bold_button.get_toggle_state ());
 				temp_node_2.appendChild (temp_node_3);
 				temp_node.appendChild (temp_node_2);
 				
 				temp_node_2 = config_xml.createElement ("italic");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.italic_button.selected.toString ());
+				temp_node_3 = config_xml.createTextNode (this.class_ref.italic_button.get_toggle_state ());
 				temp_node_2.appendChild (temp_node_3);
 				temp_node.appendChild (temp_node_2);
 				
 				temp_node_2 = config_xml.createElement ("underline");
-				temp_node_3 = config_xml.createTextNode (this.class_ref.underline_button.selected.toString ());
+				temp_node_3 = config_xml.createTextNode (this.class_ref.underline_button.get_toggle_state ());
 				temp_node_2.appendChild (temp_node_3);
 				temp_node.appendChild (temp_node_2);
 				
-				if (this.class_ref.font_color_palette.get_color_string () != null)
+				if (this.class_ref.font_color_palette.get_color_num () != null)
 				{
 					temp_node_2 = config_xml.createElement ("color");
 					temp_node_3 = config_xml.createTextNode (this.class_ref.font_color_palette.get_color_string ());
@@ -348,6 +363,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -361,6 +380,10 @@ class as.properties.NavigationMenuMC extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

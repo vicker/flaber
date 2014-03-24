@@ -1,7 +1,7 @@
-﻿// *****************
+// *****************
 // ScrollBarMC class
 // *****************
-class as.global.ScrollBarMC extends MovieClip
+class as.interface_element.ScrollBarMC extends MovieClip
 {
 	// MC variables
 	// MovieClip		up_mc
@@ -9,10 +9,9 @@ class as.global.ScrollBarMC extends MovieClip
 	// Button			trail_mc				using button not mc becos of the sensitive hit area
 	// MovieClip		box_mc
 	
-	private var original_box_mc_y:Number;		// same usage as the name
-	
 	private var scroll_height:Number;			// height of the scrolling area
 	private var box_displacement:Number;		// displacement of the box per scroll
+	private var original_box_mc_y:Number;		// same usage as the name
 	
 	private var temp_interval:Number;			// temporary interval several listeners
 	
@@ -36,7 +35,7 @@ class as.global.ScrollBarMC extends MovieClip
 	// ***********
 	// setup up mc
 	// ***********
-	public function setup_up_mc ():Void
+	private function setup_up_mc ():Void
 	{
 		// tell the mc about the class mc...
 		mc_ref.up_mc.class_ref = mc_ref;
@@ -81,13 +80,16 @@ class as.global.ScrollBarMC extends MovieClip
 		mc_ref.up_mc.onReleaseOutside = function ()
 		{
 			this.gotoAndStop ("normal");
+			
+			// stop the continuous movement
+			clearInterval (this.class_ref.temp_interval);
 		}
 	}
 	
 	// *************
 	// setup down mc
 	// *************
-	public function setup_down_mc ():Void
+	private function setup_down_mc ():Void
 	{
 		// tell the mc about the class mc...
 		mc_ref.down_mc.class_ref = mc_ref;
@@ -131,13 +133,16 @@ class as.global.ScrollBarMC extends MovieClip
 		mc_ref.down_mc.onReleaseOutside = function ()
 		{
 			this.gotoAndStop ("normal");
+			
+			// stop the continuous movement
+			clearInterval (this.class_ref.temp_interval);
 		}
 	}
 	
 	// ************
 	// setup box mc
 	// ************
-	public function setup_box_mc ():Void
+	private function setup_box_mc ():Void
 	{
 		// tell the mc about the class mc...
 		mc_ref.box_mc.class_ref = mc_ref;
@@ -162,8 +167,8 @@ class as.global.ScrollBarMC extends MovieClip
 		{
 			this.gotoAndStop ("down")
 			
-			var temp_box_y:Number;
-			var temp_scroll:Number;
+			var temp_box_y:Number = 0;
+			var temp_scroll:Number = 0;
 			
 			temp_box_y = _root._ymouse;
 			temp_scroll = this.class_ref.scroll_ref.scroll;
@@ -192,7 +197,7 @@ class as.global.ScrollBarMC extends MovieClip
 	// ******************
 	// setup trail button
 	// ******************
-	public function setup_trail_mc ():Void
+	private function setup_trail_mc ():Void
 	{	
 		// tell the mc about the class mc...
 		mc_ref.trail_mc.class_ref = mc_ref;
@@ -203,11 +208,11 @@ class as.global.ScrollBarMC extends MovieClip
 		// trail_mc onpress listener
 		mc_ref.trail_mc.onPress = function ()
 		{
-			var scroll_height:Number;
-			var text_height:Number;
-			var max_scroll:Number;
+			var scroll_height:Number = 0;
+			var text_height:Number = 0;
+			var max_scroll:Number = 0;
 			
-			var temp_scroll_amount:Number;
+			var temp_scroll_amount:Number = 0;
 			
 			scroll_height = this.class_ref.scroll_ref._height;
 			text_height = this.class_ref.scroll_ref.textHeight;
@@ -247,7 +252,7 @@ class as.global.ScrollBarMC extends MovieClip
 	// ****************
 	// setup_scroll_ref
 	// ****************
-	public function setup_scroll_ref ():Void
+	private function setup_scroll_ref ():Void
 	{
 		// tell the mc about the class mc...
 		scroll_ref.class_ref = mc_ref;
@@ -269,7 +274,7 @@ class as.global.ScrollBarMC extends MovieClip
 	// **************************
 	// scroll step wise countdown
 	// **************************
-	public function scroll_step_countdown (n:Number):Void
+	private function scroll_step_countdown (n:Number):Void
 	{
 		clearInterval (temp_interval);
 		temp_interval = setInterval (this, "scroll_step", 75, n);
@@ -279,7 +284,7 @@ class as.global.ScrollBarMC extends MovieClip
 	// *************************
 	// scroll step wise function
 	// *************************
-	public function scroll_step (n:Number):Void
+	private function scroll_step (n:Number):Void
 	{
 		scroll_ref.scroll = scroll_ref.scroll + n;
 	}
@@ -287,12 +292,12 @@ class as.global.ScrollBarMC extends MovieClip
 	// ************
 	// check_scroll
 	// ************
-	public function check_scroll ():Void
+	private function check_scroll ():Void
 	{
-		var current_height:Number;
-		var total_height:Number;
-		var new_height:Number;
-		var temp_scale:Number;
+		var current_height:Number = 0;
+		var total_height:Number = 0;
+		var new_height:Number = 0;
+		var temp_scale:Number = 0;
 		
 		// defining the box height and scroll status
 		current_height = mc_ref.trail_mc._height;
@@ -340,9 +345,9 @@ class as.global.ScrollBarMC extends MovieClip
 	// *********
 	// check_box
 	// *********
-	public function check_box ():Void
+	private function check_box ():Void
 	{
-		var temp_position:Number;
+		var temp_position:Number = 0;
 		
 		temp_position = (mc_ref.scroll_ref.scroll - 1) * box_displacement;
 		mc_ref.box_mc._y = mc_ref.original_box_mc_y + temp_position;
@@ -351,10 +356,9 @@ class as.global.ScrollBarMC extends MovieClip
 	// ***************
 	// box_track_mouse
 	// ***************
-	public function box_track_mouse (n, s):Void
+	private function box_track_mouse (n:Number, s:Number):Void
 	{
-		var temp_distance:Number;
-		
+		var temp_distance:Number = 0;
 		temp_distance = _root._ymouse - n;
 		
 		scroll_ref.scroll = s + Math.round (temp_distance / box_displacement);
@@ -369,13 +373,12 @@ class as.global.ScrollBarMC extends MovieClip
 		scroll_ref = t;
 		
 		// modifying the buttons and handle in order to fit the content
-		var temp_width:Number;
-		var temp_height:Number;
-		var new_height:Number;
+		var temp_width:Number = 0;
+		var temp_height:Number = 0;
+		var new_height:Number = 0;
 		
 		// saving the preset height in order to shrink the handles in proportion
-		var preset_height:Number;
-		preset_height = 400;
+		var preset_height:Number = 400;
 		
 		// get values of the scroll content
 		temp_width = scroll_ref._width;
@@ -400,5 +403,8 @@ class as.global.ScrollBarMC extends MovieClip
 		setup_scroll_ref ();
 	}
 		
-	public function get_scroll_ref ():TextField	{ return scroll_ref; }
+	public function get_scroll_ref ():TextField
+	{
+		return scroll_ref;
+	}
 }

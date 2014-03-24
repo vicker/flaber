@@ -1,4 +1,4 @@
-﻿// ****************
+// ****************
 // ProgressMC class
 // ****************
 class as.interface_element.ProgressMC extends MovieClip
@@ -46,20 +46,21 @@ class as.interface_element.ProgressMC extends MovieClip
 	// *************
 	// draw bg frame
 	// *************
-	public function draw_bg_frame ():Void
+	private function draw_bg_frame ():Void
 	{
-		mc_ref.bg_frame_mc.draw_frame (0, 0, frame_width, frame_height, 1, 0x999999, 100, 0xFFFFFF, 100);
+		mc_ref.bg_frame_mc.clear_frame ();
+		mc_ref.bg_frame_mc.draw_rect (0, 0, frame_width, frame_height, 1, 0x999999, 100, 0xFFFFFF, 100);
 	}
 	
 	// **************
 	// draw bar frame
 	// **************
-	public function draw_bar_frame ():Void
+	private function draw_bar_frame ():Void
 	{
-		var temp_length:Number;
-		
+		var temp_length:Number = 0;
 		temp_length = (frame_width - 4) * progress_percentage / 100;
 		
-		mc_ref.bar_frame_mc.draw_frame (2, 2, temp_length, frame_height - 4, 1, 0x666666, 100, 0x666666, 100);
+		mc_ref.bar_frame_mc.clear_frame ();
+		mc_ref.bar_frame_mc.draw_rect (2, 2, temp_length, frame_height - 4, 1, 0x666666, 100, 0x666666, 100);
 	}
 }

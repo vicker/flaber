@@ -1,4 +1,4 @@
-﻿// *****************
+// *****************
 // PageContent class
 // *****************
 class as.page_content.PageContentMC extends MovieClip
@@ -7,15 +7,14 @@ class as.page_content.PageContentMC extends MovieClip
 	// MovieClip		bg_mc;
 	
 	// private variables
-	private var content_mc_array:Array;			// array storing all the content items
+	private var content_mc_array:Array;							// array storing all the content items
 	
-	private var mc_ref:MovieClip;					// reference back to the page content mc
+	private var mc_ref:MovieClip;								// reference back to the page content mc
 	
-	private var file_name:String;					// for tracer
-	private var loaded_file:String;				// loaded file name
-	private var bg_image_url:String;
+	private var FILE_NAME:String = "(PageContentMC.as)";		// for tracer
+	private var loaded_file:String;								// loaded file name
 
-	private var max_depth:Number;					// the maximum depth of the page content items
+	private var max_depth:Number;								// the maximum depth of the page content items
 
 	// ***********
 	// constructor
@@ -25,9 +24,26 @@ class as.page_content.PageContentMC extends MovieClip
 		mc_ref = this; 
 		
 		content_mc_array = new Array ();
-		max_depth = -1;
+		max_depth = 0;
 		
-		file_name = "(PageContentMC.as)";		
+		// it is funny that not preloading all these with make the very first transition failed...
+		// takes me 3 days to find out this bug.... sigh....
+		mc_ref.attachMovie ("lib_frame_mc", "bg_color", -2);
+		mc_ref.attachMovie ("lib_clip_loader_mc", "bg_image", -1);
+		mc_ref.bg_color.draw_rect (-1, -1, Stage.width + 2, Stage.height + 2, 1, 0x666666, 100, 0xFFFFFF, 100);
+		
+		// remove any element handler if bg is clicked...
+		mc_ref.bg_color.useHandCursor = false;
+		mc_ref.bg_color.onPress = function ()
+		{
+			_root.handler_mc.throw_away ();
+		}	
+		
+		mc_ref.bg_image.useHandCursor = false;
+		mc_ref.bg_image.onPress = function ()
+		{
+			_root.handler_mc.throw_away ();
+		}	
 	}
 	
 	// **********
@@ -74,8 +90,8 @@ class as.page_content.PageContentMC extends MovieClip
 		destroy ();
 		
 		// xml data loading
-		var root_xml:as.global.XMLExtend;
-		root_xml = new as.global.XMLExtend ();
+		var root_xml:as.datatype.XMLExtend;
+		root_xml = new as.datatype.XMLExtend ();
 		root_xml ["class_ref"] = mc_ref;
 		root_xml.ignoreWhite = true;
 		root_xml.sendAndLoad (s + _root.sys_func.get_break_cache (), root_xml, "POST");
@@ -91,7 +107,7 @@ class as.page_content.PageContentMC extends MovieClip
 			else
 			{
 				this.stop_progress ();
-				_root.status_mc.add_message (this.class_ref.file_name + " constructor load xml fail.", "critical");
+				_root.status_mc.add_message (this.class_ref.FILE_NAME + " constructor load xml fail.", "critical");
 			}
 		}
 	}
@@ -127,7 +143,7 @@ class as.page_content.PageContentMC extends MovieClip
 				// exception
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name + "'", "critical");
+					_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name + "'", "critical");
 				}
 			}
 		}		
@@ -138,11 +154,17 @@ class as.page_content.PageContentMC extends MovieClip
 	// **************
 	public function set_config_xml (x:XMLNode):Void
 	{
-		if (mc_ref.bg_image.clip_mc != null)
+		// ensure they are removed first
+		if (mc_ref.bg_color != null)
 		{
-			mc_ref.bg_image.clip_mc.removeMovieClip ();
+			mc_ref.bg_color.clear_frame ();
 		}
-		
+
+		if (mc_ref.bg_image != null)
+		{
+			mc_ref.bg_image.unload_clip ();
+		}
+
 		// try to parse the config node
 		for (var i in x.childNodes)
 		{
@@ -156,8 +178,7 @@ class as.page_content.PageContentMC extends MovieClip
 			// since bg_image have additional nodes
 			if (temp_name != "bg_image")
 			{
-				temp_value = temp_node.firstChild.nodeValue;
-				
+				temp_value = temp_node.firstChild.nodeValue;			
 			}
 			
 			switch (temp_name)
@@ -177,20 +198,13 @@ class as.page_content.PageContentMC extends MovieClip
 				// background color of the page content
 				case "bg_color":
 				{
-					var temp_color:Color;
-					
-					temp_color = new Color (mc_ref.bg_color);
-					temp_color.setRGB (parseInt (temp_value));
+					mc_ref.bg_color.clear_frame ();
+					mc_ref.bg_color.draw_rect (-1, -1, Stage.width + 2, Stage.height + 2, 1, 0x666666, 100, parseInt (temp_value), 100);
 					break;
 				}
 				// background image of the page content
 				case "bg_image":
 				{
-					// -1 depth wont be able to be removed, while bg_image non negative will crash transition
-					// so we have to make it one more step... the clip_mc
-					mc_ref.attachMovie ("lib_clip_loader_mc", "bg_image", -1);
-//					mc_ref.bg_image.attachMovie ("lib_empty_mc", "clip_mc", 1, {_x:0, _y:0});
-					
 					// since background image still have many nodes, so need to iterate again
 					for (var j in temp_node.childNodes)
 					{
@@ -218,9 +232,6 @@ class as.page_content.PageContentMC extends MovieClip
 							case "url":
 							{
 								mc_ref.bg_image.set_clip_mc (temp_value_2);
-								
-								bg_image_url = temp_value_2;
-								
 								break;
 							}
 							// alpha of the bg image
@@ -232,7 +243,7 @@ class as.page_content.PageContentMC extends MovieClip
 							// exception
 							default:
 							{
-								_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name_2 + "'", "critical");
+								_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name_2 + "'", "critical");
 							}
 						}
 					}
@@ -241,7 +252,7 @@ class as.page_content.PageContentMC extends MovieClip
 				// exception
 				default:
 				{
-					_root.status_mc.add_message (file_name + " node skipped with node name '" + temp_name_2 + "'", "critical");
+					_root.status_mc.add_message (FILE_NAME + " node skipped with node name '" + temp_name_2 + "'", "critical");
 				}
 			}
 		}
@@ -285,44 +296,51 @@ class as.page_content.PageContentMC extends MovieClip
 				temp_name = "rectangle_";
 				break;
 			}
+			// Oval Shape
+			case "OvalMC":
+			{
+				lib_name = "lib_shape_oval";
+				temp_name = "oval_";
+				break;
+			}
 			// exception
 			default:
 			{
-				_root.status_mc.add_message (file_name + " item skipped with item name '" + s + "'", "critical");
+				_root.status_mc.add_message (FILE_NAME + " item skipped with item name '" + s + "'", "critical");
 			}
 		}
 		
 		var temp_id:Number;
+		var temp_mc:MovieClip;
 		
-		// if it is added by loading data, then must have depth data
 		if (x != null)
 		{
+			// if it is added by loading data, then must have depth data
 			temp_id = parseInt (x.attributes.depth);
 			max_depth = Math.max (max_depth, temp_id);
+			temp_mc = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id, {_x: 100, _y:100});
+			
+			// if it is added by loading data, then set the xml data
+			temp_mc.broadcaster_event (_root.menu_mc.get_edit_mode ());
+			temp_mc.set_data_xml (x);
+
+			content_mc_array.push (temp_mc);
 		}
-		// else it means this is brand new item
 		else	
 		{
+			// else it means this is brand new item
 			temp_id = max_depth + 1;
 			max_depth = max_depth + 1;
+			temp_mc = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id, {_x: 100, _y:100});
+			
+			// else try to open the properties window, because this is brand new item
+			temp_mc.broadcaster_event (_root.menu_mc.get_edit_mode ());
+			temp_mc.properties_function ();
+			
+			content_mc_array.push (temp_mc);
 		}
 		
-		content_mc_array [temp_id] = mc_ref.attachMovie (lib_name, temp_name + temp_id, temp_id, {_x: 50, _y:50});
-		
-		// if it is added by loading data, then set the xml data
-		if (x)
-		{
-			content_mc_array [temp_id].broadcaster_event (_root.menu_mc.get_edit_mode ());
-			content_mc_array [temp_id].set_data_xml (x);
-		}
-		// else try to open the properties window, because this is brand new item
-		else
-		{
-			content_mc_array [temp_id].broadcaster_event (_root.menu_mc.get_edit_mode ());
-			content_mc_array [temp_id].properties_function ();
-		}
-		
-		_root.mode_broadcaster.add_observer (content_mc_array [temp_id]);
+		_root.mode_broadcaster.add_observer (temp_mc);
 	}
 	
 	// ***************
@@ -330,11 +348,23 @@ class as.page_content.PageContentMC extends MovieClip
 	// ***************
 	public function rearrange_depth ():Void
 	{
-		var j:Number;
+		// negative or zero depth fixer
+		if (content_mc_array [0].getDepth () <= 0)
+		{
+			var temp_fixer:Number = 0;
+			temp_fixer = Math.abs (content_mc_array [0].getDepth ()) + 1;
+			
+			for (var i in content_mc_array)
+			{
+				content_mc_array [i].swapDepths (content_mc_array [i].getDepth () + temp_fixer);
+			}
+		}
+	
+		// the first depth must be 1.... because 0 depth thing will crash page transition
+		var j:Number = 1;
+		var l:Number = content_mc_array.length;
 		
-		j = 0;
-		
-		for (var i = 0; i <= max_depth; i++)
+		for (var i = 0; i < l; i++)
 		{
 			if (content_mc_array [i] != undefined)
 			{
@@ -342,13 +372,12 @@ class as.page_content.PageContentMC extends MovieClip
 				if (content_mc_array [i].getDepth () != j)
 				{
 					content_mc_array [i].swapDepths (j);
-					content_mc_array [j] = content_mc_array [i];
 				}
 				
 				j = j + 1;
 			}
 		}
-		
+
 		// update back the maximum depth
 		max_depth = j - 1;
 		
@@ -359,15 +388,16 @@ class as.page_content.PageContentMC extends MovieClip
 	// ************
 	// change depth
 	// ************
-	public function change_depth (d:Number, n:Number):Void
+	public function change_depth (i:Number, n:Number):Void
 	{
+		var temp_num:Number = Number (i) + Number (n);
 		var temp_mc:MovieClip;
 		
-		content_mc_array [d].swapDepths (content_mc_array [d + n]);
+		content_mc_array [i].swapDepths (content_mc_array [temp_num]);
 		
-		temp_mc = content_mc_array [d];
-		content_mc_array [d] = content_mc_array [d + n];
-		content_mc_array [d + n] = temp_mc;
+		temp_mc = content_mc_array [i];
+		content_mc_array [i] = content_mc_array [temp_num];
+		content_mc_array [temp_num] = temp_mc;
 	}
 	
 	// ************
@@ -396,7 +426,7 @@ class as.page_content.PageContentMC extends MovieClip
 	{
 		var out_xml:XML;
 		var out_string:String;
-		var return_xml:as.global.XMLExtend;
+		var return_xml:as.datatype.XMLExtend;
 		
 		var root_node:XMLNode;
 		var config_node:XMLNode;
@@ -432,17 +462,20 @@ class as.page_content.PageContentMC extends MovieClip
 			config_node.appendChild (temp_node);
 			
 			// bg color of page content
-			temp_node = out_xml.createElement ("bg_color");
-			
-			var temp_color:Color;
-			temp_color = new Color (mc_ref.bg_color);
-			
-			temp_node_2 = out_xml.createTextNode ("0x" + temp_color.getRGB ().toString (16));
-			temp_node.appendChild (temp_node_2);
-			config_node.appendChild (temp_node);
+			if (mc_ref.bg_color != null)
+			{
+				var temp_obj:Object = new Object ();
+				
+				temp_obj = mc_ref.bg_color.get_frame_param ();
+				
+				temp_node = out_xml.createElement ("bg_color");
+				temp_node_2 = out_xml.createTextNode ("0x" + temp_obj ["fc"].toString (16));
+				temp_node.appendChild (temp_node_2);
+				config_node.appendChild (temp_node);
+			}
 			
 			// bg image of page content
-			if (mc_ref.bg_image.clip_mc != null)
+			if (mc_ref.bg_image != null)
 			{
 				temp_node = out_xml.createElement ("bg_image");
 				
@@ -457,7 +490,7 @@ class as.page_content.PageContentMC extends MovieClip
 				temp_node.appendChild (temp_node_2);
 				
 				temp_node_2 = out_xml.createElement ("url");
-				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image_url);
+				temp_node_3 = out_xml.createTextNode (mc_ref.bg_image.get_clip_mc_url ());
 				temp_node_2.appendChild (temp_node_3);
 				temp_node.appendChild (temp_node_2);
 				
@@ -486,7 +519,7 @@ class as.page_content.PageContentMC extends MovieClip
 			
 		root_node.appendChild (data_node);
 		
-		return_xml = new as.global.XMLExtend ();
+		return_xml = new as.datatype.XMLExtend ();
 		return_xml.onLoad = function (b: Boolean)
 		{
 			if (b)
@@ -495,7 +528,7 @@ class as.page_content.PageContentMC extends MovieClip
 				_root.status_mc.add_message (return_xml.toString (), "");
 				
 				// update the page dir array to ensure up to date
-				_root.flaber.preload_page_dir_array ();
+				_root.flaber.load_page_dir_array ();
 			}
 		}
 		
@@ -524,19 +557,12 @@ class as.page_content.PageContentMC extends MovieClip
 		loaded_file = s;
 	}
 	
-	// ****************
-	// get bg image url
-	// ****************
-	public function get_bg_image_url ():String
-	{
-		return (bg_image_url);
-	}
-	
 	// ********************
 	// get content mc array
 	// ********************
 	public function get_content_mc_array ():Array
 	{
+	trace (this + " " + content_mc_array);
 		return (content_mc_array);
 	}
 }

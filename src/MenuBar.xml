@@ -1,36 +1,46 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 
 <menu
 xmlns="http://www.w3schools.com"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<menuitem type="normal" label="File" instanceName="file">
-		<menuitem type="normal" label="New..." instanceName="file_new" />
-		<menuitem type="normal" label="Open..." instanceName="file_open" />
+		<menuitem type="normal" label="New..." instanceName="file|new" />
+		<menuitem type="normal" label="Open..." instanceName="file|open" />
 		<menuitem type="separator" />
-		<menuitem type="normal" label="Save" instanceName="file_save" />
-		<menuitem type="normal" label="Save As..." instanceName="file_save_as" />
+		<menuitem type="normal" label="Save" instanceName="file|save" />
+		<menuitem type="normal" label="Save As..." instanceName="file|save_as" />
 		<menuitem type="separator" />
-		<menuitem type="normal" label="Logout Admin"  instanceName="file_logout"/>
+		<menuitem type="normal" label="Logout Admin"  instanceName="file|logout"/>
 	</menuitem>
 	<menuitem type="normal" label="Insert" instanceName="insert">
-		<menuitem type="normal" label="TextField" instanceName="insert_textfield" />
-		<menuitem type="normal" label="Image" instanceName="insert_image" />
-		<menuitem type="normal" label="Link"  instanceName="insert_link" />
-		<menuitem type="normal" label="Shape" instanceName="insert_shape" >
-			<menuitem type="normal" label="Rectangle"  instanceName="insert_shape_rectangle"/>
+		<menuitem type="normal" label="TextField" instanceName="insert|textfield" />
+		<menuitem type="normal" label="Image" instanceName="insert|image" />
+		<menuitem type="normal" label="Link"  instanceName="insert|link" />
+		<menuitem type="normal" label="Shape" instanceName="insert|shape" >
+			<menuitem type="normal" label="Rectangle"  instanceName="insert|shape|rectangle"/>
+			<menuitem type="normal" label="Oval"  instanceName="insert|shape|oval"/>
 		</menuitem>
 	</menuitem>
 	<menuitem type="normal" label="Modify">
-		<menuitem type="normal" label="Web Properties" instanceName="modify_web" />
-		<menuitem type="normal" label="Page Properties" instanceName="modify_page" />
+		<menuitem type="normal" label="Web Properties" instanceName="modify|web" />
+		<menuitem type="normal" label="Page Properties" instanceName="modify|page" />
 	</menuitem>
 	<menuitem type="normal" label="Mode" instanceName="mode">
-		<menuitem type="radio" label="Action Mode" groupName="mode_group" instanceName="mode_action" selected="true" />
-		<menuitem type="radio" label="Edit Mode" groupName="mode_group" instanceName="mode_edit" />
+		<menuitem type="radio" label="Action Mode" groupName="mode|group" instanceName="mode|action" selected="true" />
+		<menuitem type="radio" label="Edit Mode" groupName="mode|group" instanceName="mode|edit" />
 	</menuitem>
 	<menuitem type="normal" label="Tools" instanceName="tools">
-		<menuitem type="normal" label="Image Uploader" instanceName="tools_image" />
-		<menuitem type="normal" label="Depth Manager" instanceName="tools_depth" />
+		<menuitem type="normal" label="Image Uploader" instanceName="tools|image" />
+		<menuitem type="normal" label="Depth Manager" instanceName="tools|depth" />
+		<menuitem type="normal" label="Change Password" instanceName="tools|password" />
 	</menuitem>
-	<menuitem type="normal" label="About FLABER" instanceName="about" />
+	<menuitem type="normal" label="Help" instanceName="help">
+		<menuitem type="normal" label="WIKI" instanceName="help|wiki" />
+		<menuitem type="normal" label="Forum" instanceName="help|forum" />
+		<menuitem type="normal" label="SourceForge" instanceName="help|sourceforge" />
+		<menuitem type="separator" />
+		<menuitem type="normal" label="Donation" instanceName="help|donation" />
+		<menuitem type="separator" />
+		<menuitem type="normal" label="About FLABER" instanceName="help|about" />
+	</menuitem>
 </menu>

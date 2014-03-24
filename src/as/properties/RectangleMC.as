@@ -1,4 +1,4 @@
-﻿// *****************
+// *****************
 // RactangleMC class
 // *****************
 class as.properties.RectangleMC extends MovieClip
@@ -24,13 +24,16 @@ class as.properties.RectangleMC extends MovieClip
 	{
 		target_ref = m;
 		
+		var temp_param:Object = new Object ();
+		temp_param = target_ref.get_shape_param (); 
+		
 		// position
 		mc_ref.x_textinput.text = target_ref._x;
 		mc_ref.y_textinput.text = target_ref._y;
 		
 		// dimension
-		mc_ref.width_textinput.text = target_ref.get_rect_width ();
-		mc_ref.height_textinput.text = target_ref.get_rect_height ();
+		mc_ref.width_textinput.text = temp_param ["w"];
+		mc_ref.height_textinput.text = temp_param ["h"];
 		mc_ref.rotation_textinput.text = target_ref._rotation;
 		
 		// line style
@@ -39,13 +42,13 @@ class as.properties.RectangleMC extends MovieClip
 		line_style = new Array ();
 		line_style = target_ref.get_line_style ();
 		
-		mc_ref.line_width_textinput.text = line_style [0];
-		mc_ref.line_color_palette.set_color_num (parseInt (line_style [1]));
-		mc_ref.line_alpha_textinput.text = line_style [2];
+		mc_ref.line_width_textinput.text = temp_param ["ls"];
+		mc_ref.line_color_palette.set_color_num (temp_param ["lc"]);
+		mc_ref.line_alpha_textinput.text = temp_param ["la"];
 		
 		// fill style
-		mc_ref.fill_color_palette.set_color_num (target_ref.get_fill_color ());
-		mc_ref.fill_alpha_textinput.text = target_ref._alpha;
+		mc_ref.fill_color_palette.set_color_num (temp_param ["fc"]);
+		mc_ref.fill_alpha_textinput.text = temp_param ["fa"];
 	}
 	
 	// **********************
@@ -58,12 +61,17 @@ class as.properties.RectangleMC extends MovieClip
 		mc_ref.createClassObject (mx.controls.TextInput, "width_textinput", 3, {_x:100, _y:95, _width:40, _height:20});
 		mc_ref.createClassObject (mx.controls.TextInput, "height_textinput", 4, {_x:100, _y:120, _width:40, _height:20});
 		mc_ref.createClassObject (mx.controls.TextInput, "rotation_textinput", 5, {_x:100, _y:145, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "line_width_textinput", 6, {_x:290, _y:95, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "line_alpha_textinput", 7, {_x:290, _y:145, _width:40, _height:20});
-		mc_ref.createClassObject (mx.controls.TextInput, "fill_alpha_textinput", 8, {_x:480, _y:120, _width:40, _height:20});
-		mc_ref.attachMovie ("lib_normal_palette", "line_color_palette", 9, {_x:290, _y:120});
-		mc_ref.attachMovie ("lib_normal_palette", "fill_color_palette", 10, {_x:480, _y:95});
+		mc_ref.createClassObject (mx.controls.TextInput, "line_width_textinput", 6, {_x:260, _y:95, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "line_alpha_textinput", 7, {_x:260, _y:145, _width:40, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "fill_alpha_textinput", 8, {_x:430, _y:120, _width:40, _height:20});
+
+		mc_ref.attachMovie ("lib_button_mc", "apply_button", 9, {_x:230, _y:190});
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 10, {_x:320, _y:190});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 11, {_x:410, _y:190});
 		
+		mc_ref.attachMovie ("lib_normal_palette", "line_color_palette", 12, {_x:260, _y:120});
+		mc_ref.attachMovie ("lib_normal_palette", "fill_color_palette", 13, {_x:430, _y:95});
+
 		setup_component_style ();
 		
 		setup_apply_button ();
@@ -154,6 +162,10 @@ class as.properties.RectangleMC extends MovieClip
 	// ******************
 	public function setup_apply_button ():Void
 	{
+		mc_ref.apply_button.set_toggle_flag (false);
+		mc_ref.apply_button.set_dimension (80, 20);
+		mc_ref.apply_button.set_text ("Apply");
+		
 		mc_ref.apply_button ["class_ref"] = mc_ref;
 		mc_ref.apply_button.onRelease = function ()
 		{
@@ -198,15 +210,18 @@ class as.properties.RectangleMC extends MovieClip
 				temp_node.appendChild (temp_node_2);
 				item_node.appendChild (temp_node);
 				
-				temp_node = item_xml.createElement ("fill_color");
-				temp_node_2 = item_xml.createTextNode (this.class_ref.fill_color_palette.get_color_string ());
-				temp_node.appendChild (temp_node_2);
-				item_node.appendChild (temp_node);
-				
-				temp_node = item_xml.createElement ("alpha");
-				temp_node_2 = item_xml.createTextNode (this.class_ref.fill_alpha_textinput.text);
-				temp_node.appendChild (temp_node_2);
-				item_node.appendChild (temp_node);
+				if (this.class_ref.fill_color_palette.get_color_num () != null)
+				{
+					temp_node = item_xml.createElement ("fill_color");
+					temp_node_2 = item_xml.createTextNode (this.class_ref.fill_color_palette.get_color_string ());
+					temp_node.appendChild (temp_node_2);
+					item_node.appendChild (temp_node);
+					
+					temp_node = item_xml.createElement ("alpha");
+					temp_node_2 = item_xml.createTextNode (this.class_ref.fill_alpha_textinput.text);
+					temp_node.appendChild (temp_node_2);
+					item_node.appendChild (temp_node);
+				}
 				
 				this.class_ref.target_ref.set_data_xml (item_node);
 			}
@@ -218,6 +233,10 @@ class as.properties.RectangleMC extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -231,6 +250,10 @@ class as.properties.RectangleMC extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+		
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

@@ -1,4 +1,4 @@
-﻿// ****************
+// ****************
 // AdminLogin class
 // ****************
 class as.dialogue.AdminLogin extends MovieClip
@@ -52,6 +52,9 @@ class as.dialogue.AdminLogin extends MovieClip
 	{
 		mc_ref.createClassObject (mx.controls.TextInput, "password_textinput", 1, {_x:35, _y:35, _width:125, _height:20});
 		
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 2, {_x:10, _y:70});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 3, {_x:100, _y:70});
+
 		setup_component_style ();
 		
 		setup_password_textinput ();
@@ -94,9 +97,9 @@ class as.dialogue.AdminLogin extends MovieClip
 	{
 		if (data_validation () == true)
 		{		
-			var admin_xml:as.global.XMLExtend;
+			var admin_xml:as.datatype.XMLExtend;
 			
-			admin_xml = new as.global.XMLExtend ();
+			admin_xml = new as.datatype.XMLExtend ();
 			admin_xml.ignoreWhite = true;
 			admin_xml ["class_ref"] = mc_ref;
 			admin_xml.sendAndLoad ("function/admin_login.php?password=" + mc_ref.password_textinput.text, admin_xml);
@@ -110,6 +113,9 @@ class as.dialogue.AdminLogin extends MovieClip
 					if (this.firstChild.nodeName == "login")
 					{
 						_root.menu_mc.show_menu ();
+						_root.status_mc.chase_window ();
+						_root.flaber.set_stored_password (this.class_ref.password_textinput.text);
+						_root.status_mc.add_message ("Logged in successfully", "normal");
 						this.class_ref._parent.close_window ();
 					}
 					// if have error
@@ -128,6 +134,10 @@ class as.dialogue.AdminLogin extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -140,6 +150,10 @@ class as.dialogue.AdminLogin extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

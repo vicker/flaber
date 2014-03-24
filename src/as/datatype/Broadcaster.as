@@ -1,27 +1,26 @@
-﻿// *****************
+// *****************
 // broadcaster class
 // *****************
-class as.global.Broadcaster
+class as.datatype.Broadcaster
 {
-	private var changed_flag:Boolean;			// state that if the value is changed
-	private var observers_array:Array;			// an array of all the observers
-	
-	private var broadcaster_type:Number;		// the type of broadcaster
+	private var broadcaster_type:Number;						// the type of broadcaster
+	private var changed_flag:Boolean;							// state that if the value is changed
+	private var observers_array:Array;							// an array of all the observers
 	
 	// ***********
 	// constructor
 	// ***********
 	public function Broadcaster (t:Number)
 	{
+		broadcaster_type = t;
 		changed_flag = false;
 		observers_array = new Array ();
-		broadcaster_type = t;
 	}
 	
 	// ************
 	// add observer
 	// ************
-	public function add_observer (o:as.global.Observer):Boolean
+	public function add_observer (o:as.datatype.Observer):Boolean
 	{
 		// preventing null observer
 		if (o == null)
@@ -46,7 +45,7 @@ class as.global.Broadcaster
 	// ***************
 	// remove observer
 	// ***************
-	public function remove_observer (o:as.global.Observer):Boolean
+	public function remove_observer (o:as.datatype.Observer):Boolean
 	{
 		for (var i in observers_array)
 		{

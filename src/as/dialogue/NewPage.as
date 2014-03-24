@@ -1,11 +1,11 @@
-﻿// *************
+// *************
 // NewPage class
 // *************
 class as.dialogue.NewPage extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip;					// reference to the movie clip
-	private var file_name:String;					// for tracer
+	private var mc_ref:MovieClip;							// reference to the movie clip
+	private var FILE_NAME:String = "NewPage.as";			// for tracer
 	
 	// ***********
 	// constructor
@@ -13,8 +13,6 @@ class as.dialogue.NewPage extends MovieClip
 	public function NewPage ()
 	{
 		mc_ref = this;
-		
-		file_name = "(NewPage.as)";		
 		
 		setup_component_object ();
 	}
@@ -25,6 +23,9 @@ class as.dialogue.NewPage extends MovieClip
 	public function setup_component_object ():Void
 	{
 		mc_ref.createClassObject (mx.controls.TextInput, "file_textinput", 1, {_x:80, _y:35, _width:110, _height:20});
+		
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 2, {_x:30, _y:70});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 3, {_x:120, _y:70});
 		
 		setup_component_style ();
 		
@@ -51,7 +52,7 @@ class as.dialogue.NewPage extends MovieClip
 	{
 		if (mc_ref.file_textinput.text == "")
 		{
-			_root.status_mc.add_message (mc_ref.file_name + " Please enter a valid page name.", "critical");
+			_root.status_mc.add_message (mc_ref.FILE_NAME + " Please enter a valid page name.", "critical");
 			return false;
 		}
 		
@@ -63,9 +64,9 @@ class as.dialogue.NewPage extends MovieClip
 	// ********
 	public function new_page ():Void
 	{
-		var page_xml:as.global.XMLExtend;
+		var page_xml:as.datatype.XMLExtend;
 		
-		page_xml = new as.global.XMLExtend ();
+		page_xml = new as.datatype.XMLExtend ();
 		page_xml.ignoreWhite = true;
 		page_xml ["class_ref"] = mc_ref;
 		
@@ -97,6 +98,10 @@ class as.dialogue.NewPage extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -112,6 +117,10 @@ class as.dialogue.NewPage extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

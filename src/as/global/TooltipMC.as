@@ -1,4 +1,4 @@
-﻿// ***************
+// ***************
 // TooltipMC class
 // ***************
 class as.global.TooltipMC extends MovieClip
@@ -16,11 +16,13 @@ class as.global.TooltipMC extends MovieClip
 	public function TooltipMC ()
 	{
 		mc_ref = this;
-		
 		mc_ref.content_field.autoSize = true;
-		
+		mc_ref.attachMovie ("lib_frame_mc", "frame_mc", -16384, {_x:0, _y:20});
+
+		// drop shadow
+		_root.mc_filters.set_shadow_filter (mc_ref);
+
 		draw_frame ();
-		
 		throw_away ();
 	}
 	
@@ -33,43 +35,21 @@ class as.global.TooltipMC extends MovieClip
 		
 		draw_frame ();
 		
-		mc_ref._visible = true;
 		mc_ref.startDrag (true);
+		mc_ref._visible = true;
 	}
 
 	// **********
 	// draw frame
 	// **********
-	public function draw_frame ():Void
+	private function draw_frame ():Void
 	{
-		var frame_width:Number;
-		
+		var frame_width:Number = 0;
 		frame_width = mc_ref.content_field.textWidth + 6 * 2;
 		
 		// clear all frame first
-		mc_ref.frame_mc.clear ();
-		
-		// draw the outer border
-		mc_ref.frame_mc.lineStyle (1, 0x666666, 100);
-		mc_ref.frame_mc.beginFill (0xFFFFFF, 100);
-		mc_ref.frame_mc.moveTo (0, 0);
-		mc_ref.frame_mc.lineTo (frame_width, 0);
-		mc_ref.frame_mc.lineTo (frame_width, 22);
-		mc_ref.frame_mc.lineTo (0, 22);
-		mc_ref.frame_mc.lineTo (0, 0);
-		mc_ref.frame_mc.endFill ();
-		
-		// draw the shadow
-		mc_ref.frame_mc.lineStyle (0, 0x000000, 0);
-		mc_ref.frame_mc.beginFill (0x000000, 30);
-		mc_ref.frame_mc.moveTo (frame_width, 10);
-		mc_ref.frame_mc.lineTo (frame_width + 3, 10);
-		mc_ref.frame_mc.lineTo (frame_width + 3, 22 + 3);
-		mc_ref.frame_mc.lineTo (0 + 10, 22 + 3);
-		mc_ref.frame_mc.lineTo (0 + 10, 22);
-		mc_ref.frame_mc.lineTo (frame_width, 22);
-		mc_ref.frame_mc.lineTo (frame_width, 10);
-		mc_ref.frame_mc.endFill ();
+		mc_ref.frame_mc.clear_frame ();
+		mc_ref.frame_mc.draw_rect (0, 0, frame_width, 22, 1, 0x666666, 100, 0xFFFFFF, 100);
 	}
 
 	// **********

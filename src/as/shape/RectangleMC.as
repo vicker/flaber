@@ -1,17 +1,14 @@
-﻿// *****************
+// *****************
 // RectangleMC class
 // *****************
-class as.shape.RectangleMC extends MovieClip
+class as.shape.RectangleMC extends as.page_content.PageElementMC
 {
 	// private variables
 	private var mc_ref:MovieClip;				// interface for the rectangle mc
-	
-	// rectangle parameters
-	private var rect_width:Number;
-	private var rect_height:Number;
-	private var rect_corner:Number;
-	private var line_style:Array;
-	private var fill_color:Number;
+	private var shape_param:Object;
+
+	private var stored_width:Number;
+	private var stored_height:Number;
 
 	// ***********
 	// constructor
@@ -19,12 +16,18 @@ class as.shape.RectangleMC extends MovieClip
 	public function RectangleMC ()
 	{
 		mc_ref = this;
+		mc_ref.attachMovie ("lib_frame_mc", "frame_mc", 1, {_x: 0, _y: 0});
 		
-		rect_width = 50;
-		rect_height = 50;
-		rect_corner = 0;
-		line_style = new Array (1, 0x000000, 100);
-		fill_color = 0x000000;
+		shape_param = new Object ();
+		shape_param ["px"] = 0;
+		shape_param ["py"] = 0;
+		shape_param ["w"] = 100;
+		shape_param ["h"] = 50;
+		shape_param ["ls"] = 1;
+		shape_param ["lc"] = 0x000000;
+		shape_param ["la"] = 100;
+		shape_param ["fc"] = 0x000000;
+		shape_param ["fa"] = 100;
 	}
 	
 	// *******
@@ -32,25 +35,96 @@ class as.shape.RectangleMC extends MovieClip
 	// *******
 	public function draw_it ():Void
 	{
-		// remind that clear will also remove lineStyle
-		mc_ref.clear ();
-		
-		if (fill_color != null)
+		mc_ref.frame_mc.clear_frame ();
+		mc_ref.frame_mc.draw_rect (shape_param ["px"], shape_param ["py"], shape_param ["w"], shape_param ["h"],
+											 shape_param ["ls"], shape_param ["lc"], shape_param ["la"],
+											 shape_param ["fc"], shape_param ["fa"]);
+	}
+
+	// ***************
+	// pull edit panel
+	// ***************
+	public function pull_handler (s:String):Void
+	{
+		if (s == "first")
 		{
-			mc_ref.beginFill (fill_color);
+			_root.handler_mc.bring_back ();
+			_root.handler_mc.set_function (["resize", "rotate", "delete"], null);
+		}
+
+		_root.handler_mc.set_size (shape_param ["w"], shape_param ["h"]);
+		_root.handler_mc.set_position (mc_ref._x, mc_ref._y, mc_ref._rotation);
+	}
+	
+	// ***************
+	// resize function
+	// ***************
+	// override existing resize function
+	public function resize_function (n:Number):Void
+	{
+		stored_width = shape_param ["w"];
+		stored_height = shape_param ["h"];
+
+		super.resize_function (n);
+	}
+	
+	// ************************
+	// resize interval function
+	// ************************
+	public function resize_interval_function ():Void
+	{
+		var target_width:Number;
+		var target_height:Number;
+		
+		target_width = _root.handler_mc._xmouse;
+		target_height = _root.handler_mc._ymouse;
+		
+		// preventing the object too small...
+		target_height = Math.max (target_height, 10);
+		target_width = Math.max (target_width, 10);
+		
+		// shift will have scale resize
+		if (Key.isDown (Key.SHIFT))
+		{
+			var temp_ratio:Number;
+			temp_ratio = Math.min (target_width / stored_width, target_height / stored_height);
+
+			target_width = stored_width * temp_ratio;
+			target_height = stored_height * temp_ratio;
 		}
 		
-		mc_ref.lineStyle (parseInt (line_style [0]), parseInt (line_style [1]), parseInt (line_style [2]));
-		
-		mc_ref.lineTo (rect_width, 0);
-		mc_ref.lineTo (rect_width, rect_height);
-		mc_ref.lineTo (0, rect_height);
-		mc_ref.lineTo (0, 0);
-		
-		if (fill_color != null)
+		// ctrl will form square
+		if (Key.isDown (Key.CONTROL))
 		{
-			mc_ref.endFill ();
+			var temp_value:Number;
+			temp_value = Math.max (target_width, target_height);
+			
+			target_width = temp_value;
+			target_height = temp_value;
 		}
+				
+		shape_param ["w"] = target_width;
+		shape_param ["h"] = target_height;
+		draw_it ();
+	}
+	
+	// ************************
+	// rotate interval function
+	// ************************
+	public function rotate_interval_function (r:Number):Void
+	{
+		mc_ref._rotation = r;
+	}
+
+	// *******************
+	// properties function
+	// *******************
+	public function properties_function ():Void
+	{
+		_root.sys_func.remove_window_mc ();
+		_root.attachMovie ("lib_window", "window_mc", 9999);
+		_root.window_mc.set_window_data ("Rectangle Properties Window", 520, 240, "lib_properties_rectangle");
+		_root.window_mc.content_mc.set_target_ref (mc_ref);
 	}
 
 	// ***************
@@ -58,6 +132,19 @@ class as.shape.RectangleMC extends MovieClip
 	// ***************
 	public function set_data_xml (x:XMLNode):Void
 	{
+		// reset frame params
+		// line is necessary to be there even the user dont specify
+		// however this is the case for fill~
+		shape_param ["px"] = 0;
+		shape_param ["py"] = 0;
+		shape_param ["w"] = 100;
+		shape_param ["h"] = 50;
+		shape_param ["ls"] = 1;
+		shape_param ["lc"] = 0x000000;
+		shape_param ["la"] = 100;
+		shape_param ["fc"] = null;
+		shape_param ["fa"] = null;
+		
 		for (var i in x.childNodes)
 		{
 			var temp_node:XMLNode;
@@ -85,13 +172,13 @@ class as.shape.RectangleMC extends MovieClip
 				// width of the rectangle mc
 				case "width":
 				{
-					rect_width = parseInt (temp_value);
+					shape_param ["w"] = parseInt (temp_value);
 					break;
 				}
 				// height of the rectangle mc
 				case "height":
 				{
-					rect_height = parseInt (temp_value);
+					shape_param ["h"] = parseInt (temp_value);
 					break;
 				}
 				case "rotation":
@@ -99,240 +186,31 @@ class as.shape.RectangleMC extends MovieClip
 					mc_ref._rotation = parseInt (temp_value);
 					break;
 				}
-				// corner radius of the rectangle mc
-				case "corner":
-				{
-					rect_corner = parseInt (temp_value);
-					break;
-				}
 				// line style of the line of rectangle
 				case "line_style":
 				{
+					var line_style:Array;
 					line_style = temp_value.split ("|");
+					shape_param ["ls"] = parseInt (line_style [0]);
+					shape_param ["lc"] = parseInt (line_style [1]);
+					shape_param ["la"] = parseInt (line_style [2]);
 					break;
 				}
 				// fill color of the rectangle mc
 				case "fill_color":
 				{
-					fill_color = parseInt (temp_value);
+					shape_param ["fc"] = parseInt (temp_value);
 					break;
 				}
-				// alpha of the whole rectangle mc
+				// alpha of the fill color of rectangle mc
 				case "alpha":
 				{
-					mc_ref._alpha = parseInt (temp_value);
+					shape_param ["fa"] = parseInt (temp_value);
 					break;
 				}
 			}
 			
 			draw_it ();
-		}		
-	}
-
-	// *******************
-	// onrollover override
-	// *******************
-	public function onRollOver_event ()
-	{
-		_root.mc_filters.set_brightness_filter (mc_ref);
-		_root.tooltip_mc.set_content (mc_ref._name);
-		_root.status_mc.add_message ("Click to bring up the edit panel" , "tooltip");
-	}
-
-	// ******************
-	// onrollout override
-	// ******************
-	public function onRollOut_event ()
-	{
-		_root.mc_filters.remove_filter (mc_ref);
-		_root.tooltip_mc.throw_away ();
-	}
-
-	// ****************
-	// onpress override
-	// ****************
-	public function onPress_event ()
-	{
-		pull_edit_panel ();
-	}
-
-	// ***************
-	// pull edit panel
-	// ***************
-	public function pull_edit_panel ():Void
-	{
-		var temp_x:Number;
-		var temp_y:Number;
-		
-		var adjust_x:Number;
-		var adjust_y:Number;
-		
-		temp_x = mc_ref._x;
-		temp_y = mc_ref._y + mc_ref._height;
-		
-		adjust_x = 0;
-		adjust_y = 0;
-		
-		// rotation adjuster
-		if (mc_ref._rotation < 0 && mc_ref._rotation >= - 90)
-		{
-			adjust_y = mc_ref._height * (mc_ref._rotation / 90);
-		}
-		else if (mc_ref._rotation < -90 && mc_ref._rotation >= - 180)
-		{
-			adjust_y = 0 - mc_ref._height;
-			adjust_x = mc_ref._width * ((mc_ref._rotation + 90) / 90);
-		}
-		else if (mc_ref._rotation > 90 && mc_ref._rotation <= 180)
-		{
-			adjust_y = 0 - (mc_ref._width * ((mc_ref._rotation - 90) / 90));
-			adjust_x = 0 - mc_ref._width;
-		}
-		else if (mc_ref._rotation > 0 && mc_ref._rotation <= 90)
-		{
-			adjust_x = 0 - mc_ref._width * (mc_ref._rotation / 90);
-		}
-		
-		temp_x = temp_x + adjust_x;
-		temp_y = temp_y + adjust_y;
-		
-		_root.edit_panel_mc.set_target_ref (mc_ref);
-		_root.edit_panel_mc.set_position (temp_x, temp_y);
-		_root.edit_panel_mc.set_function (true, true, true, true, true);
-	}
-
-	// ***************
-	// resize function
-	// ***************
-	public function resize_function (n:Number):Void
-	{
-		// calling to go
-		if (n == 1)
-		{
-			mc_ref.onMouseMove = function ()
-			{
-				resize_interval_function ();
-			}
-		}
-		// calling to stop
-		else
-		{
-			delete mc_ref.onMouseMove;
-		}
-	}
-	
-	// ************************
-	// resize interval function
-	// ************************
-	public function resize_interval_function ():Void
-	{
-		var target_width:Number;
-		var target_height:Number;
-		
-		target_width = Math.max (mc_ref._xmouse, 10);
-		target_height = Math.max (mc_ref._ymouse, 10);
-		
-		rect_width = target_width;
-		rect_height = target_height;
-		draw_it ();
-	}
-
-	// ***************
-	// rotate function
-	// ***************
-	public function rotate_function (n:Number):Void
-	{
-		// calling to go
-		if (n == 1)
-		{
-			var initial_rotation:Number;
-			var initial_degree:Number;
-			
-			initial_rotation = mc_ref._rotation;
-			initial_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
-			
-			mc_ref.onMouseMove = function ()
-			{
-				rotate_interval_function (initial_rotation, initial_degree);
-			}
-		}
-		// calling to stop
-		else
-		{
-			delete mc_ref.onMouseMove;
-		}
-	}
-	
-	// ************************
-	// rotate interval function
-	// ************************
-	public function rotate_interval_function (r:Number, d:Number):Void
-	{
-		var target_degree:Number;
-		var current_degree:Number;
-		
-		current_degree = _root.sys_func.get_mouse_degree (mc_ref._x, mc_ref._y);
-		target_degree = current_degree - d;
-		
-		mc_ref._rotation = r + target_degree;
-	}
-
-	// *******************
-	// properties function
-	// *******************
-	public function properties_function ():Void
-	{
-		var temp_lib:String;
-		var temp_name:String;
-		var temp_width:Number;
-		var temp_height:Number;
-		
-		temp_lib = "lib_properties_rectangle";
-		temp_name = "Rectangle Properties Window";
-		temp_width = 580;
-		temp_height = 260;
-		
-		_root.sys_func.remove_window_mc ();
-		_root.attachMovie ("lib_window", "window_mc", 9999);
-		_root.window_mc.set_window_data (temp_name, temp_width, temp_height, temp_lib);
-		_root.window_mc.content_mc.set_target_ref (mc_ref);
-	}
-
-	// ***************
-	// delete function
-	// ***************
-	public function delete_function ():Void
-	{
-		_root.page_mc.destroy_one (mc_ref);
-	}
-
-	// *****************
-	// broadcaster event
-	// *****************
-	public function broadcaster_event (o:Object):Void
-	{
-		if (o == true)
-		{
-			mc_ref.onRollOver = function ()
-			{
-				onRollOver_event ();
-			}
-			
-			mc_ref.onRollOut = function ()
-			{
-				onRollOut_event ();
-			}
-			
-			mc_ref.onPress = function ()
-			{
-				onPress_event ();
-			}
-		}
-		else
-		{
-			delete mc_ref.onRollOver;
-			delete mc_ref.onRollOut;
-			delete mc_ref.onPress;
 		}		
 	}
 
@@ -367,13 +245,13 @@ class as.shape.RectangleMC extends MovieClip
 		
 		// width of rectangle
 		temp_node = out_xml.createElement ("width");
-		temp_node_2 = out_xml.createTextNode (rect_width.toString ());
+		temp_node_2 = out_xml.createTextNode (shape_param ["w"].toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
 		// height of rectangle
 		temp_node = out_xml.createElement ("height");
-		temp_node_2 = out_xml.createTextNode (rect_height.toString ());
+		temp_node_2 = out_xml.createTextNode (shape_param ["h"].toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
@@ -382,67 +260,37 @@ class as.shape.RectangleMC extends MovieClip
 		temp_node_2 = out_xml.createTextNode (mc_ref._rotation.toString ());
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
-				
-		// corner of rectangle
-		temp_node = out_xml.createElement ("corner");
-		temp_node_2 = out_xml.createTextNode (rect_corner.toString ());
-		temp_node.appendChild (temp_node_2);
-		root_node.appendChild (temp_node);
 		
 		// linestyle of rectangle
 		temp_node = out_xml.createElement ("line_style");
-		temp_node_2 = out_xml.createTextNode (line_style [0] + "|" + line_style [1] + "|" + line_style [2]);
+		temp_node_2 = out_xml.createTextNode (shape_param ["ls"] + "|" + shape_param ["lc"] + "|" + shape_param ["la"]);
 		temp_node.appendChild (temp_node_2);
 		root_node.appendChild (temp_node);
 		
 		// fillcolor of rectangle
-		if (fill_color != null)
+		if (shape_param ["fc"] != null && shape_param ["fa"] != null)
 		{
 			temp_node = out_xml.createElement ("fill_color");
-			temp_node_2 = out_xml.createTextNode ("0x" + fill_color.toString (16));
+			temp_node_2 = out_xml.createTextNode (_root.sys_func.color_num_to_string (shape_param ["fc"]));
+			temp_node.appendChild (temp_node_2);
+			root_node.appendChild (temp_node);
+		
+			// alpha of rectangle
+			temp_node = out_xml.createElement ("alpha");
+			temp_node_2 = out_xml.createTextNode (shape_param ["fa"].toString ());
 			temp_node.appendChild (temp_node_2);
 			root_node.appendChild (temp_node);
 		}
-		
-		// alpha of rectangle
-		temp_node = out_xml.createElement ("alpha");
-		temp_node_2 = out_xml.createTextNode (mc_ref._alpha.toString ());
-		temp_node.appendChild (temp_node_2);
-		root_node.appendChild (temp_node);
 		
 		// export the xml node to whatever place need this
 		return (root_node);
 	}
 
-	// **************
-	// get rect width
-	// **************
-	public function get_rect_width ():Number
-	{
-		return (rect_width);
-	}
-
 	// ***************
-	// get rect height
+	// get shape param
 	// ***************
-	public function get_rect_height ():Number
+	public function get_shape_param ():Object
 	{
-		return (rect_height);
-	}
-	
-	// **************
-	// get line style
-	// **************
-	public function get_line_style ():Array
-	{
-		return (line_style);
-	}
-	
-	// **************
-	// get fill color
-	// **************
-	public function get_fill_color ():Number
-	{
-		return (fill_color);
+		return (shape_param);
 	}
 }

@@ -1,10 +1,10 @@
-﻿// **********************
+// **********************
 // NavigationItemMC class
 // **********************
 class as.properties.NavigationItemMC extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip;					// reference to the movie clip
+	private var mc_ref:MovieClip;				// reference to the movie clip
 	private var target_ref:MovieClip;			// reference to the target
 	
 	// ***********
@@ -40,7 +40,7 @@ class as.properties.NavigationItemMC extends MovieClip
 				mc_ref.internal_radiobutton.selected = true;
 				mc_ref.link_radiobuttongroup.dispatchEvent({type:"click"});
 				
-				_root.sys_func.combobox_select_item (mc_ref.link_combobox, target_ref.get_link_url ());
+				mc_ref.link_combobox.select_item (target_ref.get_link_url ());
 				
 				break;
 			}
@@ -67,7 +67,11 @@ class as.properties.NavigationItemMC extends MovieClip
 		mc_ref.createClassObject (mx.controls.RadioButton, "internal_radiobutton", 4, {_x:80, _y:155, _width:60, _height:20});
 		mc_ref.createClassObject (mx.controls.RadioButton, "external_radiobutton", 5, {_x:160, _y:155, _width:60, _height:20});
 		mc_ref.createClassObject (mx.controls.TextInput, "link_textinput", 6, {_x:80, _y:175, _width:150, _height:20});
-		mc_ref.createClassObject (mx.controls.ComboBox, "link_combobox", 7, {_x:80, _y:175, _width:150, _height:20});
+		mc_ref.createClassObject (as.component.ComboBoxExtend, "link_combobox", 7, {_x:80, _y:175, _width:150, _height:20});
+
+		mc_ref.attachMovie ("lib_button_mc", "apply_button", 8, {_x:10, _y:230});
+		mc_ref.attachMovie ("lib_button_mc", "ok_button", 9, {_x:100, _y:230});
+		mc_ref.attachMovie ("lib_button_mc", "cancel_button", 10, {_x:190, _y:230});
 		
 		setup_component_style ();
 		
@@ -207,6 +211,10 @@ class as.properties.NavigationItemMC extends MovieClip
 	// ******************
 	public function setup_apply_button ():Void
 	{
+		mc_ref.apply_button.set_toggle_flag (false);
+		mc_ref.apply_button.set_dimension (80, 20);
+		mc_ref.apply_button.set_text ("Apply");
+
 		mc_ref.apply_button ["class_ref"] = mc_ref;
 		mc_ref.apply_button.onRelease = function ()
 		{
@@ -266,6 +274,10 @@ class as.properties.NavigationItemMC extends MovieClip
 	// ***************
 	public function setup_ok_button ():Void
 	{
+		mc_ref.ok_button.set_toggle_flag (false);
+		mc_ref.ok_button.set_dimension (80, 20);
+		mc_ref.ok_button.set_text ("Ok");
+
 		mc_ref.ok_button ["class_ref"] = mc_ref;
 		mc_ref.ok_button.onRelease = function ()
 		{
@@ -279,6 +291,10 @@ class as.properties.NavigationItemMC extends MovieClip
 	// *******************
 	public function setup_cancel_button ():Void
 	{
+		mc_ref.cancel_button.set_toggle_flag (false);
+		mc_ref.cancel_button.set_dimension (80, 20);
+		mc_ref.cancel_button.set_text ("Cancel");
+
 		mc_ref.cancel_button ["class_ref"] = mc_ref;
 		mc_ref.cancel_button.onRelease = function ()
 		{

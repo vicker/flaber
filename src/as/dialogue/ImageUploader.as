@@ -1,11 +1,11 @@
-﻿// *******************
+// *******************
 // ImageUploader class
 // *******************
 class as.dialogue.ImageUploader extends MovieClip
 {
 	// private variables
-	private var mc_ref:MovieClip;					// reference to the movie clip
-	private var file_name:String;					// for tracer
+	private var mc_ref:MovieClip;									// reference to the movie clip
+	private var FILE_NAME:String = "(ImageUploader.as)";			// for tracer
 	
 	private var file_ref:flash.net.FileReference;
 
@@ -16,8 +16,6 @@ class as.dialogue.ImageUploader extends MovieClip
 	{
 		mc_ref = this;
 		
-		file_name = "(ImageUploader.as)";		
-		
 		setup_component_object ();
 		setup_file_ref ();
 	}
@@ -27,7 +25,10 @@ class as.dialogue.ImageUploader extends MovieClip
 	// **********************
 	public function setup_component_object ():Void
 	{
-		mc_ref.createClassObject (mx.controls.TextInput, "file_textinput", 1, {_x:10, _y:10, _width:150, _height:20});
+		mc_ref.createClassObject (mx.controls.TextInput, "file_textinput", 1, {_x:20, _y:10, _width:150, _height:20});
+
+		mc_ref.attachMovie ("lib_button_mc", "browse_button", 2, {_x:190, _y:10});
+		mc_ref.attachMovie ("lib_button_mc", "upload_button", 3, {_x:280, _y:10});
 		
 		setup_component_style ();
 		
@@ -94,7 +95,7 @@ class as.dialogue.ImageUploader extends MovieClip
 			this.class_ref._parent.close_window ();
 			
 			// update img array
-			_root.flaber.preload_img_dir_array ();
+			_root.flaber.load_img_dir_array ();
 		}
 		
 		file_ref = new flash.net.FileReference ();
@@ -108,7 +109,7 @@ class as.dialogue.ImageUploader extends MovieClip
 	{
 		if (mc_ref.file_textinput.text == "")
 		{
-			_root.status_mc.add_message (mc_ref.file_name + " Please select a valid file.", "critical");
+			_root.status_mc.add_message (mc_ref.FILE_NAME + " Please select a valid file.", "critical");
 			return false;
 		}
 		
@@ -129,9 +130,9 @@ class as.dialogue.ImageUploader extends MovieClip
 	// ***********
 	public function upload_file ():Void
 	{
-		var dir_xml:as.global.XMLExtend;
+		var dir_xml:as.datatype.XMLExtend;
 		
-		dir_xml = new as.global.XMLExtend ();
+		dir_xml = new as.datatype.XMLExtend ();
 		dir_xml.ignoreWhite = true;
 		dir_xml ["class_ref"] = mc_ref;
 		
@@ -147,7 +148,7 @@ class as.dialogue.ImageUploader extends MovieClip
 				{
 					this.class_ref.upload_button.enabled = false;
 					
-					this.class_ref.file_ref.upload ("function/upload_file.php?target_dir=img");
+					this.class_ref.file_ref.upload ("function/upload_file.php?target_dir=img&password=" + _root.flaber.get_stored_password ());
 				}
 				// if the directory is not writable
 				else if (this.firstChild.nodeName == "not_writable")
@@ -166,6 +167,10 @@ class as.dialogue.ImageUploader extends MovieClip
 	// *******************
 	public function setup_browse_button ():Void
 	{
+		mc_ref.browse_button.set_toggle_flag (false);
+		mc_ref.browse_button.set_dimension (80, 20);
+		mc_ref.browse_button.set_text ("Browse");
+
 		mc_ref.browse_button ["class_ref"] = mc_ref;
 		mc_ref.browse_button.onRelease = function ()
 		{
@@ -178,6 +183,10 @@ class as.dialogue.ImageUploader extends MovieClip
 	// *******************
 	public function setup_upload_button ():Void
 	{
+		mc_ref.upload_button.set_toggle_flag (false);
+		mc_ref.upload_button.set_dimension (80, 20);
+		mc_ref.upload_button.set_text ("Upload");
+
 		mc_ref.upload_button ["class_ref"] = mc_ref;
 		mc_ref.upload_button.onRelease = function ()
 		{

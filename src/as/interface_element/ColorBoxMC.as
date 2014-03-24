@@ -1,10 +1,11 @@
-﻿// ****************
+// ****************
 // ColorBoxMC class
 // ****************
-class as.global.ColorBoxMC extends MovieClip
+class as.interface_element.ColorBoxMC extends MovieClip
 {
 	// MC variables
-	// MovieClip			color_box_content
+	// MovieClip			content_mc
+	// MovieClip			cross_mc
 	
 	// private variables
 	private var color_code:Number;						// color code of the mc
@@ -18,14 +19,15 @@ class as.global.ColorBoxMC extends MovieClip
 	public function ColorBoxMC ()
 	{
 		mc_ref = this;
-		mc_color = new Color (mc_ref.color_box_content);
-		color_code = 0;
+		mc_color = new Color (mc_ref.content_mc);
+		
+		color_code = null;
 	}
 
 	// *******************
 	// onrollover override
 	// *******************
-	public function onRollOver ()
+	private function onRollOver ()
 	{
 		mc_ref.gotoAndStop ("over");
 	}
@@ -33,7 +35,7 @@ class as.global.ColorBoxMC extends MovieClip
 	// ******************
 	// onrollout override
 	// ******************
-	public function onRollOut ()
+	private function onRollOut ()
 	{
 		mc_ref.gotoAndStop ("normal");
 	}
@@ -41,7 +43,7 @@ class as.global.ColorBoxMC extends MovieClip
 	// *************************
 	// onreleaseoutside override
 	// *************************
-	public function onReleaseOutside ()
+	private function onReleaseOutside ()
 	{
 		mc_ref.onRollOut ();
 	}
@@ -53,6 +55,8 @@ class as.global.ColorBoxMC extends MovieClip
 	{
 		color_code = (r << 16) | (g << 8) | (b);
 		mc_color.setRGB (color_code);
+		
+		mc_ref.cross_mc._visible = false;
 	}
 
 	// *************
@@ -61,7 +65,17 @@ class as.global.ColorBoxMC extends MovieClip
 	public function set_color_num (n:Number):Void
 	{
 		color_code = n;
-		mc_color.setRGB (color_code);
+
+		if (n != null)
+		{
+			mc_color.setRGB (color_code);
+			mc_ref.cross_mc._visible = false;
+		}
+		else
+		{
+			mc_color.setRGB (0xFFFFFF);
+			mc_ref.cross_mc._visible = true;
+		}
 	}
 
 	// **************
@@ -71,13 +85,20 @@ class as.global.ColorBoxMC extends MovieClip
 	{
 		var temp_string:String;
 		
-		temp_string = color_code.toString (16).toUpperCase ();
-		
-		while (temp_string.length != 6)
+		if (color_code != null)
 		{
-			temp_string = "0" + temp_string;
+			temp_string = color_code.toString (16).toUpperCase ();
+			
+			while (temp_string.length != 6)
+			{
+				temp_string = "0" + temp_string;
+			}
+			temp_string = "#" + temp_string;
 		}
-		temp_string = "#" + temp_string;
+		else
+		{
+			temp_string = "No Color";
+		}
 		
 		return temp_string; 
 	}
