@@ -1,11 +1,41 @@
-***
+# FLABER (FLAsh-based web Builder)
 
-FLABER (FLAsh-based web BuildER)
+Updated in Apr 2014
 
-SourceForge Project Page (Outdated)
-[http://sourceforge.net/projects/flaber](http://sourceforge.net/projects/flaber)
+## Introduction
 
-***
+FLABER is a project developed by Hong Kong developer Vicker Leung ([LinkedIn](http://hk.linkedin.com/in/vicker/)) in 2006 as his BSc Computer Science final year project. At that time Adobe Flash is commonly used as a platform to deploy rich web content, ranging from an animated banner, mini games to a complete web site. However the creation of Flash content heavily relies on the desktop Adobe Flash authoring tool that is not easy to master and maintain, that is why the concept of FLABER emerged.
+
+Instead of having the content pre-compiled inside the Flash document, the content is constructed during runtime according to a XML document. Together with the built-in intuitive editing tool, users can edit the Flash content anytime, anywhere with ease.
+
+A demo video of FLABER v1 is available at Vimeo [(https://vimeo.com/87391440)](https://vimeo.com/87391440)
+
+P.S. The whole concept is very similar as the product Wix ([website](http://www.wix.com/)), where the company was founded in the same year as FLABER was built :p
+
+## Awards
+
+- Asia Pacific ICT Awards (APICTA) Tertiary Student Project Merit Award (2006)
+- Hong Kong ICT Awards (HKICTA) eYouth Grand Award and Software Gold Award (2006)
+- Pan-Pearl River Delta Region University IT Project Competition First Class Award, Best Practicality Award and Best Presentation Award (2006)
+
+## Status
+
+The 2006 FLABER is still compatible with the latest 2014 technologies (Flash Player 12 and PHP 5) and there are still quite a number of websites on the Internet still using FLABER. However as the source code is not updated for so many years, please be warned that there may be flaws and security concerns.
+
+## Roadmap
+
+The development of FLABER v1 have been suspended for many years. The original project was hosted at SourceForge ([website](https://sourceforge.net/projects/flaber/)) and recently migrated to GitHub with complete version history as a snapshot.
+
+There was an unfinished FLABER v2 prototype developed using Adobe Flex 3, developers who are interested to have a copy of the unfinished source code can leave a message in GitHub. The source may be polished and released if there is a very high demand.
+
+FLABER Mobile is currently in brainstorming stage, subscribe this repository to get notified about future updates.
+
+
+> ***
+>
+> !!! All the contents below this are the original readme that was written back in 2006
+>
+> ***
 
 # A. Author's Voice
 
